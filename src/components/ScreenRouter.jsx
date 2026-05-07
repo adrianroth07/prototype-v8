@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import Welcome from './Welcome.jsx';
@@ -17,14 +17,8 @@ import Browse from './Browse.jsx';
 import PathMap from './PathMap.jsx';
 import PathBuilder from './PathBuilder.jsx';
 
-export default function ScreenRouter() {
-  const { state } = usePathFinder();
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [state.screen]);
-
-  switch (state.screen) {
+function getScreen(screen) {
+  switch (screen) {
     case SCREENS.WELCOME:        return <Welcome />;
     case SCREENS.OPENER:         return <Opener />;
     case SCREENS.QUIZ_R1:        return <Quiz round={1} />;
@@ -43,4 +37,31 @@ export default function ScreenRouter() {
     case SCREENS.PATH_BUILDER:   return <PathBuilder />;
     default:                     return <Welcome />;
   }
+}
+
+export default function ScreenRouter() {
+  const { state } = usePathFinder();
+  const [visible, setVisible] = useState(true);
+  const [rendered, setRendered] = useState(state.screen);
+
+  useEffect(() => {
+    if (state.screen !== rendered) {
+      setVisible(false);
+      const timer = setTimeout(() => {
+        setRendered(state.screen);
+        setVisible(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [state.screen, rendered]);
+
+  return (
+    <div
+      className="transition-opacity duration-200 ease-out"
+      style={{ opacity: visible ? 1 : 0 }}
+    >
+      {getScreen(rendered)}
+    </div>
+  );
 }

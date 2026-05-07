@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
-import { ALL_PATHS, CERT_RANK } from '../data/paths.js';
+import { ALL_PATHS, BRIDGE_PATHS, ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
 import { pathColor } from '../data/colors.js';
 
 const CERT_LEVELS = [
@@ -12,6 +12,9 @@ const CERT_LEVELS = [
 ];
 
 const LEADS_TO = {
+  iba: ['ausbildung', 'eq', 'fos'],
+  eq: ['ausbildung'],
+  fos: ['studium', 'ausbildung', 'freelancing'],
   ausbildung: ['studium', 'freelancing', 'bundeswehr', 'gap-year'],
   studium: ['freelancing', 'gap-year', 'ausbildung', 'bundeswehr'],
   fsj: ['ausbildung', 'studium', 'freelancing', 'bundeswehr'],
@@ -21,6 +24,9 @@ const LEADS_TO = {
 };
 
 const PATH_EMOJIS = {
+  iba: '\u{1F4DA}',
+  eq: '\u{1F91D}',
+  fos: '\u{1F4C8}',
   ausbildung: '\u{1F6E0}\u{FE0F}',
   studium: '\u{1F393}',
   fsj: '\u{1F49A}',
@@ -30,6 +36,9 @@ const PATH_EMOJIS = {
 };
 
 const HORIZON = {
+  iba: { emoji: '\u{1F331}', text: 'Better certificate, clearer direction — Ausbildung, EQ, or further school' },
+  eq: { emoji: '\u{1F3AF}', text: '60%+ get an Ausbildung contract — this is your bridge' },
+  fos: { emoji: '\u{1F393}', text: 'Fachabitur or Abitur — university and Duales Studium become possible' },
   ausbildung: { emoji: '\u{1F3ED}', text: 'Career in your trade — Meister, Techniker, or team lead' },
   studium: { emoji: '\u{1F4BC}', text: 'Join a company, start research, or launch your own project' },
   fsj: { emoji: '\u{1F331}', text: 'Clarity on your direction — ready for the next step' },
@@ -41,22 +50,32 @@ const HORIZON = {
 const RECOMMENDED_JOURNEYS = {
   bbr: [
     {
+      label: 'IBA first',
+      desc: 'Upgrade your certificate, then train',
+      steps: ['iba', 'ausbildung'],
+    },
+    {
+      label: 'Bridge to Ausbildung',
+      desc: 'Prove yourself at a company, get hired',
+      steps: ['eq', 'ausbildung'],
+    },
+    {
       label: 'The classic',
-      desc: 'Learn a trade, then go further',
+      desc: 'Start a trade directly, grow from there',
       steps: ['ausbildung', 'studium'],
     },
     {
-      label: 'Earn & grow',
-      desc: 'Start hands-on, then go independent',
-      steps: ['ausbildung', 'freelancing'],
-    },
-    {
-      label: 'Structure first',
-      desc: 'Learn a trade, then serve',
-      steps: ['ausbildung', 'bundeswehr'],
+      label: 'Step by step up',
+      desc: 'IBA, then EQ, then Ausbildung',
+      steps: ['iba', 'eq', 'ausbildung'],
     },
   ],
   msa: [
+    {
+      label: 'Upgrade first',
+      desc: 'Get Fachabitur/Abitur, then study',
+      steps: ['fos', 'studium'],
+    },
     {
       label: 'Orientation first',
       desc: 'Find your direction, then commit',
@@ -108,7 +127,7 @@ const RECOMMENDED_JOURNEYS = {
 };
 
 function pathById(id) {
-  return ALL_PATHS.find(p => p.id === id);
+  return ALL_PATHS_WITH_BRIDGES.find(p => p.id === id);
 }
 
 export default function PathMap() {
@@ -157,8 +176,8 @@ export default function PathMap() {
     setExpandedPath(null);
   }
 
-  const availablePaths = selectedCert ? ALL_PATHS.filter(p => isAccessible(p)) : [];
-  const lockedPaths = selectedCert ? ALL_PATHS.filter(p => !isAccessible(p)) : [];
+  const availablePaths = selectedCert ? ALL_PATHS_WITH_BRIDGES.filter(p => isAccessible(p)) : [];
+  const lockedPaths = selectedCert ? ALL_PATHS_WITH_BRIDGES.filter(p => !isAccessible(p)) : [];
   const recommendations = selectedCert ? (RECOMMENDED_JOURNEYS[selectedCert] || []) : [];
 
   return (
@@ -174,13 +193,13 @@ export default function PathMap() {
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
           <span className="text-2xl">{'\u{1F5FA}\u{FE0F}'}</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-pf-text mb-2 tracking-tight">{t.map.title}</h1>
+        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.map.title}</h1>
         <p className="text-gray-400 text-base">{t.map.subtitle}</p>
       </div>
 
       {/* Level selector */}
       <div className="animate-fade-in-up stagger-1 mb-8">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Where are you?</p>
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.map.whereAreYou}</p>
         <div className="flex flex-wrap gap-2.5">
           {CERT_LEVELS.map((cert, i) => (
             <button
@@ -205,23 +224,28 @@ export default function PathMap() {
       {!selectedCert && (
         <div className="animate-fade-in text-center py-16">
           <span className="text-5xl block mb-4">{'\u{261D}\u{FE0F}'}</span>
-          <p className="text-gray-400 text-sm">Choose your qualification level to see what's possible</p>
+          <p className="text-gray-400 text-sm">{t.map.chooseLevel}</p>
         </div>
       )}
 
       {selectedCert && (
         <>
           {/* Summary */}
-          <div className="animate-fade-in mb-8 p-4 rounded-2xl bg-pf-light/50 border border-pf-light">
+          <div className="animate-fade-in mb-8 p-4 rounded-xl bg-pf-light/50 border border-pf-light">
+            {selectedCert === 'bbr' && (
+              <p className="text-sm text-pf-primary font-bold mb-1">
+                {'\u{1F4AA}'} {t.map.bbrMessage}
+              </p>
+            )}
             <p className="text-sm text-pf-primary font-medium">
-              {availablePaths.length === ALL_PATHS.length
-                ? '\u{1F389} All 6 paths are open to you!'
-                : `\u{2705} ${availablePaths.length} paths open to you right now`
+              {availablePaths.length === ALL_PATHS_WITH_BRIDGES.length
+                ? `\u{1F389} ${t.map.allOpen.replace('{count}', ALL_PATHS_WITH_BRIDGES.length)}`
+                : `\u{2705} ${t.map.someOpen.replace('{count}', availablePaths.length)}`
               }
             </p>
             {lockedPaths.length > 0 && (
               <p className="text-xs text-pf-primary/60 mt-1">
-                {lockedPaths.map(p => p.name).join(', ')} — not yet available at this level, but you can work towards them
+                {t.map.lockedNote.replace('{paths}', lockedPaths.map(p => p.name).join(', '))}
               </p>
             )}
           </div>
@@ -229,7 +253,7 @@ export default function PathMap() {
           {/* Recommended journeys */}
           {journey.length === 0 && recommendations.length > 0 && (
             <div className="animate-fade-in-up mb-10">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{'\u{1F4A1}'} Popular paths from {certLevel.label}</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{'\u{1F4A1}'} {t.map.popularFrom} {certLevel.label}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {recommendations.map((rec, i) => (
                   <button
@@ -268,12 +292,12 @@ export default function PathMap() {
           {journey.length > 0 && (
             <div className="animate-fade-in mb-8">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{'\u{1F6A9}'} Your journey</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{'\u{1F6A9}'} {t.map.yourJourney}</p>
                 <button
                   onClick={resetJourney}
                   className="text-xs text-gray-400 hover:text-red-400 cursor-pointer transition-colors"
                 >
-                  {'\u{21BA}'} Reset
+                  {'\u{21BA}'} {t.map.reset}
                 </button>
               </div>
 
@@ -338,7 +362,7 @@ export default function PathMap() {
                 {/* Next step options */}
                 {nextOptions.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-gray-50">
-                    <p className="text-xs font-semibold text-pf-primary mb-3">{'\u{2795}'} Or keep building:</p>
+                    <p className="text-xs font-semibold text-pf-primary mb-3">{'\u{2795}'} {t.map.keepBuilding}</p>
                     <div className="flex flex-wrap gap-2">
                       {nextOptions.map(id => {
                         const p = pathById(id);
@@ -373,7 +397,7 @@ export default function PathMap() {
                 {/* Lifelong learning message */}
                 <div className="mt-5 pt-4 border-t border-gray-50">
                   <p className="text-xs text-gray-400 text-center leading-relaxed italic">
-                    No path is final. We learn, grow, and change direction throughout our lives — every step opens new doors.
+                    {t.common.noPathFinal}
                   </p>
                 </div>
               </div>
@@ -383,7 +407,7 @@ export default function PathMap() {
           {/* All available paths — flat list */}
           <div className="animate-fade-in-up stagger-2">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
-              {journey.length > 0 ? '\u{1F4DA} All your options' : '\u{270F}\u{FE0F} Or build your own — pick a starting path'}
+              {journey.length > 0 ? `\u{1F4DA} ${t.map.allOptions}` : `\u{270F}\u{FE0F} ${t.map.buildOwn}`}
             </p>
 
             <div className="space-y-2.5 mb-6">
@@ -415,7 +439,7 @@ export default function PathMap() {
                           <h3 className="font-bold text-gray-800 text-sm">{path.name}</h3>
                           {inJourney && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-pf-primary text-white font-medium">
-                              Step {journey.findIndex(j => j.id === path.id) + 1}
+                              {t.builder.step} {journey.findIndex(j => j.id === path.id) + 1}
                             </span>
                           )}
                         </div>
@@ -438,7 +462,7 @@ export default function PathMap() {
                             onClick={() => startJourney(path)}
                             className="text-xs px-3 py-1.5 rounded-xl bg-pf-primary text-white font-semibold cursor-pointer hover:bg-pf-dark transition-colors"
                           >
-                            Start
+                            {t.map.start}
                           </button>
                         )}
                         {canAdd && (
@@ -446,7 +470,7 @@ export default function PathMap() {
                             onClick={() => addStep(path.id)}
                             className="text-xs px-3 py-1.5 rounded-xl border-2 border-pf-primary text-pf-primary font-semibold cursor-pointer hover:bg-pf-light transition-colors"
                           >
-                            + Add
+                            {t.map.add}
                           </button>
                         )}
                       </div>
@@ -482,7 +506,7 @@ export default function PathMap() {
                             onClick={() => startJourney(path)}
                             className="btn-primary w-full px-6 py-3 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all text-sm"
                           >
-                            {'\u{1F680}'} Start your journey here
+                            {'\u{1F680}'} {t.map.startHere}
                           </button>
                         )}
                         {canAdd && (
@@ -490,7 +514,7 @@ export default function PathMap() {
                             onClick={() => addStep(path.id)}
                             className="w-full px-6 py-3 border-2 border-pf-primary text-pf-primary font-semibold rounded-xl hover:bg-pf-light cursor-pointer transition-all text-sm"
                           >
-                            {'\u{2795}'} Add as step {journey.length + 1}
+                            {'\u{2795}'} {t.map.addAsStep} {journey.length + 1}
                           </button>
                         )}
                       </div>
@@ -503,7 +527,7 @@ export default function PathMap() {
             {/* Locked paths */}
             {lockedPaths.length > 0 && (
               <div className="mt-8">
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{'\u{1F512}'} Available with a higher qualification</p>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{'\u{1F512}'} {t.map.lockedTitle}</p>
                 <div className="space-y-2">
                   {lockedPaths.map(path => {
                     const color = pathColor(path.id);

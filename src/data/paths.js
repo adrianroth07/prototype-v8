@@ -1,3 +1,87 @@
+export const BRIDGE_PATHS = [
+  {
+    id: 'iba',
+    name: 'IBA',
+    tagline: 'Berufsausbildungsvorbereitung',
+    meta: '1 year · at OSZ · upgrade your certificate',
+    description: 'Integrierte Berufsausbildungsvorbereitung — a one-year programme at an OSZ (Oberstufenzentrum) combining school and internships. You can upgrade your certificate (BBR to eBBR or MSA). Fulfills the 11. Pflichtschuljahr. Registration deadline: end of May.',
+    riasecFit: ['R', 'S', 'C'],
+    incomeFit: 'low',
+    typical_day: 'Classes at OSZ + Praktikum days at a company',
+    income_now: 'None (but Kindergeld continues)',
+    freedom: 'Low — structured school schedule',
+    flexibility: 'Can switch focus area within the year',
+    outlook: 'Ausbildung, further schooling, or EQ',
+    minCert: null,
+    clusters: ['hands-on', 'people', 'business'],
+    stories: [],
+    nextSteps: [
+      'Find your nearest OSZ at berlin.de/sen/bildung/schule/oberstufenzentren',
+      'Register before end of May — places fill up fast',
+      'Ask the JBA Neukölln (Sonnenallee 282) for help with the application',
+    ],
+    human_story: {
+      name: 'Yusuf, 16',
+      quote: 'I left school with just a BBR and didn\'t know what to do. IBA gave me time to try things out — and I got my MSA at the end.',
+      detail: 'Yusuf did his IBA year at an OSZ in Neukölln, with internship days at a car workshop. He now has an Ausbildung contract as a KFZ-Mechatroniker.',
+    },
+  },
+  {
+    id: 'eq',
+    name: 'EQ',
+    tagline: 'Einstiegsqualifizierung',
+    meta: '6–12 months · 276 €/mo · bridge to Ausbildung',
+    description: 'A subsidised long-term internship (6-12 months) at a real company, funded by the Arbeitsagentur. You earn 276€/month and get practical experience. Over 60% of participants get offered an Ausbildung contract afterwards. Starts October 1.',
+    riasecFit: ['R', 'E', 'C'],
+    incomeFit: 'low',
+    typical_day: 'Full-time at a company, learning on the job',
+    income_now: '276 €/mo (subsidised)',
+    freedom: 'Low — like a regular job',
+    flexibility: 'Can switch employer if it doesn\'t fit',
+    outlook: 'Ausbildung — 60%+ get taken on',
+    minCert: null,
+    clusters: ['hands-on', 'business', 'people'],
+    stories: [],
+    nextSteps: [
+      'Ask at the Agentur für Arbeit or JBA Neukölln about available EQ positions',
+      'Apply by September for an October start',
+      'Think about which trade or field you want to try — EQ is available in most industries',
+    ],
+    human_story: {
+      name: 'Amira, 17',
+      quote: 'I couldn\'t find an Ausbildung so my Berufsberaterin suggested EQ. After 8 months, my boss offered me a real contract.',
+      detail: 'Amira did an EQ at a hotel in Neukölln. She learned the basics of Hotelfachfrau and impressed the team enough to get an Ausbildung spot.',
+    },
+  },
+  {
+    id: 'fos',
+    name: 'FOS / Berufliches Gymnasium',
+    tagline: 'Upgrade to Fachabitur or Abitur',
+    meta: '2–3 years · at OSZ · opens university',
+    description: 'Fachoberschule (FOS, 2 years) leads to Fachhochschulreife. Berufliches Gymnasium (3 years) leads to Allgemeine Hochschulreife (Abitur). Both are at an OSZ and combine general education with a professional focus area. Opens the door to Studium.',
+    riasecFit: ['I', 'A', 'C'],
+    incomeFit: 'low',
+    typical_day: 'School + subject focus (IT, business, health, etc.)',
+    income_now: 'None (BAföG possible)',
+    freedom: 'Medium — school schedule but more independence',
+    flexibility: 'Can choose from multiple focus areas',
+    outlook: 'University, Duales Studium, or qualified Ausbildung',
+    minCert: 'Realschulabschluss',
+    clusters: ['analytical', 'business', 'creative'],
+    stories: [],
+    nextSteps: [
+      'Check which OSZ offers your preferred focus area (IT, business, health, social)',
+      'Apply with your MSA certificate — some programmes require a minimum grade',
+      'OSZ IMT in Neukölln offers both FOS and Berufliches Gymnasium with IT focus',
+    ],
+    human_story: {
+      name: 'Leila, 18',
+      quote: 'I had my MSA but wanted to study at university. The Berufliches Gymnasium let me get my Abitur while focusing on something I actually liked — business.',
+      detail: 'Leila is now in her second year of BWL at the FOS. She plans to do a Duales Studium in marketing after graduating.',
+    },
+  },
+];
+
 export const ALL_PATHS = [
   {
     id: 'ausbildung',
@@ -182,6 +266,8 @@ export const ALL_PATHS = [
     },
   },
 ];
+
+export const ALL_PATHS_WITH_BRIDGES = [...ALL_PATHS, ...BRIDGE_PATHS];
 
 export const CERT_RANK = {
   null: 0,

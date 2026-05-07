@@ -29,7 +29,7 @@ export default function Blocks() {
 
   return (
     <div className="min-h-dvh flex flex-col md:flex-row">
-      <div className="bg-gradient-to-b from-pf-primary to-pf-dark text-white p-10 md:p-14 md:w-[400px] flex flex-col justify-center relative overflow-hidden">
+      <div className="hidden md:flex bg-gradient-to-b from-pf-primary to-pf-dark text-white p-14 md:w-[400px] flex-col justify-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute bottom-16 right-12 w-28 h-28 rounded-full border-2 border-white" />
         </div>
@@ -37,18 +37,24 @@ export default function Blocks() {
           <div className="animate-fade-in-up inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
             <span className="text-2xl">{'\u{1F6A7}'}</span>
           </div>
-          <h1 className="animate-fade-in-up stagger-1 text-3xl font-bold mb-3 tracking-tight">{t.blocks.title}</h1>
+          <h1 className="animate-fade-in-up stagger-1 font-heading text-3xl font-bold mb-3 tracking-tight">{t.blocks.title}</h1>
           <p className="animate-fade-in-up stagger-2 text-pf-mid text-base leading-relaxed">{t.blocks.subtitle}</p>
         </div>
       </div>
 
-      <div className="flex-1 p-8 md:p-14 flex flex-col max-w-xl">
+      {/* Mobile header */}
+      <div className="md:hidden px-6 pt-8 pb-2">
+        <h1 className="font-heading text-2xl font-bold text-pf-text mb-1">{t.blocks.title}</h1>
+        <p className="text-sm text-gray-400">{t.blocks.subtitle}</p>
+      </div>
+
+      <div className="flex-1 p-6 md:p-14 flex flex-col max-w-xl">
         <div className="flex flex-wrap gap-3 mb-8">
           {BLOCK_IDS.map((id, i) => (
             <button
               key={id}
               onClick={() => toggleBlock(id)}
-              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2 px-5 py-3 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
+              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2 px-5 py-3 rounded-xl border-2 text-sm cursor-pointer transition-all ${
                 selected.includes(id)
                   ? 'border-pf-primary bg-pf-light text-pf-primary font-semibold shadow-sm shadow-pf-primary/10'
                   : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
@@ -66,14 +72,14 @@ export default function Blocks() {
             type="text"
             value={other}
             onChange={(e) => setOther(e.target.value)}
-            className="w-full rounded-2xl border-2 border-gray-100 p-4 text-sm focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
+            className="w-full rounded-xl border-2 border-gray-100 p-4 text-base focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
           />
         </div>
 
         <div className="animate-fade-in-up stagger-7 flex items-center gap-3 mt-auto pt-4">
           <button
             onClick={proceed}
-            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-2xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
           >
             {t.blocks.continueBtn}
           </button>

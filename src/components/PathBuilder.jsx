@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
-import { ALL_PATHS, CERT_RANK } from '../data/paths.js';
+import { ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
 import { pathColor } from '../data/colors.js';
 
 const QUALIFICATIONS = [
@@ -14,6 +14,9 @@ const QUALIFICATIONS = [
 ];
 
 const LEADS_TO = {
+  iba: ['ausbildung', 'eq', 'fos'],
+  eq: ['ausbildung'],
+  fos: ['studium', 'ausbildung', 'freelancing'],
   ausbildung: ['studium', 'freelancing', 'bundeswehr', 'gap-year'],
   studium: ['freelancing', 'gap-year', 'ausbildung', 'bundeswehr'],
   fsj: ['ausbildung', 'studium', 'freelancing', 'bundeswehr'],
@@ -34,14 +37,14 @@ export default function PathBuilder() {
   function getAvailablePaths() {
     const usedIds = new Set(journey.map(p => p.id));
     if (journey.length === 0) {
-      return ALL_PATHS.filter(p => {
+      return ALL_PATHS_WITH_BRIDGES.filter(p => {
         const minRank = CERT_RANK[p.minCert] ?? 0;
         return qualRank >= minRank && !usedIds.has(p.id);
       });
     }
     const lastPath = journey[journey.length - 1];
     const nextIds = LEADS_TO[lastPath.id] || [];
-    return ALL_PATHS.filter(p => nextIds.includes(p.id) && !usedIds.has(p.id));
+    return ALL_PATHS_WITH_BRIDGES.filter(p => nextIds.includes(p.id) && !usedIds.has(p.id));
   }
 
   function addPath(path) {
@@ -68,7 +71,7 @@ export default function PathBuilder() {
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
           <span className="text-2xl">{'\u{1F3D7}\u{FE0F}'}</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-pf-text mb-2 tracking-tight">{t.builder.title}</h1>
+        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.builder.title}</h1>
         <p className="text-gray-400 text-base">{t.builder.subtitle}</p>
       </div>
 

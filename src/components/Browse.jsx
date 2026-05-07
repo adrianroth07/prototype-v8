@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
-import { ALL_PATHS } from '../data/paths.js';
+import { ALL_PATHS_WITH_BRIDGES } from '../data/paths.js';
 import { pathColor } from '../data/colors.js';
 
 export default function Browse() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const [expanded, setExpanded] = useState(null);
 
@@ -20,21 +20,21 @@ export default function Browse() {
       </button>
 
       <div className="animate-fade-in-up mb-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
           <span className="text-2xl">{'\u{1F5C2}\u{FE0F}'}</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-pf-text mb-2 tracking-tight">{t.browse.title}</h1>
+        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.browse.title}</h1>
         <p className="text-gray-400 text-base">{t.browse.subtitle}</p>
       </div>
 
       <div className="flex flex-col gap-4">
-        {ALL_PATHS.map((path, i) => {
+        {ALL_PATHS_WITH_BRIDGES.map((path, i) => {
           const color = pathColor(path.id);
           const isExpanded = expanded === path.id;
           return (
             <div
               key={path.id}
-              className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)} card-hover bg-white rounded-2xl border-l-4 border border-gray-100 shadow-sm overflow-hidden transition-all`}
+              className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)} card-hover bg-white rounded-xl border-l-4 border border-gray-100 shadow-sm overflow-hidden transition-all`}
               style={{ borderLeftColor: color.border }}
             >
               <div className="p-6 md:p-8">
@@ -44,7 +44,7 @@ export default function Browse() {
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-md text-xs font-bold text-white" style={{ backgroundColor: color.border }}>
                         {i + 1}
                       </span>
-                      <h3 className="text-lg font-bold text-gray-800">{path.name}</h3>
+                      <h3 className="font-heading text-lg font-bold text-gray-800">{path.name}</h3>
                     </div>
                     <p className="text-sm text-gray-500">{path.tagline}</p>
                     <div className="flex flex-wrap gap-2 mt-2">
@@ -63,10 +63,10 @@ export default function Browse() {
 
                     <div className="grid grid-cols-2 gap-3">
                       {[
-                        { label: 'Income', value: path.income_now },
-                        { label: 'Freedom', value: path.freedom },
-                        { label: 'Flexibility', value: path.flexibility },
-                        { label: 'Outlook', value: path.outlook },
+                        { label: t.comparison.headers.income, value: path.income_now },
+                        { label: t.comparison.headers.freedom, value: path.freedom },
+                        { label: t.comparison.headers.flexibility, value: path.flexibility },
+                        { label: t.comparison.headers.outlook, value: path.outlook },
                       ].map(item => (
                         <div key={item.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
                           <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{item.label}</div>
@@ -84,7 +84,7 @@ export default function Browse() {
 
                     {path.branches && (
                       <div className="space-y-2">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Branches</p>
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{lang === 'de' ? 'Formate' : 'Formats'}</p>
                         {path.branches.map(b => (
                           <div key={b.id} className="card-hover p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                             <div className="font-semibold text-sm text-gray-700">{b.name}</div>
@@ -92,6 +92,20 @@ export default function Browse() {
                             <p className="text-xs text-gray-400 mt-1">{b.meta}</p>
                           </div>
                         ))}
+                      </div>
+                    )}
+
+                    {path.nextSteps && (
+                      <div className="pt-2">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.paths.nextSteps}</p>
+                        <ul className="space-y-2">
+                          {path.nextSteps.map((step, j) => (
+                            <li key={j} className="flex gap-2.5 text-sm">
+                              <span className="text-pf-primary shrink-0 mt-0.5">{'\u{2192}'}</span>
+                              <span className="text-gray-500 leading-relaxed">{step}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
                   </div>
@@ -107,6 +121,33 @@ export default function Browse() {
             </div>
           );
         })}
+      </div>
+
+      {/* Deadline calendar */}
+      <div className="mt-12">
+        <h2 className="font-heading text-xl font-bold text-pf-text mb-2">{t.browse.deadlinesTitle}</h2>
+        <p className="text-sm text-gray-400 mb-6">{t.browse.deadlinesSubtitle}</p>
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          {[
+            { month: 'Mai', monthEn: 'May', emoji: '\u{1F4DA}', item: 'OSZ / IBA', desc: 'Anmeldung an Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', descEn: 'Registration at Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)' },
+            { month: 'Jul', monthEn: 'Jul', emoji: '\u{1F393}', item: 'Uni / FH', desc: 'Bewerbungsfrist für viele Studiengänge (15. Juli)', descEn: 'Application deadline for many study programmes (July 15)' },
+            { month: 'Jul–Nov', monthEn: 'Jul–Nov', emoji: '\u{1F6E0}\u{FE0F}', item: 'Ausbildung', desc: 'Hauptbewerbungszeit — je früher, desto besser', descEn: 'Main application period — the earlier, the better' },
+            { month: 'Sep', monthEn: 'Sep', emoji: '\u{1F91D}', item: 'EQ', desc: 'Einstiegsqualifizierung startet am 1. Oktober — vorher bewerben', descEn: 'Einstiegsqualifizierung starts October 1 — apply before' },
+            { month: 'Ganzjährig', monthEn: 'Year-round', emoji: '\u{1F49A}', item: 'FSJ / BFD', desc: 'Plätze gibt es das ganze Jahr — Hauptstart September', descEn: 'Places available year-round — main start September' },
+            { month: 'Ganzjährig', monthEn: 'Year-round', emoji: '\u{1F396}\u{FE0F}', item: 'Bundeswehr', desc: 'Karrierecenter beraten jederzeit — Musterung nach 18', descEn: 'Career centres advise anytime — Musterung after 18' },
+          ].map((d, i) => (
+            <div key={i} className={`flex items-start gap-4 p-4 ${i > 0 ? 'border-t border-gray-50' : ''}`}>
+              <div className="shrink-0 w-20 text-right">
+                <span className="text-xs font-bold text-pf-primary uppercase">{lang === 'de' ? d.month : d.monthEn}</span>
+              </div>
+              <span className="text-lg shrink-0">{d.emoji}</span>
+              <div>
+                <div className="font-semibold text-sm text-gray-800">{d.item}</div>
+                <p className="text-xs text-gray-500 mt-0.5">{lang === 'de' ? d.desc : d.descEn}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

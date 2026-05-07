@@ -21,7 +21,7 @@ export default function Savickas() {
 
   return (
     <div className="min-h-dvh flex flex-col md:flex-row">
-      <div className="bg-gradient-to-b from-pf-primary to-pf-dark text-white p-10 md:p-14 md:w-[400px] flex flex-col justify-center relative overflow-hidden">
+      <div className="hidden md:flex bg-gradient-to-b from-pf-primary to-pf-dark text-white p-14 md:w-[400px] flex-col justify-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-16 right-8 w-36 h-36 rounded-full border-2 border-white" />
           <div className="absolute bottom-24 left-4 w-20 h-20 rounded-full border border-white" />
@@ -30,12 +30,18 @@ export default function Savickas() {
           <div className="animate-fade-in-up inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
             <span className="text-2xl">{'\u{1F52E}'}</span>
           </div>
-          <h1 className="animate-fade-in-up stagger-1 text-3xl font-bold mb-3 tracking-tight">{t.savickas.title}</h1>
+          <h1 className="animate-fade-in-up stagger-1 font-heading text-3xl font-bold mb-3 tracking-tight">{t.savickas.title}</h1>
           <p className="animate-fade-in-up stagger-2 text-pf-mid text-base leading-relaxed">{t.savickas.subtitle}</p>
         </div>
       </div>
 
-      <div className="flex-1 p-8 md:p-14 flex flex-col gap-6 max-w-xl">
+      {/* Mobile header */}
+      <div className="md:hidden px-6 pt-8 pb-2">
+        <h1 className="font-heading text-2xl font-bold text-pf-text mb-1">{t.savickas.title}</h1>
+        <p className="text-sm text-gray-400">{t.savickas.subtitle}</p>
+      </div>
+
+      <div className="flex-1 p-6 md:p-14 flex flex-col gap-6 max-w-xl">
         {['roleModel', 'story', 'motto'].map((key, i) => (
           <div key={key} className={`animate-fade-in-up stagger-${i + 1}`}>
             <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
@@ -48,7 +54,7 @@ export default function Savickas() {
               value={fields[key]}
               onChange={(e) => setFields({ ...fields, [key]: e.target.value })}
               rows={3}
-              className="w-full rounded-2xl border-2 border-gray-100 p-4 text-sm text-gray-700 leading-relaxed focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"
+              className="w-full rounded-xl border-2 border-gray-100 p-4 text-base text-gray-700 leading-relaxed focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"
             />
           </div>
         ))}
@@ -56,7 +62,7 @@ export default function Savickas() {
         <div className="animate-fade-in-up stagger-4 flex items-center gap-3 mt-auto pt-4">
           <button
             onClick={proceed}
-            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-2xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
           >
             {t.savickas.continueBtn}
           </button>

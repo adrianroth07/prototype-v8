@@ -2,7 +2,8 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
-  --color-warm-50: #fdf8f0;
+  --font-heading: 'Satoshi', 'Inter', system-ui, sans-serif;
+  --color-warm-50: #FAFAF7;
   --color-warm-100: #f5ead6;
   --color-warm-200: #e8d5b0;
   --color-warm-300: #d4b978;
@@ -18,17 +19,19 @@
   --color-mint-600: #16a34a;
   --color-coral-50: #fff7ed;
   --color-coral-500: #f97316;
-  --color-violet-50: #f5f3ff;
-  --color-violet-500: #8b5cf6;
-  --color-violet-600: #7c3aed;
-  --color-pf-primary: #1B5E4F;
-  --color-pf-dark: #134439;
-  --color-pf-light: #E8F5F1;
-  --color-pf-mid: #C2E0D8;
-  --color-pf-text: #0D3328;
+  --color-violet-50: #EDE9FE;
+  --color-violet-100: #DDD6FE;
+  --color-violet-500: #6C5CE7;
+  --color-violet-600: #5B4BD5;
+  --color-pf-primary: #0F6B5B;
+  --color-pf-dark: #0A4F43;
+  --color-pf-light: #E6F7F2;
+  --color-pf-mid: #B8DDD3;
+  --color-pf-text: #1A1A2E;
   --color-surface: #f4f4f2;
   --color-surface-alt: #eeecea;
-  --color-pf-accent: #2D8B75;
+  --color-pf-accent: #6C5CE7;
+  --color-pf-accent-light: #EDE9FE;
 }
 
 body {
@@ -38,8 +41,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+/* ─── Animations ─── */
+
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -64,12 +73,37 @@ body {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(27, 94, 79, 0.2); }
-  50% { box-shadow: 0 0 0 8px rgba(27, 94, 79, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(15, 107, 91, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(15, 107, 91, 0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes progressGlow {
+  0%, 100% { box-shadow: 0 0 4px 0 rgba(15, 107, 91, 0.3); }
+  50% { box-shadow: 0 0 12px 2px rgba(15, 107, 91, 0.15); }
+}
+
+@keyframes morphDot {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.5); opacity: 1; }
+}
+
+@keyframes screenEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes confettiBurst {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out both;
+  animation: fadeInUp 0.45s ease-out both;
 }
 
 .animate-fade-in {
@@ -84,6 +118,14 @@ body {
   animation: scaleIn 0.25s ease-out both;
 }
 
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-screen-enter {
+  animation: screenEnter 0.35s ease-out both;
+}
+
 .stagger-1 { animation-delay: 0.05s; }
 .stagger-2 { animation-delay: 0.1s; }
 .stagger-3 { animation-delay: 0.15s; }
@@ -92,6 +134,8 @@ body {
 .stagger-6 { animation-delay: 0.3s; }
 .stagger-7 { animation-delay: 0.35s; }
 
+/* ─── Card + hover ─── */
+
 .card-hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -99,6 +143,8 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 10px -3px rgba(0, 0, 0, 0.04);
 }
+
+/* ─── Primary button with shimmer ─── */
 
 .btn-primary {
   position: relative;
@@ -122,6 +168,8 @@ body {
   transform: scale(0.97);
 }
 
+/* ─── Option card with accent bar ─── */
+
 .option-card {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -141,16 +189,41 @@ body {
 .option-card.selected::before {
   height: 60%;
 }
+.option-card.selected {
+  transform: scale(1.01);
+}
+
+/* ─── Progress bar ─── */
 
 .progress-bar-fill {
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: progressGlow 2s ease-in-out infinite;
 }
+
+/* ─── Glass card ─── */
 
 .glass-card {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+
+/* ─── Modal backdrop ─── */
+
+.modal-backdrop {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ─── Loading dots ─── */
+
+.loading-dot {
+  animation: morphDot 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: 0.2s; }
+.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+/* ─── Scrollbar ─── */
 
 ::-webkit-scrollbar {
   width: 6px;

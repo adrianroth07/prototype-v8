@@ -80,7 +80,8 @@ export default function Quiz({ round }) {
 
   return (
     <div className="min-h-dvh flex flex-col md:flex-row">
-      <div className="bg-gradient-to-b from-pf-primary to-pf-dark text-white p-8 md:p-12 md:w-[380px] flex flex-col justify-between relative overflow-hidden">
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex bg-gradient-to-b from-pf-primary to-pf-dark text-white p-12 md:w-[380px] flex-col justify-between relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full border-2 border-white" />
         </div>
@@ -88,7 +89,7 @@ export default function Quiz({ round }) {
           <button onClick={goBack} className="inline-flex items-center gap-1.5 text-pf-mid hover:text-white text-sm mb-10 cursor-pointer transition-colors">
             {'\u{2190}'} {t.quiz.back}
           </button>
-          <h2 className="text-xl font-bold mb-2">{t.quiz[titleKey]}</h2>
+          <h2 className="font-heading text-xl font-bold mb-2">{t.quiz[titleKey]}</h2>
           <p className="text-pf-mid text-sm leading-relaxed">{t.quiz[subtitleKey]}</p>
         </div>
         <div className="relative mt-8">
@@ -102,12 +103,25 @@ export default function Quiz({ round }) {
         </div>
       </div>
 
-      <div key={animKey} className="flex-1 p-8 md:p-12 flex flex-col max-w-2xl">
+      {/* Mobile top bar */}
+      <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-pf-primary text-white sticky top-0 z-10">
+        <button onClick={goBack} className="text-white/70 hover:text-white cursor-pointer transition-colors p-1">
+          {'\u{2190}'}
+        </button>
+        <span className="text-xs font-semibold text-white/80">
+          {t.quiz.questionOf.replace('{current}', currentIndex + 1).replace('{total}', questions.length)}
+        </span>
+        <div className="flex-1 h-1.5 bg-pf-dark/50 rounded-full overflow-hidden">
+          <div className="progress-bar-fill h-full bg-white rounded-full" style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+
+      <div key={animKey} className="flex-1 p-6 md:p-12 flex flex-col max-w-2xl">
         <div className="animate-fade-in-up">
           <div className="inline-block px-3 py-1 rounded-full bg-pf-light text-pf-primary text-xs font-bold uppercase tracking-wider mb-4">
             {question.word}
           </div>
-          <h3 className="text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">
+          <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">
             {question.text}
           </h3>
           <p className="text-sm text-gray-400 mb-8">{question.hint}</p>
@@ -136,7 +150,7 @@ export default function Quiz({ round }) {
                       </svg>
                     )}
                   </div>
-                  <span className={`text-sm leading-relaxed ${isSelected ? 'text-pf-text font-medium' : 'text-gray-600'}`}>
+                  <span className={`text-base leading-relaxed ${isSelected ? 'text-pf-text font-medium' : 'text-gray-600'}`}>
                     {opt.text}
                   </span>
                 </div>
@@ -157,15 +171,18 @@ export default function Quiz({ round }) {
           </div>
         )}
 
-        <div className="mt-auto pt-4">
+        {/* Sticky CTA on mobile */}
+        <div className="mt-auto pt-4 md:relative fixed bottom-0 left-0 right-0 md:p-0 p-4 bg-warm-50/95 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none z-10">
           <button
             onClick={goNext}
             disabled={selected.length === 0}
-            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-2xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all"
+            className="btn-primary w-full md:w-auto px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all"
           >
             {t.quiz.next}
           </button>
         </div>
+        {/* Spacer for fixed bottom CTA on mobile */}
+        <div className="h-20 md:hidden" />
       </div>
     </div>
   );
