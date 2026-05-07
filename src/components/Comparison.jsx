@@ -22,6 +22,14 @@ const FINANCIAL_INFO = {
   },
 };
 
+function extractEuro(text) {
+  const match = text.match(/[\d.,]+\s*[–\-]\s*[\d.,]+\s*€|[\d.,]+\s*€|bis\s+[\d.,]+\s*€|up\s+to\s+[\d.,]+\s*€/);
+  if (!match) return { amount: null, rest: text };
+  const amount = match[0];
+  const rest = text.replace(amount, '').replace(/^\s*[:–\-·]\s*/, '').trim();
+  return { amount, rest };
+}
+
 export default function Comparison() {
   const { t, lang } = useLang();
   const { state, dispatch } = usePathFinder();
@@ -49,7 +57,7 @@ export default function Comparison() {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-[500px]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-100">
+              <tr className="border-b border-gray-100 bg-gradient-to-r from-pf-light to-white">
                 <th className="text-left p-4 text-xs font-bold text-gray-400 uppercase tracking-wider">{t.comparison.headers.path}</th>
                 {paths.map((p) => {
                   const color = pathColor(p.id);
@@ -93,13 +101,24 @@ export default function Comparison() {
                   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color.border }} />
                   <span className="font-heading font-bold text-sm text-gray-800">{p.name}</span>
                 </div>
-                <p className="text-xs text-gray-600 leading-relaxed">{info}</p>
+                {(() => {
+                  const { amount, rest } = extractEuro(info);
+                  if (amount) {
+                    return (
+                      <>
+                        <p className="text-lg font-bold text-pf-primary mb-1">{amount}</p>
+                        <p className="text-xs text-gray-600 leading-relaxed">{rest}</p>
+                      </>
+                    );
+                  }
+                  return <p className="text-xs text-gray-600 leading-relaxed">{info}</p>;
+                })()}
               </div>
             );
           })}
 
           {/* Universal benefits */}
-          <div className="p-4 bg-pf-light/50 rounded-xl border border-pf-light sm:col-span-2 lg:col-span-3">
+          <div className="p-4 bg-pf-light/50 rounded-xl border border-pf-light border-l-4 border-l-pf-primary sm:col-span-2 lg:col-span-3">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-base">{'\u{1F4B6}'}</span>
               <span className="font-heading font-bold text-sm text-pf-primary">Kindergeld</span>

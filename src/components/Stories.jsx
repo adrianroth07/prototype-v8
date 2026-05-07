@@ -51,8 +51,11 @@ export default function Stories() {
               style={{ borderLeftColor: color.border }}
             >
               <div className="flex items-start gap-4 mb-4">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-pf-light shrink-0">
-                  <span className="text-xl">{'\u{1F464}'}</span>
+                <div
+                  className="inline-flex items-center justify-center w-12 h-12 rounded-xl shrink-0 text-white font-heading font-bold text-lg"
+                  style={{ backgroundColor: color.border }}
+                >
+                  {story.name.charAt(0)}
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-gray-800 text-lg">{story.name}</h3>
@@ -61,9 +64,10 @@ export default function Stories() {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100 mb-4">
-                <blockquote className="text-sm text-gray-600 italic leading-relaxed">
-                  "{story.quote}"
+              <div className="relative p-5 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100 mb-4 overflow-hidden">
+                <span className="absolute top-1 left-3 text-5xl text-pf-primary/20 font-serif leading-none select-none pointer-events-none">{'\u{201C}'}</span>
+                <blockquote className="relative text-base text-gray-600 italic leading-relaxed pl-6">
+                  {story.quote}
                 </blockquote>
               </div>
 
@@ -108,7 +112,10 @@ export default function Stories() {
             >
               <span className="text-2xl shrink-0 mt-0.5">{r.emoji}</span>
               <div className="min-w-0">
-                <div className="font-semibold text-sm text-gray-800 group-hover:text-pf-primary transition-colors">{r.name}</div>
+                <div className="font-bold text-sm text-gray-800 group-hover:text-pf-primary transition-colors flex items-center gap-1">
+                  {r.name}
+                  <span className="text-pf-primary opacity-0 group-hover:opacity-100 transition-opacity">{'\u{2192}'}</span>
+                </div>
                 <p className="text-xs text-gray-500 mt-0.5">{r.desc}</p>
                 <p className="text-xs text-gray-400 mt-1">{r.detail}</p>
               </div>

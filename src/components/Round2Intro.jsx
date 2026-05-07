@@ -3,6 +3,15 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { computeRiasec } from '../logic/matching.js';
 
+const RIASEC_BG = {
+  R: 'bg-red-50',
+  I: 'bg-blue-50',
+  A: 'bg-purple-50',
+  S: 'bg-green-50',
+  E: 'bg-amber-50',
+  C: 'bg-slate-50',
+};
+
 export default function Round2Intro() {
   const { t } = useLang();
   const { state, dispatch } = usePathFinder();
@@ -39,7 +48,7 @@ export default function Round2Intro() {
           return (
             <div
               key={type}
-              className={`animate-fade-in-up stagger-${i + 1} card-hover flex items-start gap-5 p-6 bg-white rounded-xl border border-gray-100 shadow-sm`}
+              className={`animate-fade-in-up stagger-${i + 1} card-hover flex items-start gap-5 p-6 ${RIASEC_BG[type] || 'bg-white'} rounded-xl border border-gray-100 shadow-sm`}
             >
               <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light shrink-0">
                 <span className="text-3xl">{mode.emoji}</span>

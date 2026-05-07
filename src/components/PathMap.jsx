@@ -37,90 +37,90 @@ const PATH_EMOJIS = {
 
 const HORIZON = {
   iba: { emoji: '\u{1F331}', text: 'Better certificate, clearer direction — Ausbildung, EQ, or further school' },
-  eq: { emoji: '\u{1F3AF}', text: '60%+ get an Ausbildung contract — this is your bridge' },
-  fos: { emoji: '\u{1F393}', text: 'Fachabitur or Abitur — university and Duales Studium become possible' },
-  ausbildung: { emoji: '\u{1F3ED}', text: 'Career in your trade — Meister, Techniker, or team lead' },
-  studium: { emoji: '\u{1F4BC}', text: 'Join a company, start research, or launch your own project' },
-  fsj: { emoji: '\u{1F331}', text: 'Clarity on your direction — ready for the next step' },
-  freelancing: { emoji: '\u{1F680}', text: 'Grow your business, build a team, or pivot anytime' },
-  bundeswehr: { emoji: '\u{1F396}\u{FE0F}', text: 'Specialist career, officer track, or civilian transfer with strong skills' },
-  'gap-year': { emoji: '\u{1F30D}', text: 'Come back with perspective — ready to commit' },
+  eq: { emoji: '\u{1F3AF}', de: '60%+ bekommen danach einen Ausbildungsvertrag', en: '60%+ get an Ausbildung contract — this is your bridge' },
+  fos: { emoji: '\u{1F393}', de: 'Fachabitur oder Abitur — Uni und Duales Studium werden möglich', en: 'Fachabitur or Abitur — university and Duales Studium become possible' },
+  ausbildung: { emoji: '\u{1F3ED}', de: 'Karriere im Beruf — Meister, Techniker oder Teamleitung', en: 'Career in your trade — Meister, Techniker, or team lead' },
+  studium: { emoji: '\u{1F4BC}', de: 'Firma, Forschung oder eigenes Projekt starten', en: 'Join a company, start research, or launch your own project' },
+  fsj: { emoji: '\u{1F331}', de: 'Klarheit über deine Richtung — bereit für den nächsten Schritt', en: 'Clarity on your direction — ready for the next step' },
+  freelancing: { emoji: '\u{1F680}', de: 'Business aufbauen, Team gründen oder flexibel bleiben', en: 'Grow your business, build a team, or pivot anytime' },
+  bundeswehr: { emoji: '\u{1F396}\u{FE0F}', de: 'Spezialist, Offizier oder Wechsel in zivilen Beruf', en: 'Specialist career, officer track, or civilian transfer with strong skills' },
+  'gap-year': { emoji: '\u{1F30D}', de: 'Mit neuer Perspektive zurückkommen — bereit loszulegen', en: 'Come back with perspective — ready to commit' },
 };
 
 const RECOMMENDED_JOURNEYS = {
   bbr: [
     {
-      label: 'IBA first',
-      desc: 'Upgrade your certificate, then train',
+      de: { label: 'Erst IBA', desc: 'Abschluss nachholen, dann Ausbildung' },
+      en: { label: 'IBA first', desc: 'Upgrade your certificate, then train' },
       steps: ['iba', 'ausbildung'],
     },
     {
-      label: 'Bridge to Ausbildung',
-      desc: 'Prove yourself at a company, get hired',
+      de: { label: 'Brücke zur Ausbildung', desc: 'Zeig was du kannst, werde übernommen' },
+      en: { label: 'Bridge to Ausbildung', desc: 'Prove yourself at a company, get hired' },
       steps: ['eq', 'ausbildung'],
     },
     {
-      label: 'The classic',
-      desc: 'Start a trade directly, grow from there',
+      de: { label: 'Der Klassiker', desc: 'Direkt Ausbildung starten und wachsen' },
+      en: { label: 'The classic', desc: 'Start a trade directly, grow from there' },
       steps: ['ausbildung', 'studium'],
     },
     {
-      label: 'Step by step up',
-      desc: 'IBA, then EQ, then Ausbildung',
+      de: { label: 'Schritt für Schritt', desc: 'IBA, dann EQ, dann Ausbildung' },
+      en: { label: 'Step by step up', desc: 'IBA, then EQ, then Ausbildung' },
       steps: ['iba', 'eq', 'ausbildung'],
     },
   ],
   msa: [
     {
-      label: 'Upgrade first',
-      desc: 'Get Fachabitur/Abitur, then study',
+      de: { label: 'Erst upgraden', desc: 'Fachabitur/Abitur holen, dann studieren' },
+      en: { label: 'Upgrade first', desc: 'Get Fachabitur/Abitur, then study' },
       steps: ['fos', 'studium'],
     },
     {
-      label: 'Orientation first',
-      desc: 'Find your direction, then commit',
+      de: { label: 'Erst orientieren', desc: 'Richtung finden, dann loslegen' },
+      en: { label: 'Orientation first', desc: 'Find your direction, then commit' },
       steps: ['fsj', 'ausbildung'],
     },
     {
-      label: 'Service & study',
-      desc: 'Volunteer year, then university',
+      de: { label: 'Helfen & studieren', desc: 'Freiwilligenjahr, dann Uni' },
+      en: { label: 'Service & study', desc: 'Volunteer year, then university' },
       steps: ['fsj', 'studium'],
     },
     {
-      label: 'Hands-on start',
-      desc: 'Vocational training opens many doors',
+      de: { label: 'Praxis-Start', desc: 'Ausbildung öffnet viele Türen' },
+      en: { label: 'Hands-on start', desc: 'Vocational training opens many doors' },
       steps: ['ausbildung', 'studium'],
     },
     {
-      label: 'Discipline path',
-      desc: 'Military experience, then a trade',
+      de: { label: 'Disziplin-Weg', desc: 'Bundeswehr-Erfahrung, dann Beruf' },
+      en: { label: 'Discipline path', desc: 'Military experience, then a trade' },
       steps: ['bundeswehr', 'ausbildung'],
     },
   ],
   abitur: [
     {
-      label: 'Explore, then study',
-      desc: 'Take time to find the right fit',
+      de: { label: 'Erst entdecken', desc: 'Zeit nehmen, dann studieren' },
+      en: { label: 'Explore, then study', desc: 'Take time to find the right fit' },
       steps: ['gap-year', 'studium'],
     },
     {
-      label: 'Academic path',
-      desc: 'Study deep, then go independent',
+      de: { label: 'Akademischer Weg', desc: 'Studieren, dann selbstständig werden' },
+      en: { label: 'Academic path', desc: 'Study deep, then go independent' },
       steps: ['studium', 'freelancing'],
     },
     {
-      label: 'The practical route',
-      desc: 'Real skills first, theory later',
+      de: { label: 'Der praktische Weg', desc: 'Erst Praxis, dann Theorie' },
+      en: { label: 'The practical route', desc: 'Real skills first, theory later' },
       steps: ['ausbildung', 'studium'],
     },
     {
-      label: 'Social start',
-      desc: 'Give back, gain clarity, then commit',
+      de: { label: 'Sozialer Start', desc: 'Helfen, Klarheit finden, dann loslegen' },
+      en: { label: 'Social start', desc: 'Give back, gain clarity, then commit' },
       steps: ['fsj', 'ausbildung', 'studium'],
     },
     {
-      label: 'Self-made',
-      desc: 'Travel, build skills, go solo',
+      de: { label: 'Selbstständig', desc: 'Reisen, Skills aufbauen, eigenes Ding' },
+      en: { label: 'Self-made', desc: 'Travel, build skills, go solo' },
       steps: ['gap-year', 'freelancing'],
     },
   ],
@@ -131,7 +131,7 @@ function pathById(id) {
 }
 
 export default function PathMap() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const [selectedCert, setSelectedCert] = useState(null);
   const [journey, setJourney] = useState([]);
@@ -269,8 +269,8 @@ export default function PathMap() {
                         </span>
                       ))}
                     </div>
-                    <div className="font-bold text-sm text-gray-800 group-hover:text-pf-primary transition-colors">{rec.label}</div>
-                    <div className="text-xs text-gray-500 mt-0.5">{rec.desc}</div>
+                    <div className="font-bold text-sm text-gray-800 group-hover:text-pf-primary transition-colors">{rec[lang]?.label || rec.label}</div>
+                    <div className="text-xs text-gray-500 mt-0.5">{rec[lang]?.desc || rec.desc}</div>
                     <div className="flex items-center gap-1 mt-2">
                       {rec.steps.map((id, j) => {
                         const c = pathColor(id);
@@ -354,7 +354,7 @@ export default function PathMap() {
                     </div>
                     <div className="flex items-center gap-3 p-3.5 rounded-xl bg-gradient-to-r from-pf-light/60 to-white border border-pf-light/80">
                       <span className="text-xl">{HORIZON[lastStep.id]?.emoji || '\u{2728}'}</span>
-                      <p className="text-sm text-pf-text/80 leading-snug">{HORIZON[lastStep.id]?.text || 'The world is open.'}</p>
+                      <p className="text-sm text-pf-text/80 leading-snug">{HORIZON[lastStep.id]?.[lang] || HORIZON[lastStep.id]?.text || (lang === 'de' ? 'Die Welt steht dir offen.' : 'The world is open.')}</p>
                     </div>
                   </div>
                 )}

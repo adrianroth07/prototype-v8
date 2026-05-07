@@ -3,9 +3,9 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 
 const MODES = [
-  { id: 'lena', emoji: '\u{1F32A}\u{FE0F}', color: 'from-amber-50 to-orange-50' },
-  { id: 'malik', emoji: '\u{1F914}', color: 'from-blue-50 to-indigo-50' },
-  { id: 'clear', emoji: '\u{1F3AF}', color: 'from-green-50 to-emerald-50' },
+  { id: 'lena', emoji: '\u{1F937}', color: 'from-amber-50 to-orange-50', border: 'border-l-pf-accent' },
+  { id: 'malik', emoji: '\u{1F914}', color: 'from-blue-50 to-indigo-50', border: 'border-l-pf-primary' },
+  { id: 'clear', emoji: '\u{1F4AA}', color: 'from-green-50 to-emerald-50', border: 'border-l-amber-500' },
 ];
 
 export default function Opener() {
@@ -41,10 +41,12 @@ export default function Opener() {
           <button
             key={mode.id}
             onClick={() => select(mode.id)}
-            className={`animate-fade-in-up stagger-${i + 1} card-hover text-left p-6 rounded-xl border-2 border-gray-100 bg-gradient-to-r ${mode.color} hover:border-pf-primary transition-all cursor-pointer group`}
+            className={`animate-fade-in-up stagger-${i + 1} card-hover text-left p-6 rounded-xl border-2 border-gray-100 border-l-4 ${mode.border} bg-gradient-to-r ${mode.color} hover:border-pf-primary hover:-translate-y-0.5 hover:shadow-md transition-all cursor-pointer group`}
           >
             <div className="flex items-start gap-4">
-              <span className="text-2xl mt-0.5">{mode.emoji}</span>
+              <div className="flex flex-col items-center gap-1">
+                <span className="text-3xl">{mode.emoji}</span>
+              </div>
               <div>
                 <div className="font-heading font-bold text-gray-800 group-hover:text-pf-primary mb-1 text-base transition-colors">
                   {t.opener[mode.id].label}

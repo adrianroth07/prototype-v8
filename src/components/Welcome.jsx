@@ -3,7 +3,7 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 
 export default function Welcome() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const nav = (screen) => dispatch({ type: 'NAVIGATE', screen });
 
@@ -20,13 +20,13 @@ export default function Welcome() {
           </div>
         </div>
 
-        <h1 className="animate-fade-in-up font-heading text-5xl md:text-7xl font-black text-pf-text mb-4 tracking-tight">
+        <h1 className="animate-fade-in-up font-heading text-5xl md:text-7xl font-black text-gradient mb-4 tracking-tight">
           {t.landing.title}
         </h1>
         <p className="animate-fade-in-up stagger-1 text-xl md:text-2xl text-gray-500 mb-3 max-w-lg font-light">
           {t.landing.subtitle}
         </p>
-        <p className="animate-fade-in-up stagger-2 text-base text-gray-400 mb-10 max-w-md leading-relaxed">
+        <p className="animate-fade-in-up stagger-2 text-base text-gray-400 mb-10 max-w-md leading-relaxed text-balance">
           {t.landing.description}
         </p>
 
@@ -34,7 +34,7 @@ export default function Welcome() {
         <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center gap-4 mb-16">
           <button
             onClick={() => nav(SCREENS.OPENER)}
-            className="btn-primary w-full sm:w-auto px-12 py-4 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-bold rounded-xl shadow-lg shadow-pf-primary/20 cursor-pointer text-base"
+            className="btn-primary btn-glow w-full sm:w-auto px-12 py-4 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-bold rounded-xl shadow-lg shadow-pf-primary/20 cursor-pointer text-base"
           >
             {t.landing.startBtn}
           </button>
@@ -46,6 +46,15 @@ export default function Welcome() {
           </button>
         </div>
 
+        {/* Trust badges */}
+        <div className="animate-fade-in-up stagger-4 flex items-center gap-3 mb-16">
+          {(t.landing.trustBadges || (lang === 'de' ? ['10 Minuten', 'Kostenlos', 'Anonym'] : ['10 minutes', 'Free', 'Anonymous'])).map((badge, i) => (
+            <span key={i} className="bg-white border border-gray-200 text-gray-500 text-xs px-3 py-1 rounded-full">
+              {badge}
+            </span>
+          ))}
+        </div>
+
         {/* Tool cards — PathMap & PathBuilder */}
         <div className="animate-fade-in-up stagger-4 max-w-xl w-full mb-16">
           <h2 className="font-heading text-xs font-bold text-gray-400 uppercase tracking-widest mb-5">
@@ -54,7 +63,7 @@ export default function Welcome() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               onClick={() => nav(SCREENS.MAP)}
-              className="card-hover text-left p-5 bg-white rounded-xl border border-gray-100 shadow-sm cursor-pointer group transition-all hover:border-pf-primary hover:shadow-md"
+              className="card-hover card-glass text-left p-5 rounded-xl border border-gray-100 shadow-sm cursor-pointer group transition-all hover:border-pf-primary hover:shadow-md"
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-light ring-1 ring-pf-primary/10 group-hover:bg-pf-primary group-hover:ring-0 transition-colors">
@@ -67,7 +76,7 @@ export default function Welcome() {
 
             <button
               onClick={() => nav(SCREENS.PATH_BUILDER)}
-              className="card-hover text-left p-5 bg-white rounded-xl border border-gray-100 shadow-sm cursor-pointer group transition-all hover:border-pf-accent hover:shadow-md"
+              className="card-hover card-glass text-left p-5 rounded-xl border border-gray-100 shadow-sm cursor-pointer group transition-all hover:border-pf-accent hover:shadow-md"
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-accent-light ring-1 ring-pf-accent/10 group-hover:bg-pf-accent group-hover:ring-0 transition-colors">
@@ -91,7 +100,7 @@ export default function Welcome() {
                 key={i}
                 className={`animate-fade-in-up stagger-${Math.min(i + 5, 7)} bg-white rounded-xl p-5 border border-gray-100 shadow-sm`}
               >
-                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-pf-light text-pf-primary text-xs font-bold mb-3">
+                <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pf-primary to-pf-dark text-white text-xs font-bold mb-3">
                   {i + 1}
                 </div>
                 <div className="font-heading font-bold text-sm text-gray-800 mb-1">{step.title}</div>

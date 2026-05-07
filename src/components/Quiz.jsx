@@ -5,8 +5,10 @@ import { SCREENS } from '../state/appReducer.js';
 import { ROUND1_QUESTIONS, ROUND2_QUESTIONS } from '../data/questions.js';
 import { shouldEndRound1 } from '../logic/matching.js';
 
+const ENCOURAGE_AFTER = [2, 5, 8];
+
 export default function Quiz({ round }) {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { state, dispatch } = usePathFinder();
   const [showWhy, setShowWhy] = useState(false);
   const [animKey, setAnimKey] = useState(0);
@@ -97,7 +99,7 @@ export default function Quiz({ round }) {
             <span>{t.quiz.questionOf.replace('{current}', currentIndex + 1).replace('{total}', questions.length)}</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="h-1.5 bg-pf-dark rounded-full overflow-hidden">
+          <div className="h-2 bg-pf-dark rounded-full overflow-hidden">
             <div className="progress-bar-fill h-full bg-white rounded-full" style={{ width: `${progress}%` }} />
           </div>
         </div>
@@ -111,7 +113,7 @@ export default function Quiz({ round }) {
         <span className="text-xs font-semibold text-white/80">
           {t.quiz.questionOf.replace('{current}', currentIndex + 1).replace('{total}', questions.length)}
         </span>
-        <div className="flex-1 h-1.5 bg-pf-dark/50 rounded-full overflow-hidden">
+        <div className="flex-1 h-2 bg-pf-dark/50 rounded-full overflow-hidden">
           <div className="progress-bar-fill h-full bg-white rounded-full" style={{ width: `${progress}%` }} />
         </div>
       </div>
@@ -127,6 +129,12 @@ export default function Quiz({ round }) {
           <p className="text-sm text-gray-400 mb-8">{question.hint}</p>
         </div>
 
+        {ENCOURAGE_AFTER.includes(currentIndex - 1) && (
+          <p className="animate-fade-in text-sm text-pf-primary text-center mb-4 font-medium">
+            {lang === 'de' ? 'Du machst das super! \u{1F4AA}' : "You're doing great! \u{1F4AA}"}
+          </p>
+        )}
+
         <div className="flex flex-col gap-2.5 mb-6">
           {question.options.map((opt, i) => {
             const isSelected = selected.includes(opt.id);
@@ -134,9 +142,9 @@ export default function Quiz({ round }) {
               <button
                 key={opt.id}
                 onClick={() => selectOption(opt.id)}
-                className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)} option-card ${isSelected ? 'selected' : ''} text-left p-4 pl-5 rounded-xl border-2 cursor-pointer ${
+                className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)} option-card ${isSelected ? 'selected' : ''} text-left p-4 pl-5 rounded-xl border-2 cursor-pointer min-h-[52px] ${
                   isSelected
-                    ? 'border-pf-primary bg-pf-light shadow-sm shadow-pf-primary/10'
+                    ? 'border-pf-primary border-l-[3px] border-l-pf-primary bg-pf-light shadow-sm shadow-pf-primary/10'
                     : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
                 }`}
               >
@@ -172,7 +180,7 @@ export default function Quiz({ round }) {
         )}
 
         {/* Sticky CTA on mobile */}
-        <div className="mt-auto pt-4 md:relative fixed bottom-0 left-0 right-0 md:p-0 p-4 bg-warm-50/95 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none z-10">
+        <div className="mt-auto pt-6 md:relative fixed bottom-0 left-0 right-0 md:p-0 p-4 safe-bottom bg-gradient-to-t from-warm-50 via-warm-50/95 to-warm-50/0 md:bg-transparent md:from-transparent z-10">
           <button
             onClick={goNext}
             disabled={selected.length === 0}

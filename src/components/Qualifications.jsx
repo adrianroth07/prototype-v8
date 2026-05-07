@@ -11,9 +11,25 @@ const CERT_MAP = {
   fachabitur: 'Fachhochschulreife',
   abitur: 'Abitur',
 };
+const CERT_HINTS = {
+  de: {
+    none: 'IBA, EQ, BVJ',
+    hauptschule: 'Ausbildung, IBA, EQ',
+    realschule: 'Ausbildung, FOS, FSJ',
+    fachabitur: 'FH, Duales Studium, Ausbildung',
+    abitur: 'Uni, FH, Duales Studium, Ausbildung',
+  },
+  en: {
+    none: 'IBA, EQ, BVJ',
+    hauptschule: 'Ausbildung, IBA, EQ',
+    realschule: 'Ausbildung, FOS, FSJ',
+    fachabitur: 'FH, Duales Studium, Ausbildung',
+    abitur: 'Uni, FH, Duales Studium, Ausbildung',
+  },
+};
 
 export default function Qualifications() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { state, dispatch } = usePathFinder();
   const [cert, setCert] = useState('none');
   const [grade, setGrade] = useState('');
@@ -40,18 +56,23 @@ export default function Qualifications() {
         <label className="block text-sm font-semibold text-gray-700 mb-4">
           {t.qualifications.certLabel}
         </label>
-        <div className="flex flex-wrap gap-2.5">
+        <div className="flex flex-col gap-3">
           {CERT_OPTIONS.map((opt, i) => (
             <button
               key={opt}
               onClick={() => setCert(opt)}
-              className={`animate-fade-in-up stagger-${i + 1} px-5 py-2.5 rounded-xl border-2 text-sm cursor-pointer transition-all ${
+              className={`animate-fade-in-up stagger-${i + 1} w-full text-left p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 cert === opt
-                  ? 'border-pf-primary bg-pf-light text-pf-primary font-semibold shadow-sm shadow-pf-primary/10'
-                  : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
+                  ? 'border-pf-primary bg-pf-light shadow-sm shadow-pf-primary/10'
+                  : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm'
               }`}
             >
-              {t.qualifications.certs[opt]}
+              <div className={`text-sm font-semibold ${cert === opt ? 'text-pf-primary' : 'text-gray-700'}`}>
+                {t.qualifications.certs[opt]}
+              </div>
+              <div className={`text-xs mt-1 ${cert === opt ? 'text-pf-primary/70' : 'text-gray-400'}`}>
+                {lang === 'de' ? 'Ermöglicht: ' : 'Unlocks: '}{CERT_HINTS[lang]?.[opt] || CERT_HINTS.en[opt]}
+              </div>
             </button>
           ))}
         </div>

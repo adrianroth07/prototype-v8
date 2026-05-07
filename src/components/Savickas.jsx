@@ -52,10 +52,18 @@ export default function Savickas() {
             </label>
             <textarea
               value={fields[key]}
-              onChange={(e) => setFields({ ...fields, [key]: e.target.value })}
+              onChange={(e) => {
+                const val = e.target.value.slice(0, 200);
+                setFields({ ...fields, [key]: val });
+              }}
               rows={3}
-              className="w-full rounded-xl border-2 border-gray-100 p-4 text-base text-gray-700 leading-relaxed focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"
+              maxLength={200}
+              className="w-full rounded-xl border-2 border-gray-100 border-l-[3px] border-l-pf-primary/30 p-4 text-base text-gray-700 leading-relaxed focus:border-pf-primary focus:border-l-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"
+              style={{ minHeight: '100px' }}
             />
+            <div className="text-xs text-gray-300 text-right mt-1">
+              {(fields[key] || '').length} / 200
+            </div>
           </div>
         ))}
 

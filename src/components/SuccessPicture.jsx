@@ -8,6 +8,7 @@ export default function SuccessPicture() {
   const { dispatch } = usePathFinder();
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   function proceed() {
     dispatch({ type: 'SET_SUCCESS_PICTURE', text });
@@ -39,10 +40,11 @@ export default function SuccessPicture() {
         <p className="font-heading text-xl font-bold text-pf-text">
           {t.loading?.finding || 'Finding your paths...'}
         </p>
-        <div className="flex gap-2">
-          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary" />
-          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary" />
-          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary" />
+        <div className="relative flex gap-2">
+          <div className="absolute inset-0 -m-8 rounded-full opacity-50" style={{ background: 'radial-gradient(circle, rgba(15,107,91,0.05) 0%, transparent 70%)' }} />
+          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary relative" />
+          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary relative" />
+          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary relative" />
         </div>
       </div>
     );
@@ -77,13 +79,18 @@ export default function SuccessPicture() {
           </div>
         </div>
 
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={t.successPicture.placeholder}
-          rows={8}
-          className="animate-fade-in-up stagger-2 w-full rounded-xl border-2 border-gray-100 p-5 text-base text-gray-700 leading-relaxed focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"
-        />
+        <div className={`animate-fade-in-up stagger-2 rounded-xl transition-all ${focused ? 'p-[2px] bg-gradient-to-b from-pf-primary to-pf-accent' : 'p-0'}`}>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            placeholder={t.successPicture.placeholder}
+            rows={8}
+            className="w-full rounded-xl border-2 border-gray-100 p-5 text-base text-gray-700 leading-relaxed focus:border-transparent focus:ring-0 focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"
+            style={{ minHeight: '180px' }}
+          />
+        </div>
 
         <div className="animate-fade-in-up stagger-3 flex items-center gap-3 mt-auto pt-6">
           <button

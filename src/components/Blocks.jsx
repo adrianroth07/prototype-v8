@@ -54,9 +54,9 @@ export default function Blocks() {
             <button
               key={id}
               onClick={() => toggleBlock(id)}
-              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2 px-5 py-3 rounded-xl border-2 text-sm cursor-pointer transition-all ${
+              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border-2 text-sm cursor-pointer transition-all duration-200 ${
                 selected.includes(id)
-                  ? 'border-pf-primary bg-pf-light text-pf-primary font-semibold shadow-sm shadow-pf-primary/10'
+                  ? 'border-pf-primary bg-pf-primary text-white font-semibold shadow-sm shadow-pf-primary/10 scale-105'
                   : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
               }`}
             >

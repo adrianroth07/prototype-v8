@@ -64,10 +64,53 @@ function Confetti() {
   );
 }
 
-function PathDetail({ path, t }) {
+function metricDots(value) {
+  if (!value) return 0;
+  const v = value.toLowerCase();
+  // High income / positive indicators
+  if (/1[,.]?[0-9]{3}|1400|high|meister|strong|hoch|sehr/i.test(value)) return 3;
+  if (/[6-9]\d{2}|600|900|medium|mittel|portfolio|wide|dual/i.test(value)) return 2;
+  // Low / none
+  return 1;
+}
+
+function MetricIndicator({ value }) {
+  const filled = metricDots(value);
+  return (
+    <span className="inline-flex gap-1 ml-2">
+      {[1, 2, 3].map(i => (
+        <span
+          key={i}
+          className={`inline-block w-2 h-2 rounded-full ${
+            i <= filled ? 'bg-pf-primary' : 'bg-gray-200'
+          }`}
+        />
+      ))}
+    </span>
+  );
+}
+
+function PathDetail({ path, t, lang }) {
+  const diffLabel = { easy: { de: 'Einfach', en: 'Easy' }, medium: { de: 'Mittel', en: 'Medium' }, hard: { de: 'Anspruchsvoll', en: 'Challenging' } };
+  const diffColor = { easy: 'bg-green-100 text-green-700', medium: 'bg-amber-100 text-amber-700', hard: 'bg-red-100 text-red-700' };
   return (
     <div className="animate-fade-in px-5 pb-5 space-y-4">
       <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
+
+      {(path.difficulty || path.timeToStart) && (
+        <div className="flex flex-wrap gap-2">
+          {path.difficulty && (
+            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${diffColor[path.difficulty]}`}>
+              {diffLabel[path.difficulty]?.[lang] || path.difficulty}
+            </span>
+          )}
+          {path.timeToStart && (
+            <span className="text-xs px-2.5 py-1 rounded-full bg-pf-light text-pf-primary font-medium">
+              {path.timeToStart[lang] || path.timeToStart}
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         {[
@@ -77,7 +120,10 @@ function PathDetail({ path, t }) {
           { label: t.comparison.headers.outlook, value: path.outlook },
         ].map(item => (
           <div key={item.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{item.label}</div>
+            <div className="flex items-center text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+              {item.label}
+              <MetricIndicator value={item.value} />
+            </div>
             <div className="text-sm text-gray-700">{item.value}</div>
           </div>
         ))}
@@ -155,7 +201,7 @@ export default function Paths() {
                     </span>
                     <h3 className="font-heading text-lg font-bold text-gray-800">{path.name}</h3>
                     {i === 0 && (
-                      <span className="px-2 py-0.5 rounded-full bg-pf-accent text-white text-[10px] font-bold uppercase tracking-wider">
+                      <span className="px-2 py-0.5 rounded-full bg-pf-accent text-white text-[10px] font-bold uppercase tracking-wider animate-pulse">
                         {lang === 'de' ? 'Top-Treffer' : 'Top match'}
                       </span>
                     )}
@@ -236,13 +282,15 @@ export default function Paths() {
                       </span>
                     </div>
                   </button>
-                  {isOpen && <PathDetail path={path} t={t} />}
+                  {isOpen && <PathDetail path={path} t={t} lang={lang} />}
                 </div>
               );
             })}
           </div>
         </div>
       )}
+
+      <div className="divider-gradient my-10" />
 
       {/* Bridge paths — stepping stones */}
       <div className="animate-fade-in-up mb-10">
@@ -273,7 +321,7 @@ export default function Paths() {
                     </span>
                   </div>
                 </button>
-                {isOpen && <PathDetail path={path} t={t} />}
+                {isOpen && <PathDetail path={path} t={t} lang={lang} />}
               </div>
             );
           })}
@@ -286,25 +334,49 @@ export default function Paths() {
 
       <button
         onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUALIFICATIONS })}
-        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        className="btn-primary btn-glow px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.paths.confirmBtn}
       </button>
 
       {swapTarget && (
         <div className="fixed inset-0 bg-black/50 modal-backdrop flex items-center justify-center z-50 p-4 animate-fade-in" onClick={() => setSwapTarget(null)}>
-          <div className="animate-scale-in bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl border-t-4 border-pf-primary" onClick={e => e.stopPropagation()}>
+          <div className="animate-scale-in bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border-t-4 border-pf-primary max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h3 className="font-heading font-bold text-gray-800 mb-4 text-lg">{t.paths.swapBtn}</h3>
+
+            {/* Current path being removed */}
+            {(() => {
+              const removePath = suggestedPaths.find(p => p.id === swapTarget);
+              if (!removePath) return null;
+              const removeColor = pathColor(removePath.id);
+              return (
+                <div className="mb-4 p-3 rounded-xl border-l-4 bg-red-50/50 border border-red-100" style={{ borderLeftColor: removeColor.border }}>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                    {lang === 'de' ? 'Wird entfernt' : 'Removing'}
+                  </div>
+                  <div className="font-semibold text-gray-800">{removePath.name}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{removePath.tagline}</div>
+                  <div className="text-xs text-gray-400 mt-1">{removePath.meta}</div>
+                </div>
+              );
+            })()}
+
+            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+              {lang === 'de' ? 'Ersetzen durch' : 'Replace with'}
+            </div>
             <div className="flex flex-col gap-2">
               {wildcardPaths.map((wc) => {
+                const wcColor = pathColor(wc.id);
                 return (
                   <button
                     key={wc.id}
                     onClick={() => handleSwap(swapTarget, wc)}
-                    className="card-hover text-left p-4 rounded-xl border-2 border-gray-100 hover:border-pf-primary hover:bg-pf-light transition-all cursor-pointer"
+                    className="card-hover text-left p-4 rounded-xl border-2 border-l-4 border-gray-100 hover:border-pf-primary hover:bg-pf-light transition-all cursor-pointer"
+                    style={{ borderLeftColor: wcColor.border }}
                   >
                     <span className="font-semibold text-gray-800">{wc.name}</span>
-                    <span className="text-sm text-gray-500 ml-2">{wc.tagline}</span>
+                    <div className="text-sm text-gray-500 mt-0.5">{wc.tagline}</div>
+                    <div className="text-xs text-gray-400 mt-1">{wc.meta}</div>
                   </button>
                 );
               })}

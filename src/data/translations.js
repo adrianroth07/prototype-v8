@@ -21,6 +21,7 @@ export const translations = {
         builder: { title: 'Weg-Planer', desc: 'Plane Schritt für Schritt, was nach der Schule kommt.' },
       },
       footer: 'Erstellt von Studierenden der CODE University Berlin',
+      trustBadges: ['10 Minuten', 'Kostenlos', 'Anonym'],
     },
     opener: {
       title: 'Bevor wir starten...',
@@ -48,16 +49,17 @@ export const translations = {
       round1Subtitle: 'Finde heraus, was dich antreibt',
       round2Title: 'Runde 2: Deine Situation',
       round2Subtitle: 'Was ist dir wichtig im Leben?',
+      encouragement: ['Du machst das super! 💪', 'Fast geschafft! 🎯', 'Jede Antwort zählt! ✨', 'Nur noch ein paar! 🚀'],
     },
     round2Intro: {
       title: 'Checkpoint',
-      subtitle: 'Deine Antworten zeigen, du bist besonders stark in...',
+      subtitle: 'Deine Antworten zeigen: Das sind deine Stärken!',
       continueBtn: 'Weiter zu Runde 2',
     },
     savickas: {
       title: 'Kurze Reflexion',
-      subtitle: 'Du musst nicht — aber es hilft uns, dich besser zu verstehen.',
-      roleModel: 'Wen findest du cool? Was genau an der Person?',
+      subtitle: 'Du musst nicht — aber es hilft uns, dich besser zu kennen.',
+      roleModel: 'Wen findest du cool? Und warum?',
       story: 'Was ist dein Lieblingsbuch, Film oder Spiel? Warum magst du es?',
       motto: 'Hast du einen Satz oder ein Motto, das dir wichtig ist?',
       continueBtn: 'Weiter',
@@ -70,7 +72,7 @@ export const translations = {
         money: 'Geld / finanzielle Sorgen',
         family: 'Erwartungen der Familie',
         fear: 'Angst, das Falsche zu wählen',
-        comparison: 'Ich vergleiche mich mit anderen',
+        comparison: 'Ich vergleiche mich mit anderen Leuten',
         info: 'Ich weiß nicht genug',
       },
       otherLabel: 'Etwas anderes?',
@@ -79,7 +81,7 @@ export const translations = {
     },
     successPicture: {
       title: 'Dein guter Dienstag',
-      subtitle: 'Stell dir vor: Dienstag in 5 Jahren. Ein guter Tag. Was machst du? Wo bist du? Wie fühlt es sich an?',
+      subtitle: 'Stell dir vor: Dienstag in 5 Jahren. Ein guter Tag. Was machst du? Wo bist du? Wie fühlst du dich?',
       placeholder: 'Schreib einfach drauf los...',
       continueBtn: 'Weiter',
       skipBtn: 'Überspringen',
@@ -95,6 +97,7 @@ export const translations = {
       nextSteps: 'Nächste Schritte',
       bridgeTitle: 'Noch nicht bereit? Diese Wege bereiten dich vor',
       bridgeSubtitle: 'Kein direkter Einstieg? Diese Programme helfen dir beim nächsten Schritt.',
+      whyThisPath: 'Warum dieser Weg?',
     },
     qualifications: {
       title: 'Qualifikationen',
@@ -111,6 +114,7 @@ export const translations = {
       langLabel: 'Sprachen',
       expLabel: 'Erfahrungen',
       continueBtn: 'Weiter',
+      unlocks: 'Öffnet dir diese Wege:',
     },
     fieldNarrowing: {
       title: 'Arbeitsstil',
@@ -124,10 +128,11 @@ export const translations = {
         'business': 'Wirtschaft & Organisation',
       },
       continueBtn: 'Weiter',
+      selected: '{count} ausgewählt',
     },
     comparison: {
       title: 'Vergleich',
-      subtitle: 'Deine Top-Wege im Direktvergleich',
+      subtitle: 'Deine besten Wege im Vergleich',
       headers: {
         path: 'Weg',
         typicalDay: 'Typischer Tag',
@@ -138,7 +143,7 @@ export const translations = {
         financial: 'Finanzierung',
       },
       financeTitle: 'Finanzielle Hilfen',
-      financeSubtitle: 'Geld und Hilfe, die du bekommen kannst',
+      financeSubtitle: 'Geld und Hilfe, die es für dich gibt',
       continueBtn: 'Weiter',
     },
     stories: {
@@ -149,6 +154,7 @@ export const translations = {
       resourcesTitle: 'Echte Orte, echte Hilfe',
       resourcesSubtitle: 'Kostenlose Angebote in Berlin-Neukölln und online — dein nächster Schritt.',
       restartBtn: 'Nochmal starten',
+      visitNow: 'Jetzt besuchen →',
     },
     browse: {
       title: 'Alle Wege',
@@ -157,6 +163,7 @@ export const translations = {
       collapseBtn: 'Weniger',
       deadlinesTitle: 'Wichtige Fristen',
       deadlinesSubtitle: 'Wann musst du dich wo bewerben?',
+      searchPlaceholder: 'Suche nach einem Weg...',
     },
     map: {
       title: 'Wege-Karte',
@@ -233,6 +240,7 @@ export const translations = {
         builder: { title: 'Path Builder', desc: 'Plan step by step what comes after school.' },
       },
       footer: 'Built by students at CODE University Berlin',
+      trustBadges: ['10 minutes', 'Free', 'Anonymous'],
     },
     opener: {
       title: 'Before we start...',
@@ -260,6 +268,7 @@ export const translations = {
       round1Subtitle: 'Find out what drives you',
       round2Title: 'Round 2: Your situation',
       round2Subtitle: "What matters to you in life?",
+      encouragement: ['You\'re doing great! 💪', 'Almost there! 🎯', 'Every answer counts! ✨', 'Just a few more! 🚀'],
     },
     round2Intro: {
       title: 'Checkpoint',
@@ -307,6 +316,7 @@ export const translations = {
       nextSteps: 'Next steps',
       bridgeTitle: 'Not ready yet? These paths prepare you',
       bridgeSubtitle: 'If you can\'t start directly — these programmes help you take the next step.',
+      whyThisPath: 'Why this path?',
     },
     qualifications: {
       title: 'Qualifications',
@@ -323,6 +333,7 @@ export const translations = {
       langLabel: 'Languages',
       expLabel: 'Experience',
       continueBtn: 'Continue',
+      unlocks: 'Unlocks these paths:',
     },
     fieldNarrowing: {
       title: 'Work style',
@@ -336,6 +347,7 @@ export const translations = {
         'business': 'Business & organisation',
       },
       continueBtn: 'Continue',
+      selected: '{count} selected',
     },
     comparison: {
       title: 'Comparison',
@@ -361,6 +373,7 @@ export const translations = {
       resourcesTitle: 'Real places, real help',
       resourcesSubtitle: 'Free resources in Berlin-Neukölln and online — your next concrete step.',
       restartBtn: 'Start over',
+      visitNow: 'Visit now →',
     },
     browse: {
       title: 'All paths',
@@ -369,6 +382,7 @@ export const translations = {
       collapseBtn: 'Show less',
       deadlinesTitle: 'Key deadlines',
       deadlinesSubtitle: 'When to apply for what?',
+      searchPlaceholder: 'Search for a path...',
     },
     map: {
       title: 'Path map',

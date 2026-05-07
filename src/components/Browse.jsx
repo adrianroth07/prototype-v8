@@ -9,6 +9,7 @@ export default function Browse() {
   const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const [expanded, setExpanded] = useState(null);
+  const [filter, setFilter] = useState('');
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto">
@@ -27,8 +28,26 @@ export default function Browse() {
         <p className="text-gray-400 text-base">{t.browse.subtitle}</p>
       </div>
 
+      <div className="animate-fade-in-up mb-6">
+        <input
+          type="text"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder={lang === 'de' ? 'Wege durchsuchen...' : 'Search paths...'}
+          className="w-full rounded-xl border-2 border-gray-100 p-3.5 text-sm focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
+        />
+      </div>
+
       <div className="flex flex-col gap-4">
-        {ALL_PATHS_WITH_BRIDGES.map((path, i) => {
+        {ALL_PATHS_WITH_BRIDGES.filter((path) => {
+          if (!filter.trim()) return true;
+          const q = filter.toLowerCase();
+          return (
+            path.name.toLowerCase().includes(q) ||
+            path.tagline.toLowerCase().includes(q) ||
+            (path.description && path.description.toLowerCase().includes(q))
+          );
+        }).map((path, i) => {
           const color = pathColor(path.id);
           const isExpanded = expanded === path.id;
           return (
@@ -60,6 +79,27 @@ export default function Browse() {
                 {isExpanded && (
                   <div className="animate-fade-in mt-6 space-y-4">
                     <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
+
+                    {(path.difficulty || path.timeToStart) && (
+                      <div className="flex flex-wrap gap-2">
+                        {path.difficulty && (
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                            path.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                            path.difficulty === 'medium' ? 'bg-amber-100 text-amber-700' :
+                            'bg-red-100 text-red-700'
+                          }`}>
+                            {path.difficulty === 'easy' ? (lang === 'de' ? 'Einfach' : 'Easy') :
+                             path.difficulty === 'medium' ? (lang === 'de' ? 'Mittel' : 'Medium') :
+                             (lang === 'de' ? 'Anspruchsvoll' : 'Challenging')}
+                          </span>
+                        )}
+                        {path.timeToStart && (
+                          <span className="text-xs px-2.5 py-1 rounded-full bg-pf-light text-pf-primary font-medium">
+                            {path.timeToStart[lang] || path.timeToStart}
+                          </span>
+                        )}
+                      </div>
+                    )}
 
                     <div className="grid grid-cols-2 gap-3">
                       {[
@@ -128,25 +168,34 @@ export default function Browse() {
         <h2 className="font-heading text-xl font-bold text-pf-text mb-2">{t.browse.deadlinesTitle}</h2>
         <p className="text-sm text-gray-400 mb-6">{t.browse.deadlinesSubtitle}</p>
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
-          {[
-            { month: 'Mai', monthEn: 'May', emoji: '\u{1F4DA}', item: 'OSZ / IBA', desc: 'Anmeldung an Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', descEn: 'Registration at Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)' },
-            { month: 'Jul', monthEn: 'Jul', emoji: '\u{1F393}', item: 'Uni / FH', desc: 'Bewerbungsfrist für viele Studiengänge (15. Juli)', descEn: 'Application deadline for many study programmes (July 15)' },
-            { month: 'Jul–Nov', monthEn: 'Jul–Nov', emoji: '\u{1F6E0}\u{FE0F}', item: 'Ausbildung', desc: 'Hauptbewerbungszeit — je früher, desto besser', descEn: 'Main application period — the earlier, the better' },
-            { month: 'Sep', monthEn: 'Sep', emoji: '\u{1F91D}', item: 'EQ', desc: 'Einstiegsqualifizierung startet am 1. Oktober — vorher bewerben', descEn: 'Einstiegsqualifizierung starts October 1 — apply before' },
-            { month: 'Ganzjährig', monthEn: 'Year-round', emoji: '\u{1F49A}', item: 'FSJ / BFD', desc: 'Plätze gibt es das ganze Jahr — Hauptstart September', descEn: 'Places available year-round — main start September' },
-            { month: 'Ganzjährig', monthEn: 'Year-round', emoji: '\u{1F396}\u{FE0F}', item: 'Bundeswehr', desc: 'Karrierecenter beraten jederzeit — Musterung nach 18', descEn: 'Career centres advise anytime — Musterung after 18' },
-          ].map((d, i) => (
-            <div key={i} className={`flex items-start gap-4 p-4 ${i > 0 ? 'border-t border-gray-50' : ''}`}>
-              <div className="shrink-0 w-20 text-right">
-                <span className="text-xs font-bold text-pf-primary uppercase">{lang === 'de' ? d.month : d.monthEn}</span>
+          {(() => {
+            const deadlines = [
+              { month: 'Mai', monthEn: 'May', emoji: '\u{1F4DA}', item: 'OSZ / IBA', desc: 'Anmeldung an Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', descEn: 'Registration at Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', color: '#3B82F6' },
+              { month: 'Jul', monthEn: 'Jul', emoji: '\u{1F393}', item: 'Uni / FH', desc: 'Bewerbungsfrist für viele Studiengänge (15. Juli)', descEn: 'Application deadline for many study programmes (July 15)', color: '#6C5CE7' },
+              { month: 'Jul–Nov', monthEn: 'Jul–Nov', emoji: '\u{1F6E0}\u{FE0F}', item: 'Ausbildung', desc: 'Hauptbewerbungszeit — je früher, desto besser', descEn: 'Main application period — the earlier, the better', color: '#F59E0B' },
+              { month: 'Sep', monthEn: 'Sep', emoji: '\u{1F91D}', item: 'EQ', desc: 'Einstiegsqualifizierung startet am 1. Oktober — vorher bewerben', descEn: 'Einstiegsqualifizierung starts October 1 — apply before', color: '#0F6B5B' },
+              { month: 'Ganzjährig', monthEn: 'Year-round', emoji: '\u{1F49A}', item: 'FSJ / BFD', desc: 'Plätze gibt es das ganze Jahr — Hauptstart September', descEn: 'Places available year-round — main start September', color: '#14B8A6' },
+              { month: 'Ganzjährig', monthEn: 'Year-round', emoji: '\u{1F396}\u{FE0F}', item: 'Bundeswehr', desc: 'Karrierecenter beraten jederzeit — Musterung nach 18', descEn: 'Career centres advise anytime — Musterung after 18', color: '#64748B' },
+            ];
+            return deadlines.map((d, i) => (
+              <div key={i} className={`flex items-start gap-4 p-4 ${i > 0 ? 'border-t border-gray-50' : ''}`}>
+                <div className="shrink-0 w-20 text-right">
+                  <span className="text-xs font-bold text-pf-primary uppercase">{lang === 'de' ? d.month : d.monthEn}</span>
+                </div>
+                <div className="relative flex flex-col items-center shrink-0">
+                  <span className="inline-block w-3 h-3 rounded-full border-2 border-white shadow-sm z-10" style={{ backgroundColor: d.color }} />
+                  {i < deadlines.length - 1 && (
+                    <span className="absolute top-3 w-0.5 bg-gray-200" style={{ height: 'calc(100% + 16px)' }} />
+                  )}
+                </div>
+                <span className="text-lg shrink-0">{d.emoji}</span>
+                <div>
+                  <div className="font-semibold text-sm text-gray-800">{d.item}</div>
+                  <p className="text-xs text-gray-500 mt-0.5">{lang === 'de' ? d.desc : d.descEn}</p>
+                </div>
               </div>
-              <span className="text-lg shrink-0">{d.emoji}</span>
-              <div>
-                <div className="font-semibold text-sm text-gray-800">{d.item}</div>
-                <p className="text-xs text-gray-500 mt-0.5">{lang === 'de' ? d.desc : d.descEn}</p>
-              </div>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
       </div>
     </div>
