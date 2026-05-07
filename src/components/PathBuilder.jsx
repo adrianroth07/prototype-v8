@@ -14,8 +14,8 @@ const QUALIFICATIONS = [
 ];
 
 const LEADS_TO = {
-  ausbildung: ['studium', 'freelancing', 'bundeswehr'],
-  studium: ['freelancing', 'gap-year'],
+  ausbildung: ['studium', 'freelancing', 'bundeswehr', 'gap-year'],
+  studium: ['freelancing', 'gap-year', 'ausbildung', 'bundeswehr'],
   fsj: ['ausbildung', 'studium', 'freelancing', 'bundeswehr'],
   freelancing: ['ausbildung', 'studium'],
   bundeswehr: ['ausbildung', 'studium', 'freelancing'],
