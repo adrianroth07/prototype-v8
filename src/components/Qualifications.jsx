@@ -28,22 +28,27 @@ export default function Qualifications() {
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-pf-text mb-2">{t.qualifications.title}</h1>
-      <p className="text-gray-500 mb-8">{t.qualifications.subtitle}</p>
+      <div className="animate-fade-in-up mb-10">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
+          <span className="text-2xl">{'\u{1F393}'}</span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-pf-text mb-2 tracking-tight">{t.qualifications.title}</h1>
+        <p className="text-gray-400 text-base">{t.qualifications.subtitle}</p>
+      </div>
 
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+      <div className="animate-fade-in-up stagger-1 mb-8">
+        <label className="block text-sm font-semibold text-gray-700 mb-4">
           {t.qualifications.certLabel}
         </label>
-        <div className="flex flex-wrap gap-2">
-          {CERT_OPTIONS.map((opt) => (
+        <div className="flex flex-wrap gap-2.5">
+          {CERT_OPTIONS.map((opt, i) => (
             <button
               key={opt}
               onClick={() => setCert(opt)}
-              className={`px-4 py-2 rounded-full border-2 text-sm cursor-pointer transition-all ${
+              className={`animate-fade-in-up stagger-${i + 1} px-5 py-2.5 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
                 cert === opt
-                  ? 'border-pf-primary bg-pf-light text-pf-primary font-medium'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  ? 'border-pf-primary bg-pf-light text-pf-primary font-semibold shadow-sm shadow-pf-primary/10'
+                  : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
               }`}
             >
               {t.qualifications.certs[opt]}
@@ -52,8 +57,8 @@ export default function Qualifications() {
         </div>
       </div>
 
-      <div className="mb-8">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+      <div className="animate-fade-in-up stagger-2 mb-10">
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
           {t.qualifications.gradeLabel}
         </label>
         <input
@@ -61,19 +66,29 @@ export default function Qualifications() {
           value={grade}
           onChange={(e) => setGrade(e.target.value)}
           placeholder="z.B. 2,3"
-          className="w-32 rounded-lg border border-gray-200 p-3 text-sm focus:border-pf-primary focus:outline-none"
+          className="w-36 rounded-2xl border-2 border-gray-100 p-3.5 text-sm focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
         />
       </div>
 
       {state.filterResult && Object.keys(state.filterResult).length > 0 && (
-        <div className="mb-8 space-y-2">
-          {state.suggestedPaths.map((path) => {
+        <div className="animate-fade-in mb-10 space-y-3">
+          {state.suggestedPaths.map((path, i) => {
             const result = state.filterResult[path.id];
             if (!result) return null;
             return (
-              <div key={path.id} className={`text-sm p-3 rounded-lg ${result.open ? 'bg-mint-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-                <span className="font-medium">{path.name}:</span>{' '}
-                {result.open ? '\u{2705}' : '\u{274C}'} {result.note || ''}
+              <div
+                key={path.id}
+                className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-3 text-sm p-4 rounded-2xl border ${
+                  result.open
+                    ? 'bg-mint-50 border-mint-500/20 text-green-800'
+                    : 'bg-red-50 border-red-200 text-red-800'
+                }`}
+              >
+                <span className="text-lg">{result.open ? '\u{2705}' : '\u{274C}'}</span>
+                <div>
+                  <span className="font-semibold">{path.name}</span>
+                  {result.note && <span className="ml-1.5 text-xs opacity-75">{result.note}</span>}
+                </div>
               </div>
             );
           })}
@@ -82,7 +97,7 @@ export default function Qualifications() {
 
       <button
         onClick={proceed}
-        className="px-8 py-3 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark transition-colors cursor-pointer"
+        className="animate-fade-in-up stagger-3 btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-2xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.qualifications.continueBtn}
       </button>

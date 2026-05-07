@@ -4,6 +4,13 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 
 const BLOCK_IDS = ['money', 'family', 'fear', 'comparison', 'info'];
+const BLOCK_EMOJIS = {
+  money: '\u{1F4B0}',
+  family: '\u{1F46A}',
+  fear: '\u{1F628}',
+  comparison: '\u{2696}\u{FE0F}',
+  info: '\u{2753}',
+};
 
 export default function Blocks() {
   const { t } = useLang();
@@ -22,48 +29,57 @@ export default function Blocks() {
 
   return (
     <div className="min-h-dvh flex flex-col md:flex-row">
-      <div className="bg-pf-primary text-white p-8 md:p-12 md:w-[360px] flex flex-col justify-center">
-        <h1 className="text-2xl font-bold mb-2">{t.blocks.title}</h1>
-        <p className="text-pf-mid text-sm">{t.blocks.subtitle}</p>
+      <div className="bg-gradient-to-b from-pf-primary to-pf-dark text-white p-10 md:p-14 md:w-[400px] flex flex-col justify-center relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute bottom-16 right-12 w-28 h-28 rounded-full border-2 border-white" />
+        </div>
+        <div className="relative">
+          <div className="animate-fade-in-up inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
+            <span className="text-2xl">{'\u{1F6A7}'}</span>
+          </div>
+          <h1 className="animate-fade-in-up stagger-1 text-3xl font-bold mb-3 tracking-tight">{t.blocks.title}</h1>
+          <p className="animate-fade-in-up stagger-2 text-pf-mid text-base leading-relaxed">{t.blocks.subtitle}</p>
+        </div>
       </div>
 
-      <div className="flex-1 p-8 md:p-12 flex flex-col">
-        <div className="flex flex-wrap gap-2 mb-6">
-          {BLOCK_IDS.map((id) => (
+      <div className="flex-1 p-8 md:p-14 flex flex-col max-w-xl">
+        <div className="flex flex-wrap gap-3 mb-8">
+          {BLOCK_IDS.map((id, i) => (
             <button
               key={id}
               onClick={() => toggleBlock(id)}
-              className={`px-4 py-2 rounded-full border-2 text-sm cursor-pointer transition-all ${
+              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2 px-5 py-3 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
                 selected.includes(id)
-                  ? 'border-pf-primary bg-pf-light text-pf-primary font-medium'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  ? 'border-pf-primary bg-pf-light text-pf-primary font-semibold shadow-sm shadow-pf-primary/10'
+                  : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
               }`}
             >
+              <span className="text-base">{BLOCK_EMOJIS[id]}</span>
               {t.blocks.chips[id]}
             </button>
           ))}
         </div>
 
-        <div className="mb-6">
-          <label className="block text-sm text-gray-600 mb-2">{t.blocks.otherLabel}</label>
+        <div className="animate-fade-in-up stagger-6 mb-8">
+          <label className="block text-sm font-semibold text-gray-700 mb-3">{t.blocks.otherLabel}</label>
           <input
             type="text"
             value={other}
             onChange={(e) => setOther(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-pf-primary focus:outline-none"
+            className="w-full rounded-2xl border-2 border-gray-100 p-4 text-sm focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
           />
         </div>
 
-        <div className="flex gap-3 mt-auto">
+        <div className="animate-fade-in-up stagger-7 flex items-center gap-3 mt-auto pt-4">
           <button
             onClick={proceed}
-            className="px-8 py-3 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark transition-colors cursor-pointer"
+            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-2xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
           >
             {t.blocks.continueBtn}
           </button>
           <button
             onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.SUCCESS_PICTURE })}
-            className="px-8 py-3 text-gray-500 hover:text-gray-700 font-medium cursor-pointer"
+            className="px-6 py-3.5 text-gray-400 hover:text-gray-600 font-medium cursor-pointer transition-colors"
           >
             {t.blocks.skipBtn}
           </button>
