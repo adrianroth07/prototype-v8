@@ -2,6 +2,7 @@ import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { STORIES } from '../data/stories.js';
 import { pathColor } from '../data/colors.js';
+import Reveal from './ui/Reveal.jsx';
 
 const RESOURCES = {
   de: [
@@ -32,22 +33,22 @@ export default function Stories() {
     .map(([id, story]) => ({ id, ...story }));
 
   return (
-    <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto">
-      <div className="animate-fade-in-up mb-10">
+    <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto relative">
+      <Reveal className="mb-10">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
           <span className="text-2xl">{'\u{1F4AC}'}</span>
         </div>
         <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.stories.title}</h1>
         <p className="text-gray-400 text-base">{t.stories.subtitle}</p>
-      </div>
+      </Reveal>
 
       <div className="flex flex-col gap-5 mb-10">
         {stories.map((story, i) => {
           const color = pathColor(story.path);
           return (
+            <Reveal key={story.id} delay={i * 100}>
             <div
-              key={story.id}
-              className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)} card-hover bg-white rounded-xl p-6 md:p-8 border-l-4 border border-gray-100 shadow-sm`}
+              className="card-hover bg-white rounded-xl p-6 md:p-8 border-l-4 border border-gray-100 shadow-sm"
               style={{ borderLeftColor: color.border }}
             >
               <div className="flex items-start gap-4 mb-4">
@@ -82,6 +83,7 @@ export default function Stories() {
                 </div>
               </div>
             </div>
+            </Reveal>
           );
         })}
 
@@ -94,7 +96,7 @@ export default function Stories() {
       </div>
 
       {/* Resources section */}
-      <div className="animate-fade-in-up mb-10">
+      <Reveal variant="blur" className="mb-10">
         <h2 className="font-heading text-xl font-bold text-pf-text mb-2">
           {t.stories.resourcesTitle}
         </h2>
@@ -122,7 +124,7 @@ export default function Stories() {
             </a>
           ))}
         </div>
-      </div>
+      </Reveal>
 
       <p className="text-sm text-gray-400 text-center italic mb-6">
         {t.common.noPathFinal}
@@ -130,7 +132,7 @@ export default function Stories() {
 
       <button
         onClick={() => dispatch({ type: 'RESTART' })}
-        className="animate-fade-in-up btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.stories.restartBtn}
       </button>

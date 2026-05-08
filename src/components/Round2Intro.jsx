@@ -2,6 +2,7 @@ import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { computeRiasec } from '../logic/matching.js';
+import Reveal from './ui/Reveal.jsx';
 
 const RIASEC_BG = {
   R: 'bg-red-50',
@@ -26,13 +27,15 @@ export default function Round2Intro() {
         <div className="absolute inset-0 opacity-5">
           <div className="absolute top-20 right-10 w-32 h-32 rounded-full border-2 border-white" />
         </div>
-        <div className="relative">
-          <div className="animate-fade-in-up inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
-            <span className="text-2xl">{'\u{1F3AF}'}</span>
+        <Reveal>
+          <div className="relative">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
+              <span className="text-2xl">{'\u{1F3AF}'}</span>
+            </div>
+            <h1 className="font-heading text-3xl font-bold mb-3 tracking-tight">{t.round2Intro.title}</h1>
+            <p className="text-pf-mid text-base leading-relaxed">{t.round2Intro.subtitle}</p>
           </div>
-          <h1 className="animate-fade-in-up stagger-1 font-heading text-3xl font-bold mb-3 tracking-tight">{t.round2Intro.title}</h1>
-          <p className="animate-fade-in-up stagger-2 text-pf-mid text-base leading-relaxed">{t.round2Intro.subtitle}</p>
-        </div>
+        </Reveal>
       </div>
 
       {/* Mobile header */}
@@ -46,24 +49,25 @@ export default function Round2Intro() {
           const mode = t.riasec[type];
           if (!mode) return null;
           return (
-            <div
-              key={type}
-              className={`animate-fade-in-up stagger-${i + 1} card-hover flex items-start gap-5 p-6 ${RIASEC_BG[type] || 'bg-white'} rounded-xl border border-gray-100 shadow-sm`}
-            >
-              <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light shrink-0">
-                <span className="text-3xl">{mode.emoji}</span>
+            <Reveal key={type} delay={i * 100}>
+              <div
+                className={`card-hover flex items-start gap-5 p-6 ${RIASEC_BG[type] || 'bg-white'} rounded-xl border border-gray-100 shadow-sm`}
+              >
+                <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light shrink-0">
+                  <span className="text-3xl">{mode.emoji}</span>
+                </div>
+                <div>
+                  <div className="font-heading font-bold text-gray-800 text-lg">{mode.name}</div>
+                  <div className="text-sm text-gray-500 leading-relaxed mt-1">{mode.desc}</div>
+                </div>
               </div>
-              <div>
-                <div className="font-heading font-bold text-gray-800 text-lg">{mode.name}</div>
-                <div className="text-sm text-gray-500 leading-relaxed mt-1">{mode.desc}</div>
-              </div>
-            </div>
+            </Reveal>
           );
         })}
 
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.SAVICKAS })}
-          className="animate-fade-in-up stagger-3 btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer self-start mt-4 transition-all"
+          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer self-start mt-4 transition-all"
         >
           {t.round2Intro.continueBtn}
         </button>

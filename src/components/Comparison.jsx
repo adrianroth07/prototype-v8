@@ -2,6 +2,7 @@ import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { pathColor } from '../data/colors.js';
+import Reveal from './ui/Reveal.jsx';
 
 const FINANCIAL_INFO = {
   de: {
@@ -45,15 +46,18 @@ export default function Comparison() {
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto">
-      <div className="animate-fade-in-up mb-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
-          <span className="text-2xl">{'\u{1F4CA}'}</span>
+      <Reveal>
+        <div className="mb-10">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
+            <span className="text-2xl">{'\u{1F4CA}'}</span>
+          </div>
+          <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.comparison.title}</h1>
+          <p className="text-gray-400 text-base">{t.comparison.subtitle}</p>
         </div>
-        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.comparison.title}</h1>
-        <p className="text-gray-400 text-base">{t.comparison.subtitle}</p>
-      </div>
+      </Reveal>
 
-      <div className="animate-fade-in-up stagger-1 overflow-x-auto mb-10 -mx-2">
+      <Reveal variant="up">
+      <div className="overflow-x-auto mb-10 -mx-2">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-[500px]">
           <table className="w-full text-sm">
             <thead>
@@ -85,9 +89,11 @@ export default function Comparison() {
           </table>
         </div>
       </div>
+      </Reveal>
 
       {/* Financial comparison */}
-      <div className="animate-fade-in-up stagger-2 mb-10">
+      <Reveal variant="blur" delay={200}>
+      <div className="mb-10">
         <h2 className="font-heading text-lg font-bold text-pf-text mb-2">{t.comparison.financeTitle}</h2>
         <p className="text-sm text-gray-400 mb-4">{t.comparison.financeSubtitle}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -131,13 +137,16 @@ export default function Comparison() {
           </div>
         </div>
       </div>
+      </Reveal>
 
+      <Reveal variant="up" delay={400}>
       <button
         onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.STORIES })}
-        className="animate-fade-in-up stagger-3 btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.comparison.continueBtn}
       </button>
+      </Reveal>
     </div>
   );
 }

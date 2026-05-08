@@ -4,6 +4,7 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
 import { pathColor } from '../data/colors.js';
+import Reveal from './ui/Reveal.jsx';
 
 const QUALIFICATIONS = [
   { id: 'none', label: 'Kein Abschluss', rank: 0 },
@@ -60,29 +61,32 @@ export default function PathBuilder() {
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-3xl mx-auto">
-      <button
-        onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.WELCOME })}
-        className="animate-fade-in inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-pf-primary mb-8 cursor-pointer transition-colors"
-      >
-        {'\u{2190}'} {t.common.back}
-      </button>
+      <Reveal>
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.WELCOME })}
+          className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-pf-primary mb-8 cursor-pointer transition-colors"
+        >
+          {'\u{2190}'} {t.common.back}
+        </button>
 
-      <div className="animate-fade-in-up mb-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
-          <span className="text-2xl">{'\u{1F3D7}\u{FE0F}'}</span>
+        <div className="mb-10">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
+            <span className="text-2xl">{'\u{1F3D7}\u{FE0F}'}</span>
+          </div>
+          <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.builder.title}</h1>
+          <p className="text-gray-400 text-base">{t.builder.subtitle}</p>
         </div>
-        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.builder.title}</h1>
-        <p className="text-gray-400 text-base">{t.builder.subtitle}</p>
-      </div>
+      </Reveal>
 
-      <div className="animate-fade-in-up stagger-1 mb-10">
+      <Reveal delay={100}>
+      <div className="mb-10">
         <label className="block text-sm font-semibold text-gray-700 mb-4">{t.builder.qualLabel}</label>
         <div className="flex flex-wrap gap-2.5">
-          {QUALIFICATIONS.map((q, i) => (
+          {QUALIFICATIONS.map((q) => (
             <button
               key={q.id}
               onClick={() => { setQualification(q.id); setJourney([]); setShowOptions(false); }}
-              className={`animate-fade-in-up stagger-${i + 1} px-5 py-2.5 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
+              className={`px-5 py-2.5 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
                 qualification === q.id
                   ? 'border-pf-primary bg-pf-light text-pf-primary font-semibold shadow-sm shadow-pf-primary/10'
                   : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
@@ -93,13 +97,14 @@ export default function PathBuilder() {
           ))}
         </div>
       </div>
+      </Reveal>
 
       {journey.length > 0 && (
-        <div className="animate-fade-in mb-8 space-y-0">
+        <div className="mb-8 space-y-0">
           {journey.map((path, i) => {
             const color = pathColor(path.id);
             return (
-              <div key={path.id} className="animate-fade-in-up">
+              <Reveal key={path.id} delay={i * 100}>
                 {i > 0 && (
                   <div className="flex justify-center py-2">
                     <div className="flex flex-col items-center gap-0.5 text-pf-primary">
@@ -137,14 +142,14 @@ export default function PathBuilder() {
                     )}
                   </div>
                 </div>
-              </div>
+              </Reveal>
             );
           })}
         </div>
       )}
 
       {qualification && (
-        <div className="animate-fade-in">
+        <div>
           {!showOptions ? (
             <button
               onClick={() => setShowOptions(true)}

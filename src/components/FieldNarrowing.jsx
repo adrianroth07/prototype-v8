@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
+import Reveal from './ui/Reveal.jsx';
 
 const CLUSTER_IDS = ['hands-on', 'people', 'creative', 'analytical', 'nature', 'business'];
 const CLUSTER_EMOJIS = {
@@ -37,20 +38,23 @@ export default function FieldNarrowing() {
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-3xl mx-auto">
-      <div className="animate-fade-in-up mb-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
-          <span className="text-2xl">{'\u{1F50D}'}</span>
+      <Reveal>
+        <div className="mb-10">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
+            <span className="text-2xl">{'\u{1F50D}'}</span>
+          </div>
+          <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.fieldNarrowing.title}</h1>
+          <p className="text-gray-400 text-base">{t.fieldNarrowing.subtitle}</p>
         </div>
-        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.fieldNarrowing.title}</h1>
-        <p className="text-gray-400 text-base">{t.fieldNarrowing.subtitle}</p>
-      </div>
+      </Reveal>
 
+      <Reveal variant="scale" delay={100}>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        {CLUSTER_IDS.map((id, i) => (
+        {CLUSTER_IDS.map((id) => (
           <button
             key={id}
             onClick={() => toggle(id)}
-            className={`animate-fade-in-up stagger-${i + 1} card-hover p-6 rounded-xl border-2 text-left cursor-pointer transition-all bg-gradient-to-br ${CLUSTER_COLORS[id]} ${
+            className={`card-hover p-6 rounded-xl border-2 text-left cursor-pointer transition-all bg-gradient-to-br ${CLUSTER_COLORS[id]} ${
               selected.includes(id)
                 ? 'border-pf-primary shadow-md shadow-pf-primary/10 ring-1 ring-pf-light'
                 : 'border-gray-100 hover:border-gray-200'
@@ -71,18 +75,21 @@ export default function FieldNarrowing() {
           </button>
         ))}
       </div>
+      </Reveal>
 
       <div className="text-sm text-gray-500 mb-6 text-center">
         <span className={`font-semibold ${selected.length > 0 ? 'text-pf-primary' : ''}`}>{selected.length}</span>
         {' '}{lang === 'de' ? 'von' : 'of'} 6
       </div>
 
+      <Reveal variant="up" delay={200}>
       <button
         onClick={proceed}
-        className="animate-fade-in-up stagger-7 btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.fieldNarrowing.continueBtn}
       </button>
+      </Reveal>
     </div>
   );
 }

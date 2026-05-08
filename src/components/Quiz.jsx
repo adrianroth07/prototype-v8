@@ -4,6 +4,7 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { ROUND1_QUESTIONS, ROUND2_QUESTIONS } from '../data/questions.js';
 import { shouldEndRound1 } from '../logic/matching.js';
+import Reveal from './ui/Reveal.jsx';
 
 const ENCOURAGE_AFTER = [2, 5, 8];
 
@@ -119,53 +120,57 @@ export default function Quiz({ round }) {
       </div>
 
       <div key={animKey} className="flex-1 p-6 md:p-12 flex flex-col max-w-2xl">
-        <div className="animate-fade-in-up">
-          <div className="inline-block px-3 py-1 rounded-full bg-pf-light text-pf-primary text-xs font-bold uppercase tracking-wider mb-4">
-            {question.word}
+        <Reveal variant="blur">
+          <div>
+            <div className="inline-block px-3 py-1 rounded-full bg-pf-light text-pf-primary text-xs font-bold uppercase tracking-wider mb-4">
+              {question.word}
+            </div>
+            <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">
+              {question.text}
+            </h3>
+            <p className="text-sm text-gray-400 mb-8">{question.hint}</p>
           </div>
-          <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">
-            {question.text}
-          </h3>
-          <p className="text-sm text-gray-400 mb-8">{question.hint}</p>
-        </div>
+        </Reveal>
 
         {ENCOURAGE_AFTER.includes(currentIndex - 1) && (
-          <p className="animate-fade-in text-sm text-pf-primary text-center mb-4 font-medium">
+          <p className="text-sm text-pf-primary text-center mb-4 font-medium">
             {lang === 'de' ? 'Du machst das super! \u{1F4AA}' : "You're doing great! \u{1F4AA}"}
           </p>
         )}
 
-        <div className="flex flex-col gap-2.5 mb-6">
-          {question.options.map((opt, i) => {
-            const isSelected = selected.includes(opt.id);
-            return (
-              <button
-                key={opt.id}
-                onClick={() => selectOption(opt.id)}
-                className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)} option-card ${isSelected ? 'selected' : ''} text-left p-4 pl-5 rounded-xl border-2 cursor-pointer min-h-[52px] ${
-                  isSelected
-                    ? 'border-pf-primary border-l-[3px] border-l-pf-primary bg-pf-light shadow-sm shadow-pf-primary/10'
-                    : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                    isSelected ? 'border-pf-primary bg-pf-primary' : 'border-gray-300'
-                  }`}>
-                    {isSelected && (
-                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    )}
+        <Reveal delay={100}>
+          <div className="flex flex-col gap-2.5 mb-6">
+            {question.options.map((opt, i) => {
+              const isSelected = selected.includes(opt.id);
+              return (
+                <button
+                  key={opt.id}
+                  onClick={() => selectOption(opt.id)}
+                  className={`option-card ${isSelected ? 'selected' : ''} text-left p-4 pl-5 rounded-xl border-2 cursor-pointer min-h-[52px] ${
+                    isSelected
+                      ? 'border-pf-primary border-l-[3px] border-l-pf-primary bg-pf-light shadow-sm shadow-pf-primary/10'
+                      : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                      isSelected ? 'border-pf-primary bg-pf-primary' : 'border-gray-300'
+                    }`}>
+                      {isSelected && (
+                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      )}
+                    </div>
+                    <span className={`text-base leading-relaxed ${isSelected ? 'text-pf-text font-medium' : 'text-gray-600'}`}>
+                      {opt.text}
+                    </span>
                   </div>
-                  <span className={`text-base leading-relaxed ${isSelected ? 'text-pf-text font-medium' : 'text-gray-600'}`}>
-                    {opt.text}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                </button>
+              );
+            })}
+          </div>
+        </Reveal>
 
         <button
           onClick={() => setShowWhy(!showWhy)}
@@ -174,7 +179,7 @@ export default function Quiz({ round }) {
           {showWhy ? '\u{25B2}' : '\u{25BC}'} {t.quiz.whyWeAsk}
         </button>
         {showWhy && (
-          <div className="animate-fade-in text-xs text-gray-500 bg-white rounded-xl p-4 mb-4 border border-gray-100 leading-relaxed shadow-sm">
+          <div className="text-xs text-gray-500 bg-white rounded-xl p-4 mb-4 border border-gray-100 leading-relaxed shadow-sm">
             {question.why}
           </div>
         )}

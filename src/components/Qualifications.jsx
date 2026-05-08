@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
+import Reveal from './ui/Reveal.jsx';
 
 const CERT_OPTIONS = ['none', 'hauptschule', 'realschule', 'fachabitur', 'abitur'];
 const CERT_MAP = {
@@ -44,24 +45,27 @@ export default function Qualifications() {
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-3xl mx-auto">
-      <div className="animate-fade-in-up mb-10">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
-          <span className="text-2xl">{'\u{1F393}'}</span>
+      <Reveal>
+        <div className="mb-10">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
+            <span className="text-2xl">{'\u{1F393}'}</span>
+          </div>
+          <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.qualifications.title}</h1>
+          <p className="text-gray-400 text-base">{t.qualifications.subtitle}</p>
         </div>
-        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.qualifications.title}</h1>
-        <p className="text-gray-400 text-base">{t.qualifications.subtitle}</p>
-      </div>
+      </Reveal>
 
-      <div className="animate-fade-in-up stagger-1 mb-8">
+      <Reveal variant="up" delay={100}>
+      <div className="mb-8">
         <label className="block text-sm font-semibold text-gray-700 mb-4">
           {t.qualifications.certLabel}
         </label>
         <div className="flex flex-col gap-3">
           {CERT_OPTIONS.map((opt, i) => (
+            <Reveal key={opt} delay={i * 80}>
             <button
-              key={opt}
               onClick={() => setCert(opt)}
-              className={`animate-fade-in-up stagger-${i + 1} w-full text-left p-4 rounded-xl border-2 cursor-pointer transition-all ${
+              className={`w-full text-left p-4 rounded-xl border-2 cursor-pointer transition-all ${
                 cert === opt
                   ? 'border-pf-primary bg-pf-light shadow-sm shadow-pf-primary/10'
                   : 'border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm'
@@ -74,11 +78,14 @@ export default function Qualifications() {
                 {lang === 'de' ? 'Ermöglicht: ' : 'Unlocks: '}{CERT_HINTS[lang]?.[opt] || CERT_HINTS.en[opt]}
               </div>
             </button>
+            </Reveal>
           ))}
         </div>
       </div>
+      </Reveal>
 
-      <div className="animate-fade-in-up stagger-2 mb-10">
+      <Reveal variant="up" delay={200}>
+      <div className="mb-10">
         <label className="block text-sm font-semibold text-gray-700 mb-3">
           {t.qualifications.gradeLabel}
         </label>
@@ -90,16 +97,18 @@ export default function Qualifications() {
           className="w-36 rounded-xl border-2 border-gray-100 p-3.5 text-base focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
         />
       </div>
+      </Reveal>
 
       {state.filterResult && Object.keys(state.filterResult).length > 0 && (
-        <div className="animate-fade-in mb-10 space-y-3">
+        <Reveal variant="up" delay={300}>
+        <div className="mb-10 space-y-3">
           {state.suggestedPaths.map((path, i) => {
             const result = state.filterResult[path.id];
             if (!result) return null;
             return (
               <div
                 key={path.id}
-                className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-3 text-sm p-4 rounded-xl border ${
+                className={`flex items-center gap-3 text-sm p-4 rounded-xl border ${
                   result.open
                     ? 'bg-mint-50 border-mint-500/20 text-green-800'
                     : 'bg-red-50 border-red-200 text-red-800'
@@ -114,18 +123,21 @@ export default function Qualifications() {
             );
           })}
         </div>
+        </Reveal>
       )}
 
-      <p className="animate-fade-in text-xs text-gray-400 italic mb-6">
+      <Reveal variant="up" delay={400}>
+      <p className="text-xs text-gray-400 italic mb-6">
         {t.common.canChange}
       </p>
 
       <button
         onClick={proceed}
-        className="animate-fade-in-up stagger-3 btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.qualifications.continueBtn}
       </button>
+      </Reveal>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
+import Reveal from './ui/Reveal.jsx';
 
 const BLOCK_IDS = ['money', 'family', 'fear', 'comparison', 'info'];
 const BLOCK_EMOJIS = {
@@ -33,13 +34,15 @@ export default function Blocks() {
         <div className="absolute inset-0 opacity-5">
           <div className="absolute bottom-16 right-12 w-28 h-28 rounded-full border-2 border-white" />
         </div>
-        <div className="relative">
-          <div className="animate-fade-in-up inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
-            <span className="text-2xl">{'\u{1F6A7}'}</span>
+        <Reveal>
+          <div className="relative">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-white/10 mb-6">
+              <span className="text-2xl">{'\u{1F6A7}'}</span>
+            </div>
+            <h1 className="font-heading text-3xl font-bold mb-3 tracking-tight">{t.blocks.title}</h1>
+            <p className="text-pf-mid text-base leading-relaxed">{t.blocks.subtitle}</p>
           </div>
-          <h1 className="animate-fade-in-up stagger-1 font-heading text-3xl font-bold mb-3 tracking-tight">{t.blocks.title}</h1>
-          <p className="animate-fade-in-up stagger-2 text-pf-mid text-base leading-relaxed">{t.blocks.subtitle}</p>
-        </div>
+        </Reveal>
       </div>
 
       {/* Mobile header */}
@@ -49,24 +52,26 @@ export default function Blocks() {
       </div>
 
       <div className="flex-1 p-6 md:p-14 flex flex-col max-w-xl">
-        <div className="flex flex-wrap gap-3 mb-8">
-          {BLOCK_IDS.map((id, i) => (
-            <button
-              key={id}
-              onClick={() => toggleBlock(id)}
-              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border-2 text-sm cursor-pointer transition-all duration-200 ${
-                selected.includes(id)
-                  ? 'border-pf-primary bg-pf-primary text-white font-semibold shadow-sm shadow-pf-primary/10 scale-105'
-                  : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
-              }`}
-            >
-              <span className="text-base">{BLOCK_EMOJIS[id]}</span>
-              {t.blocks.chips[id]}
-            </button>
-          ))}
-        </div>
+        <Reveal variant="scale">
+          <div className="flex flex-wrap gap-3 mb-8">
+            {BLOCK_IDS.map((id, i) => (
+              <button
+                key={id}
+                onClick={() => toggleBlock(id)}
+                className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border-2 text-sm cursor-pointer transition-all duration-200 ${
+                  selected.includes(id)
+                    ? 'border-pf-primary bg-pf-primary text-white font-semibold shadow-sm shadow-pf-primary/10 scale-105'
+                    : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
+                }`}
+              >
+                <span className="text-base">{BLOCK_EMOJIS[id]}</span>
+                {t.blocks.chips[id]}
+              </button>
+            ))}
+          </div>
+        </Reveal>
 
-        <div className="animate-fade-in-up stagger-6 mb-8">
+        <div className="mb-8">
           <label className="block text-sm font-semibold text-gray-700 mb-3">{t.blocks.otherLabel}</label>
           <input
             type="text"
@@ -76,7 +81,7 @@ export default function Blocks() {
           />
         </div>
 
-        <div className="animate-fade-in-up stagger-7 flex items-center gap-3 mt-auto pt-4">
+        <div className="flex items-center gap-3 mt-auto pt-4">
           <button
             onClick={proceed}
             className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"

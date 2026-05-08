@@ -4,6 +4,7 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { ALL_PATHS, BRIDGE_PATHS, ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
 import { pathColor } from '../data/colors.js';
+import Reveal from './ui/Reveal.jsx';
 
 const CERT_LEVELS = [
   { id: 'bbr', label: 'BBR', fullLabel: '9. Klasse', rank: 1, emoji: '\u{1F4D7}', gradient: 'from-blue-50 to-indigo-50', border: 'border-blue-200' },
@@ -182,30 +183,33 @@ export default function PathMap() {
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-3xl mx-auto">
-      <button
-        onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.WELCOME })}
-        className="animate-fade-in inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-pf-primary mb-6 cursor-pointer transition-colors"
-      >
-        {'\u{2190}'} {t.common.back}
-      </button>
+      <Reveal>
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.WELCOME })}
+          className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-pf-primary mb-6 cursor-pointer transition-colors"
+        >
+          {'\u{2190}'} {t.common.back}
+        </button>
 
-      <div className="animate-fade-in-up mb-8">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
-          <span className="text-2xl">{'\u{1F5FA}\u{FE0F}'}</span>
+        <div className="mb-8">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-pf-light mb-4">
+            <span className="text-2xl">{'\u{1F5FA}\u{FE0F}'}</span>
+          </div>
+          <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.map.title}</h1>
+          <p className="text-gray-400 text-base">{t.map.subtitle}</p>
         </div>
-        <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.map.title}</h1>
-        <p className="text-gray-400 text-base">{t.map.subtitle}</p>
-      </div>
+      </Reveal>
 
       {/* Level selector */}
-      <div className="animate-fade-in-up stagger-1 mb-8">
+      <Reveal variant="blur" delay={150}>
+      <div className="mb-8">
         <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.map.whereAreYou}</p>
         <div className="flex flex-wrap gap-2.5">
-          {CERT_LEVELS.map((cert, i) => (
+          {CERT_LEVELS.map((cert) => (
             <button
               key={cert.id}
               onClick={() => { setSelectedCert(prev => prev === cert.id ? null : cert.id); resetJourney(); }}
-              className={`animate-fade-in-up stagger-${i + 1} flex items-center gap-2.5 px-5 py-3 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl border-2 text-sm cursor-pointer transition-all ${
                 selectedCert === cert.id
                   ? `bg-gradient-to-r ${cert.gradient} ${cert.border} font-semibold shadow-sm`
                   : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
@@ -220,9 +224,10 @@ export default function PathMap() {
           ))}
         </div>
       </div>
+      </Reveal>
 
       {!selectedCert && (
-        <div className="animate-fade-in text-center py-16">
+        <div className="text-center py-16">
           <span className="text-5xl block mb-4">{'\u{261D}\u{FE0F}'}</span>
           <p className="text-gray-400 text-sm">{t.map.chooseLevel}</p>
         </div>
@@ -231,7 +236,7 @@ export default function PathMap() {
       {selectedCert && (
         <>
           {/* Summary */}
-          <div className="animate-fade-in mb-8 p-4 rounded-xl bg-pf-light/50 border border-pf-light">
+          <div className="mb-8 p-4 rounded-xl bg-pf-light/50 border border-pf-light">
             {selectedCert === 'bbr' && (
               <p className="text-sm text-pf-primary font-bold mb-1">
                 {'\u{1F4AA}'} {t.map.bbrMessage}
@@ -252,14 +257,15 @@ export default function PathMap() {
 
           {/* Recommended journeys */}
           {journey.length === 0 && recommendations.length > 0 && (
-            <div className="animate-fade-in-up mb-10">
+            <Reveal variant="up" delay={200}>
+            <div className="mb-10">
               <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">{'\u{1F4A1}'} {t.map.popularFrom} {certLevel.label}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {recommendations.map((rec, i) => (
                   <button
                     key={i}
                     onClick={() => loadRecommended(rec.steps)}
-                    className={`animate-fade-in-up stagger-${i + 1} card-hover text-left p-4 rounded-2xl border-2 border-gray-100 bg-white cursor-pointer transition-all hover:border-pf-primary hover:shadow-md group`}
+                    className="card-hover text-left p-4 rounded-2xl border-2 border-gray-100 bg-white cursor-pointer transition-all hover:border-pf-primary hover:shadow-md group"
                   >
                     <div className="flex items-center gap-1.5 mb-2">
                       {rec.steps.map((id, j) => (
@@ -286,11 +292,12 @@ export default function PathMap() {
                 ))}
               </div>
             </div>
+            </Reveal>
           )}
 
           {/* Active journey */}
           {journey.length > 0 && (
-            <div className="animate-fade-in mb-8">
+            <div className="mb-8">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{'\u{1F6A9}'} {t.map.yourJourney}</p>
                 <button
@@ -405,7 +412,8 @@ export default function PathMap() {
           )}
 
           {/* All available paths — flat list */}
-          <div className="animate-fade-in-up stagger-2">
+          <Reveal variant="blur" delay={150}>
+          <div>
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
               {journey.length > 0 ? `\u{1F4DA} ${t.map.allOptions}` : `\u{270F}\u{FE0F} ${t.map.buildOwn}`}
             </p>
@@ -418,7 +426,7 @@ export default function PathMap() {
                 const canAdd = journey.length > 0 && nextOptions.includes(path.id) && !inJourney;
 
                 return (
-                  <div key={path.id} className={`animate-fade-in-up stagger-${Math.min(i + 1, 7)}`}>
+                  <div key={path.id}>
                     <div
                       className={`flex items-center gap-3 p-4 rounded-2xl border-2 transition-all ${
                         inJourney
@@ -477,7 +485,7 @@ export default function PathMap() {
                     </div>
 
                     {isExpanded && (
-                      <div className="animate-fade-in mt-1.5 rounded-2xl border border-gray-100 bg-white shadow-sm p-5 space-y-4">
+                      <div className="mt-1.5 rounded-2xl border border-gray-100 bg-white shadow-sm p-5 space-y-4">
                         <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
 
                         <div className="grid grid-cols-2 gap-2">
@@ -551,6 +559,7 @@ export default function PathMap() {
               </div>
             )}
           </div>
+          </Reveal>
         </>
       )}
     </div>

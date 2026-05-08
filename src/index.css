@@ -19,19 +19,30 @@
   --color-mint-600: #16a34a;
   --color-coral-50: #fff7ed;
   --color-coral-500: #f97316;
-  --color-violet-50: #EDE9FE;
-  --color-violet-100: #DDD6FE;
-  --color-violet-500: #6C5CE7;
-  --color-violet-600: #5B4BD5;
   --color-pf-primary: #0F6B5B;
   --color-pf-dark: #0A4F43;
   --color-pf-light: #E6F7F2;
   --color-pf-mid: #B8DDD3;
-  --color-pf-text: #1A1A2E;
+  --color-pf-accent: #1B8A72;
+  --color-pf-accent-light: #D1F0E7;
+  --color-pf-text: #111827;
   --color-surface: #f4f4f2;
   --color-surface-alt: #eeecea;
-  --color-pf-accent: #6C5CE7;
-  --color-pf-accent-light: #EDE9FE;
+}
+
+/* ═══════════════════════════════════════════
+   MOTION IDENTITY — "Calm Premium"
+   Slow, smooth, ease-out, fluid, intentional.
+   ═══════════════════════════════════════════ */
+
+:root {
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 0.2s;
+  --duration-normal: 0.4s;
+  --duration-slow: 0.7s;
+  --duration-reveal: 0.8s;
 }
 
 body {
@@ -54,13 +65,11 @@ body::after {
   background-size: 256px 256px;
 }
 
-/* Selection color */
 ::selection {
   background-color: var(--color-pf-primary);
   color: white;
 }
 
-/* Focus styles */
 *:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px white, 0 0 0 4px rgba(15, 107, 91, 0.5);
@@ -71,7 +80,64 @@ body::after {
   letter-spacing: -0.02em;
 }
 
-/* Text gradient */
+/* ═══════════════════════════════════════════
+   SCROLL REVEAL SYSTEM
+   Used via <Reveal> component.
+   ═══════════════════════════════════════════ */
+
+.reveal {
+  opacity: 0;
+  will-change: transform, opacity, filter;
+  transition:
+    opacity var(--duration-reveal) var(--ease-smooth),
+    transform var(--duration-reveal) var(--ease-smooth),
+    filter var(--duration-reveal) var(--ease-smooth);
+}
+
+.reveal-up {
+  transform: translateY(32px);
+}
+
+.reveal-down {
+  transform: translateY(-32px);
+}
+
+.reveal-left {
+  transform: translateX(40px);
+}
+
+.reveal-right {
+  transform: translateX(-40px);
+}
+
+.reveal-scale {
+  transform: scale(0.92);
+}
+
+.reveal-blur {
+  transform: translateY(20px);
+  filter: blur(8px);
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translate(0) scale(1);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TEXT EFFECTS
+   ═══════════════════════════════════════════ */
+
 .text-gradient {
   background: linear-gradient(135deg, var(--color-pf-primary), var(--color-pf-accent));
   -webkit-background-clip: text;
@@ -79,12 +145,37 @@ body::after {
   background-clip: text;
 }
 
-/* Text balance */
+.text-gradient-animated {
+  background: linear-gradient(
+    90deg,
+    var(--color-pf-dark),
+    var(--color-pf-primary),
+    var(--color-pf-accent),
+    var(--color-pf-primary)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 6s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.text-accent {
+  color: var(--color-pf-primary);
+}
+
 .text-balance {
   text-wrap: balance;
 }
 
-/* ─── Animations ─── */
+/* ═══════════════════════════════════════════
+   KEYFRAMES
+   ═══════════════════════════════════════════ */
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -121,6 +212,26 @@ body::after {
   50% { transform: translateY(-8px); }
 }
 
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(-6px) rotate(-0.5deg); }
+}
+
+@keyframes floatDrift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(8px, -14px) rotate(2deg); }
+  50% { transform: translate(-4px, -8px) rotate(-1deg); }
+  75% { transform: translate(6px, -18px) rotate(1.5deg); }
+}
+
+@keyframes floatDriftAlt {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(-10px, -10px) rotate(-2deg); }
+  50% { transform: translate(6px, -16px) rotate(1deg); }
+  75% { transform: translate(-8px, -6px) rotate(-1.5deg); }
+}
+
 @keyframes progressGlow {
   0%, 100% { box-shadow: 0 0 4px 0 rgba(15, 107, 91, 0.3); }
   50% { box-shadow: 0 0 12px 2px rgba(15, 107, 91, 0.15); }
@@ -151,8 +262,22 @@ body::after {
   100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
 }
 
+@keyframes borderGlow {
+  0%, 100% { border-color: rgba(15, 107, 91, 0.1); }
+  50% { border-color: rgba(15, 107, 91, 0.3); }
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 0.4; }
+  100% { transform: scale(4); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATION UTILITY CLASSES
+   ═══════════════════════════════════════════ */
+
 .animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out both;
+  animation: fadeInUp var(--duration-normal) var(--ease-smooth) both;
 }
 
 .animate-fade-in {
@@ -160,19 +285,23 @@ body::after {
 }
 
 .animate-slide-in-right {
-  animation: slideInRight 0.35s ease-out both;
+  animation: slideInRight 0.35s var(--ease-smooth) both;
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.25s ease-out both;
+  animation: scaleIn 0.25s var(--ease-smooth) both;
 }
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
 
+.animate-float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
 .animate-screen-enter {
-  animation: screenEnter 0.35s ease-out both;
+  animation: screenEnter 0.35s var(--ease-smooth) both;
 }
 
 .animate-pulse-soft {
@@ -183,15 +312,17 @@ body::after {
   animation: glow 2s ease-in-out infinite;
 }
 
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.1s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.2s; }
-.stagger-5 { animation-delay: 0.25s; }
-.stagger-6 { animation-delay: 0.3s; }
-.stagger-7 { animation-delay: 0.35s; }
+.stagger-1 { animation-delay: 0.06s; }
+.stagger-2 { animation-delay: 0.12s; }
+.stagger-3 { animation-delay: 0.18s; }
+.stagger-4 { animation-delay: 0.24s; }
+.stagger-5 { animation-delay: 0.30s; }
+.stagger-6 { animation-delay: 0.36s; }
+.stagger-7 { animation-delay: 0.42s; }
 
-/* ─── Card + hover ─── */
+/* ═══════════════════════════════════════════
+   CARD SYSTEM — Premium hover + glass
+   ═══════════════════════════════════════════ */
 
 .card-glass {
   background: rgba(255, 255, 255, 0.65);
@@ -202,15 +333,21 @@ body::after {
 }
 
 .card-hover {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth),
+    border-color var(--duration-normal) var(--ease-smooth);
 }
 .card-hover:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 6px -1px rgba(15, 107, 91, 0.06), 0 20px 40px -8px rgba(15, 107, 91, 0.08);
+  transform: translateY(-4px);
+  box-shadow:
+    0 4px 6px -1px rgba(15, 107, 91, 0.06),
+    0 20px 40px -8px rgba(15, 107, 91, 0.1),
+    0 0 0 1px rgba(15, 107, 91, 0.06);
 }
 
 .card-gradient-border {
-  background: linear-gradient(135deg, var(--color-pf-primary), var(--color-pf-accent));
+  background: linear-gradient(135deg, var(--color-pf-primary), var(--color-pf-dark));
   padding: 2px;
   border-radius: 1rem;
 }
@@ -219,12 +356,22 @@ body::after {
   border-radius: calc(1rem - 2px);
 }
 
-/* ─── Primary button with shimmer ─── */
+/* Tilt card base — JS handles transforms */
+.tilt-card {
+  transition:
+    transform var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth);
+  transform-style: preserve-3d;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS — Premium interactions
+   ═══════════════════════════════════════════ */
 
 .btn-primary {
   position: relative;
   overflow: hidden;
-  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all var(--duration-fast) var(--ease-spring);
   min-height: 44px;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
@@ -251,16 +398,55 @@ body::after {
   border: 2px solid var(--color-pf-primary);
   background: transparent;
   color: var(--color-pf-primary);
-  transition: all 0.2s ease;
+  transition: all var(--duration-normal) var(--ease-smooth);
 }
 .btn-secondary:hover {
   background: var(--color-pf-light);
+  border-color: var(--color-pf-dark);
 }
 
-/* ─── Option card with accent bar ─── */
+.btn-glow {
+  position: relative;
+  z-index: 1;
+}
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: var(--color-pf-primary);
+  z-index: -1;
+  opacity: 0;
+  filter: blur(20px);
+  transition: opacity var(--duration-normal) var(--ease-smooth);
+}
+.btn-glow:hover::before {
+  opacity: 0.25;
+}
+
+/* Ripple effect */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple .ripple-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  animation: ripple 0.6s ease-out forwards;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   OPTION CARD — Quiz selections
+   ═══════════════════════════════════════════ */
 
 .option-card {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--duration-normal) var(--ease-smooth);
   position: relative;
 }
 .option-card::before {
@@ -273,7 +459,7 @@ body::after {
   height: 0;
   background: var(--color-pf-primary);
   border-radius: 0 2px 2px 0;
-  transition: height 0.2s ease;
+  transition: height var(--duration-normal) var(--ease-smooth);
 }
 .option-card.selected::before {
   height: 60%;
@@ -281,17 +467,41 @@ body::after {
 .option-card.selected {
   transform: scale(1.015);
   border-color: var(--color-pf-primary);
-  box-shadow: 0 0 0 3px rgba(15, 107, 91, 0.08);
+  box-shadow: 0 0 0 3px rgba(15, 107, 91, 0.08), 0 8px 24px -4px rgba(15, 107, 91, 0.1);
 }
 
-/* ─── Progress bar ─── */
+/* ═══════════════════════════════════════════
+   INPUT — Focus animations
+   ═══════════════════════════════════════════ */
+
+input[type="text"],
+textarea,
+select {
+  transition:
+    border-color var(--duration-normal) var(--ease-smooth),
+    box-shadow var(--duration-normal) var(--ease-smooth),
+    background-color var(--duration-normal) var(--ease-smooth);
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-pf-primary);
+  box-shadow: 0 0 0 3px rgba(15, 107, 91, 0.08), 0 4px 12px -2px rgba(15, 107, 91, 0.06);
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════════ */
 
 .progress-bar-fill {
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.5s var(--ease-out-expo);
   animation: progressGlow 2s ease-in-out infinite;
 }
 
-/* ─── Glass card ─── */
+/* ═══════════════════════════════════════════
+   GLASS / MODAL / LOADING
+   ═══════════════════════════════════════════ */
 
 .glass-card {
   background: rgba(255, 255, 255, 0.8);
@@ -299,14 +509,10 @@ body::after {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* ─── Modal backdrop ─── */
-
 .modal-backdrop {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
-
-/* ─── Loading dots ─── */
 
 .loading-dot {
   animation: morphDot 1.4s ease-in-out infinite;
@@ -314,45 +520,67 @@ body::after {
 .loading-dot:nth-child(2) { animation-delay: 0.2s; }
 .loading-dot:nth-child(3) { animation-delay: 0.4s; }
 
-/* ─── Button glow on hover ─── */
-
-.btn-glow {
-  position: relative;
-  z-index: 1;
-}
-.btn-glow::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: inherit;
-  background: linear-gradient(135deg, var(--color-pf-primary), var(--color-pf-accent));
-  z-index: -1;
-  opacity: 0;
-  filter: blur(12px);
-  transition: opacity 0.3s ease;
-}
-.btn-glow:hover::before {
-  opacity: 0.4;
-}
-
-/* ─── Gradient divider ─── */
+/* ═══════════════════════════════════════════
+   SECTION TRANSITIONS
+   ═══════════════════════════════════════════ */
 
 .divider-gradient {
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--color-pf-primary), var(--color-pf-accent), transparent);
-  opacity: 0.2;
+  background: linear-gradient(to right, transparent, var(--color-pf-mid), transparent);
+  opacity: 0.4;
   border: none;
 }
 
-/* ─── Safe area for notched phones ─── */
+.section-fade-bridge {
+  height: 80px;
+  background: linear-gradient(to bottom, var(--color-warm-50), transparent);
+  pointer-events: none;
+}
+
+.section-overlap {
+  margin-top: -40px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ═══════════════════════════════════════════
+   FLOATING UI ELEMENTS — Hero decorations
+   ═══════════════════════════════════════════ */
+
+.floating-badge {
+  animation: floatDrift 8s ease-in-out infinite;
+}
+
+.floating-badge-alt {
+  animation: floatDriftAlt 9s ease-in-out infinite;
+  animation-delay: -3s;
+}
+
+.floating-badge-slow {
+  animation: floatSlow 10s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+.floating-emoji {
+  animation: floatDrift 7s ease-in-out infinite;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
+}
+
+.floating-emoji-alt {
+  animation: floatDriftAlt 8s ease-in-out infinite;
+  animation-delay: -2s;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
+}
+
+/* ═══════════════════════════════════════════
+   SAFE AREA / SCROLLBAR
+   ═══════════════════════════════════════════ */
 
 @supports (padding: env(safe-area-inset-bottom)) {
   .safe-bottom {
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
 }
-
-/* ─── Scrollbar ─── */
 
 ::-webkit-scrollbar {
   width: 6px;

@@ -4,6 +4,7 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { pathColor } from '../data/colors.js';
 import { BRIDGE_PATHS } from '../data/paths.js';
+import Reveal from './ui/Reveal.jsx';
 
 function Confetti() {
   const canvasRef = useRef(null);
@@ -15,7 +16,7 @@ function Confetti() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const colors = ['#0F6B5B', '#6C5CE7', '#F59E0B', '#3B82F6', '#EC4899', '#14B8A6'];
+    const colors = ['#0F6B5B', '#1B8A72', '#F59E0B', '#3B82F6', '#EC4899', '#14B8A6'];
     const particles = Array.from({ length: 60 }, () => ({
       x: Math.random() * canvas.width,
       y: canvas.height + 10,
@@ -173,24 +174,24 @@ export default function Paths() {
   }
 
   return (
-    <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto">
+    <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto relative">
       {showConfetti && <Confetti />}
 
-      <div className="animate-fade-in-up mb-10">
+      <Reveal className="mb-10">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-pf-light mb-4">
           <span className="text-2xl">{'\u{2728}'}</span>
         </div>
         <h1 className="font-heading text-3xl md:text-4xl font-black text-pf-text mb-2 tracking-tight">{t.paths.title}</h1>
         <p className="text-gray-400 text-base">{t.paths.subtitle}</p>
-      </div>
+      </Reveal>
 
       <div className="flex flex-col gap-5 mb-10">
         {suggestedPaths.map((path, i) => {
           const color = pathColor(path.id);
           return (
+            <Reveal key={path.id} delay={i * 100}>
             <div
-              key={path.id}
-              className={`animate-fade-in-up stagger-${i + 1} card-hover bg-white rounded-xl p-6 md:p-8 border-l-4 border border-gray-100 shadow-sm`}
+              className="card-hover bg-white rounded-xl p-6 md:p-8 border-l-4 border border-gray-100 shadow-sm"
               style={{ borderLeftColor: color.border }}
             >
               <div className="flex justify-between items-start mb-3">
@@ -249,12 +250,13 @@ export default function Paths() {
                 </div>
               )}
             </div>
+            </Reveal>
           );
         })}
       </div>
 
       {wildcardPaths.length > 0 && (
-        <div className="animate-fade-in-up mb-10">
+        <Reveal variant="up" className="mb-10">
           <h2 className="font-heading text-lg font-bold text-gray-700 mb-2">{t.paths.wildcardTitle}</h2>
           <p className="text-sm text-gray-400 mb-4">{t.paths.wildcardSubtitle}</p>
           <div className="flex flex-col gap-3">
@@ -287,13 +289,13 @@ export default function Paths() {
               );
             })}
           </div>
-        </div>
+        </Reveal>
       )}
 
       <div className="divider-gradient my-10" />
 
       {/* Bridge paths — stepping stones */}
-      <div className="animate-fade-in-up mb-10">
+      <Reveal variant="up" className="mb-10">
         <h2 className="font-heading text-lg font-bold text-gray-700 mb-2">{t.paths.bridgeTitle}</h2>
         <p className="text-sm text-gray-400 mb-4">{t.paths.bridgeSubtitle}</p>
         <div className="flex flex-col gap-3">
@@ -326,18 +328,20 @@ export default function Paths() {
             );
           })}
         </div>
-      </div>
+      </Reveal>
 
-      <p className="animate-fade-in text-sm text-gray-400 text-center italic mb-6">
+      <p className="text-sm text-gray-400 text-center italic mb-6">
         {t.common.noPathFinal}
       </p>
 
+      <Reveal variant="scale">
       <button
         onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUALIFICATIONS })}
         className="btn-primary btn-glow px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
       >
         {t.paths.confirmBtn}
       </button>
+      </Reveal>
 
       {swapTarget && (
         <div className="fixed inset-0 bg-black/50 modal-backdrop flex items-center justify-center z-50 p-4 animate-fade-in" onClick={() => setSwapTarget(null)}>
