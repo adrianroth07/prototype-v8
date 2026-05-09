@@ -2,23 +2,24 @@ import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { pathColor } from '../data/colors.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 const FINANCIAL_INFO = {
   de: {
-    ausbildung: 'Gehalt: 600–1.200€/Monat + Kindergeld 250€ + evtl. BAB',
-    studium: 'BAföG: bis 934€/Monat (geschenkt!) + Kindergeld 250€ + Nebenjob',
-    fsj: 'Taschengeld: ca. 350€/Monat + Kindergeld 250€ + Unterkunft & Essen',
+    ausbildung: 'Gehalt: 724–1.200€/Monat + Kindergeld 250€ + evtl. BAB',
+    studium: 'BAföG: bis 992€/Monat (geschenkt!) + Kindergeld 250€ + Nebenjob',
+    fsj: 'Taschengeld: 300–676€/Monat + Kindergeld 250€ + ggf. Unterkunft & Essen',
     freelancing: 'Eigenes Einkommen (unterschiedlich) + Gründungszuschuss möglich',
-    bundeswehr: 'Sold: ca. 1.400€/Monat (netto) + Unterkunft & Essen kostenlos',
+    bundeswehr: 'Sold: ca. 2.600€/Monat (brutto) + Unterkunft & Essen kostenlos',
     'gap-year': 'Selbst finanziert + Kindergeld 250€ + Working Holiday Einkommen',
   },
   en: {
-    ausbildung: 'Salary: 600–1,200€/month + Kindergeld 250€ + possibly BAB',
-    studium: 'BAföG: up to 934€/month (grant!) + Kindergeld 250€ + part-time job',
-    fsj: 'Pocket money: ~350€/month + Kindergeld 250€ + housing & food',
+    ausbildung: 'Salary: 724–1,200€/month + Kindergeld 250€ + possibly BAB',
+    studium: 'BAföG: up to 992€/month (grant!) + Kindergeld 250€ + part-time job',
+    fsj: 'Pocket money: 300–676€/month + Kindergeld 250€ + housing & food possible',
     freelancing: 'Own income (varies) + start-up grant possible',
-    bundeswehr: 'Pay: ~1,400€/month (net) + housing & food free',
+    bundeswehr: 'Pay: ~2,600€/month (gross) + housing & food free',
     'gap-year': 'Self-funded + Kindergeld 250€ + Working Holiday income',
   },
 };
@@ -37,11 +38,11 @@ export default function Comparison() {
   const paths = state.suggestedPaths;
 
   const rows = [
-    { key: 'typicalDay', accessor: (p) => p.typical_day },
-    { key: 'income', accessor: (p) => p.income_now },
-    { key: 'freedom', accessor: (p) => p.freedom },
-    { key: 'flexibility', accessor: (p) => p.flexibility },
-    { key: 'outlook', accessor: (p) => p.outlook },
+    { key: 'typicalDay', accessor: (p) => l(p.typical_day, lang) },
+    { key: 'income', accessor: (p) => l(p.income_now, lang) },
+    { key: 'freedom', accessor: (p) => l(p.freedom, lang) },
+    { key: 'flexibility', accessor: (p) => l(p.flexibility, lang) },
+    { key: 'outlook', accessor: (p) => l(p.outlook, lang) },
   ];
 
   return (
@@ -56,8 +57,34 @@ export default function Comparison() {
         </div>
       </Reveal>
 
+      {/* Mobile: card-based comparison */}
       <Reveal variant="up">
-      <div className="overflow-x-auto mb-10 -mx-2">
+      <div className="sm:hidden space-y-4 mb-10">
+        {paths.map((p, pi) => {
+          const color = pathColor(p.id);
+          return (
+            <div key={p.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5" style={{ borderLeftWidth: '4px', borderLeftColor: color.border }}>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold text-white" style={{ backgroundColor: color.border }}>{pi + 1}</span>
+                <h3 className="font-heading font-bold text-gray-800">{p.name}</h3>
+              </div>
+              <div className="space-y-3">
+                {rows.map(row => (
+                  <div key={row.key}>
+                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{t.comparison.headers[row.key]}</div>
+                    <div className="text-sm text-gray-700 mt-0.5 leading-relaxed">{row.accessor(p)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      </Reveal>
+
+      {/* Desktop: table comparison */}
+      <Reveal variant="up">
+      <div className="hidden sm:block overflow-x-auto mb-10 -mx-2">
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden min-w-[500px]">
           <table className="w-full text-sm">
             <thead>
@@ -140,12 +167,20 @@ export default function Comparison() {
       </Reveal>
 
       <Reveal variant="up" delay={400}>
-      <button
-        onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.STORIES })}
-        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
-      >
-        {t.comparison.continueBtn}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.FIELD_NARROWING })}
+          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        >
+          {'←'} {t.common.back}
+        </button>
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.STORIES })}
+          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        >
+          {t.comparison.continueBtn}
+        </button>
+      </div>
       </Reveal>
     </div>
   );

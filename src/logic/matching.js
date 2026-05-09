@@ -103,37 +103,80 @@ export function getWildcards(riasecCounts, suggestedPaths, anchor, count = 1) {
 }
 
 const ANCHOR_PHRASES = {
-  tech:    'being really good at something specific',
-  auto:    'working on your own terms',
-  secure:  'having a stable, reliable path',
-  impact:  'making a genuine difference',
-  create:  'building something of your own',
-  balance: 'a life where work fits around the rest',
+  de: {
+    tech:    'richtig gut in etwas Bestimmtem zu sein',
+    auto:    'nach deinen eigenen Regeln zu arbeiten',
+    secure:  'einen sicheren, verlässlichen Weg zu haben',
+    impact:  'wirklich etwas zu bewirken',
+    create:  'etwas Eigenes aufzubauen',
+    balance: 'ein Leben, in dem Arbeit zum Rest passt',
+  },
+  en: {
+    tech:    'being really good at something specific',
+    auto:    'working on your own terms',
+    secure:  'having a stable, reliable path',
+    impact:  'making a genuine difference',
+    create:  'building something of your own',
+    balance: 'a life where work fits around the rest',
+  },
 };
 
-// buildReasons now names both the RIASEC trait and the Schein anchor
-// Structure: "[RIASEC label] + [anchor]  → [path]"
-export function buildReasons(paths, riasecCounts, lifestyle) {
-  const anchor = lifestyle?.anchor || null;
-  const anchorPhrase = anchor ? ANCHOR_PHRASES[anchor] : null;
-
-  const meaningfulCounts = Object.fromEntries(
-    Object.entries(riasecCounts).filter(([k]) => k !== 'unsure')
-  );
-  const topType = Object.entries(meaningfulCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
-  const modeLabels = {
+const MODE_LABELS = {
+  de: {
+    R: 'praktisches Arbeiten',
+    I: 'Nachdenken und Problemlösung',
+    A: 'kreativen Ausdruck',
+    S: 'Helfen und Kontakt mit Menschen',
+    E: 'Führen und Umsetzen',
+    C: 'Struktur und Ordnung',
+  },
+  en: {
     R: 'hands-on and practical work',
     I: 'deep thinking and problem solving',
     A: 'creative expression',
     S: 'helping and connecting with people',
     E: 'leading and making things happen',
     C: 'structure and doing things properly',
-  };
-  const topLabel = modeLabels[topType] || 'your answers';
+  },
+};
 
-  function reason(id) {
+export function buildReasons(paths, riasecCounts, lifestyle) {
+  const anchor = lifestyle?.anchor || null;
+
+  const meaningfulCounts = Object.fromEntries(
+    Object.entries(riasecCounts).filter(([k]) => k !== 'unsure')
+  );
+  const topType = Object.entries(meaningfulCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+
+  function forLang(lang) {
+    const anchorPhrase = anchor ? ANCHOR_PHRASES[lang]?.[anchor] : null;
+    const topLabel = MODE_LABELS[lang]?.[topType] || (lang === 'de' ? 'deine Antworten' : 'your answers');
     const a = anchorPhrase;
-    const r = {
+
+    if (lang === 'de') {
+      return {
+        ausbildung: a
+          ? `Du hast stark auf ${topLabel} gepunktet und ${a} ist dir wichtig — die Ausbildung liefert beides ab Tag 1.`
+          : `Deine Antworten zeigen klar: ${topLabel} liegt dir — die Ausbildung lässt dich vom ersten Tag echte Skills aufbauen und dabei verdienen.`,
+        studium: a
+          ? `Du hast stark auf ${topLabel} gepunktet und dir ist ${a} wichtig — ein Studium gibt dir die Tiefe und Flexibilität, um weit zu kommen.`
+          : `Du hast stark auf ${topLabel} gepunktet — ein Studium gibt dir die Tiefe und Zeit, in einem Feld weit zu kommen, das dich interessiert.`,
+        fsj: a
+          ? `Du bist eher der Mensch, der gerne hilft und mit Leuten arbeitet, und ${a} ist dir wichtig — ein FSJ gibt dir echte Erfahrung ohne lange Verpflichtung.`
+          : `Du bist eher der Mensch, der gerne hilft und mit Leuten arbeitet — ein FSJ gibt dir echte Erfahrung, bevor du dich langfristig festlegst.`,
+        freelancing: a
+          ? `Dein kreativer und selbstständiger Stil kam klar rüber, und ${a} ist zentral für dich — Freelancing baut genau darauf auf.`
+          : `Dein kreativer und selbstständiger Stil kam klar rüber — Freelancing lässt dich auf deine eigene Art arbeiten.`,
+        bundeswehr: a
+          ? `Dein Profil zeigt, dass du Herausforderungen suchst und ${a} wichtig findest — die Bundeswehr liefert beides ab Tag 1.`
+          : `Dein Profil zeigt eine Vorliebe für Struktur, Herausforderung und sofortiges Verdienen — die Bundeswehr passt dazu gut.`,
+        'gap-year': a
+          ? `Deine Antworten zeigen: Erkunden ist dir wichtiger als sofort loszulegen, und ${a} passt dazu — ein Gap Year gibt dir Zeit und Erfahrung vor der Entscheidung.`
+          : `Deine Antworten zeigen: Erkunden ist dir wichtiger als sofort loszulegen — ein Gap Year gibt dir Zeit und Erfahrung vor der Entscheidung.`,
+        _default: `Basierend auf deinem ${topLabel}-Profil${a ? ` und ${a}` : ''}.`,
+      };
+    }
+    return {
       ausbildung: a
         ? `You scored high on ${topLabel} and care about ${a} — Ausbildung delivers both from day one.`
         : `Your answers point strongly to ${topLabel} — Ausbildung lets you earn while you build real skills from day one.`,
@@ -152,12 +195,20 @@ export function buildReasons(paths, riasecCounts, lifestyle) {
       'gap-year': a
         ? `Your answers suggest exploration over immediate commitment, and ${a} fits that — a gap year gives you time and experience before deciding.`
         : `Your answers suggest you value exploration over immediate commitment — a gap year gives you time and experience before deciding.`,
+      _default: `Based on your ${topLabel} profile${a ? ` and ${a}` : ''}.`,
     };
-    return r[id] || `Based on your ${topLabel} profile${a ? ` and ${a}` : ''}.`;
   }
 
+  const de = forLang('de');
+  const en = forLang('en');
+
   const out = {};
-  for (const path of paths) out[path.id] = reason(path.id);
+  for (const path of paths) {
+    out[path.id] = {
+      de: de[path.id] || de._default,
+      en: en[path.id] || en._default,
+    };
+  }
   return out;
 }
 
@@ -167,11 +218,22 @@ export function filterByQuals(paths, quals) {
   for (const path of paths) {
     const open = userCertRank >= (CERT_RANK[path.minCert] ?? 0);
     let note = null;
-    if (!open) note = `Typically requires ${path.minCert} — exceptions exist with strong work experience.`;
-    else if (path.id === 'freelancing' && !quals.hasPortfolio)
-      note = 'Open — building a client base takes time without a portfolio yet.';
-    else if (path.id === 'studium' && quals.cert === 'Realschulabschluss')
-      note = 'Open — you\'d need Fachhochschulreife or Abitur first, or via second-chance routes.';
+    if (!open) {
+      note = {
+        de: `Erfordert normalerweise ${path.minCert} — Ausnahmen gibt es mit starker Berufserfahrung.`,
+        en: `Typically requires ${path.minCert} — exceptions exist with strong work experience.`,
+      };
+    } else if (path.id === 'freelancing' && !quals.hasPortfolio) {
+      note = {
+        de: 'Offen — einen Kundenstamm aufzubauen braucht Zeit ohne bisheriges Portfolio.',
+        en: 'Open — building a client base takes time without a portfolio yet.',
+      };
+    } else if (path.id === 'studium' && quals.cert === 'Realschulabschluss') {
+      note = {
+        de: 'Offen — du bräuchtest erst Fachhochschulreife oder Abitur, z.B. über eine FOS.',
+        en: 'Open — you\'d need Fachhochschulreife or Abitur first, or via second-chance routes.',
+      };
+    }
     out[path.id] = { open, note };
   }
   return out;

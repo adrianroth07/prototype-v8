@@ -1,5 +1,26 @@
 import { useEffect, useRef } from 'react';
 
+const callbacks = new Map();
+let sharedObserver = null;
+
+function getObserver() {
+  if (sharedObserver) return sharedObserver;
+  sharedObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const cb = callbacks.get(entry.target);
+          if (cb) cb();
+          callbacks.delete(entry.target);
+          sharedObserver.unobserve(entry.target);
+        }
+      }
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
+  );
+  return sharedObserver;
+}
+
 export default function Reveal({
   children,
   className = '',
@@ -19,18 +40,14 @@ export default function Reveal({
 
     if (delay) el.style.transitionDelay = `${delay}ms`;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          el.classList.add('revealed');
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -30px 0px' }
-    );
-
+    const observer = getObserver();
+    callbacks.set(el, () => el.classList.add('revealed'));
     observer.observe(el);
-    return () => observer.disconnect();
+
+    return () => {
+      callbacks.delete(el);
+      observer.unobserve(el);
+    };
   }, [delay]);
 
   return (

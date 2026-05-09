@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
-import { ALL_PATHS, BRIDGE_PATHS, ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
+import { ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
+import { LEADS_TO, PATH_EMOJIS, pathById } from '../data/journeys.js';
 import { pathColor } from '../data/colors.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 const CERT_LEVELS = [
@@ -12,32 +14,8 @@ const CERT_LEVELS = [
   { id: 'abitur', label: 'Abitur', fullLabel: '12./13. Klasse', rank: 4, emoji: '\u{1F4D5}', gradient: 'from-purple-50 to-pink-50', border: 'border-purple-200' },
 ];
 
-const LEADS_TO = {
-  iba: ['ausbildung', 'eq', 'fos'],
-  eq: ['ausbildung'],
-  fos: ['studium', 'ausbildung', 'freelancing'],
-  ausbildung: ['studium', 'freelancing', 'bundeswehr', 'gap-year'],
-  studium: ['freelancing', 'gap-year', 'ausbildung', 'bundeswehr'],
-  fsj: ['ausbildung', 'studium', 'freelancing', 'bundeswehr'],
-  freelancing: ['ausbildung', 'studium'],
-  bundeswehr: ['ausbildung', 'studium', 'freelancing'],
-  'gap-year': ['ausbildung', 'studium', 'fsj', 'freelancing', 'bundeswehr'],
-};
-
-const PATH_EMOJIS = {
-  iba: '\u{1F4DA}',
-  eq: '\u{1F91D}',
-  fos: '\u{1F4C8}',
-  ausbildung: '\u{1F6E0}\u{FE0F}',
-  studium: '\u{1F393}',
-  fsj: '\u{1F49A}',
-  freelancing: '\u{1F4BB}',
-  bundeswehr: '\u{1F396}\u{FE0F}',
-  'gap-year': '\u{2708}\u{FE0F}',
-};
-
 const HORIZON = {
-  iba: { emoji: '\u{1F331}', text: 'Better certificate, clearer direction — Ausbildung, EQ, or further school' },
+  iba: { emoji: '\u{1F331}', de: 'Besserer Abschluss, klarere Richtung — Ausbildung, EQ oder weiterschulen', en: 'Better certificate, clearer direction — Ausbildung, EQ, or further school' },
   eq: { emoji: '\u{1F3AF}', de: '60%+ bekommen danach einen Ausbildungsvertrag', en: '60%+ get an Ausbildung contract — this is your bridge' },
   fos: { emoji: '\u{1F393}', de: 'Fachabitur oder Abitur — Uni und Duales Studium werden möglich', en: 'Fachabitur or Abitur — university and Duales Studium become possible' },
   ausbildung: { emoji: '\u{1F3ED}', de: 'Karriere im Beruf — Meister, Techniker oder Teamleitung', en: 'Career in your trade — Meister, Techniker, or team lead' },
@@ -127,10 +105,6 @@ const RECOMMENDED_JOURNEYS = {
   ],
 };
 
-function pathById(id) {
-  return ALL_PATHS_WITH_BRIDGES.find(p => p.id === id);
-}
-
 export default function PathMap() {
   const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
@@ -176,6 +150,13 @@ export default function PathMap() {
     setJourney([]);
     setExpandedPath(null);
   }
+
+  useEffect(() => {
+    if (!expandedPath) return;
+    function onKey(e) { if (e.key === 'Escape') setExpandedPath(null); }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [expandedPath]);
 
   const availablePaths = selectedCert ? ALL_PATHS_WITH_BRIDGES.filter(p => isAccessible(p)) : [];
   const lockedPaths = selectedCert ? ALL_PATHS_WITH_BRIDGES.filter(p => !isAccessible(p)) : [];
@@ -333,12 +314,12 @@ export default function PathMap() {
                             <span className="text-base">{PATH_EMOJIS[path.id]}</span>
                             <span className="font-bold text-gray-800 text-sm">{path.name}</span>
                           </div>
-                          <p className="text-xs text-gray-500 mt-0.5">{path.tagline}</p>
+                          <p className="text-xs text-gray-500 mt-0.5">{l(path.tagline, lang)}</p>
                         </div>
                         {i === journey.length - 1 && journey.length > 1 && (
                           <button
                             onClick={() => removeFromStep(i)}
-                            className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-400 cursor-pointer transition-all p-1"
+                            className="sm:opacity-0 sm:group-hover:opacity-100 text-gray-300 hover:text-red-400 cursor-pointer transition-all p-1"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -451,7 +432,7 @@ export default function PathMap() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">{path.tagline}</p>
+                        <p className="text-xs text-gray-500">{l(path.tagline, lang)}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <button
@@ -486,14 +467,14 @@ export default function PathMap() {
 
                     {isExpanded && (
                       <div className="mt-1.5 rounded-2xl border border-gray-100 bg-white shadow-sm p-5 space-y-4">
-                        <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
+                        <p className="text-sm text-gray-600 leading-relaxed">{l(path.description, lang)}</p>
 
                         <div className="grid grid-cols-2 gap-2">
                           {[
-                            { icon: '\u{1F4B0}', label: 'Income', value: path.income_now },
-                            { icon: '\u{1F54A}\u{FE0F}', label: 'Freedom', value: path.freedom },
-                            { icon: '\u{1F504}', label: 'Flexibility', value: path.flexibility },
-                            { icon: '\u{1F4C8}', label: 'Outlook', value: path.outlook },
+                            { icon: '\u{1F4B0}', label: t.comparison.headers.income, value: l(path.income_now, lang) },
+                            { icon: '\u{1F54A}\u{FE0F}', label: t.comparison.headers.freedom, value: l(path.freedom, lang) },
+                            { icon: '\u{1F504}', label: t.comparison.headers.flexibility, value: l(path.flexibility, lang) },
+                            { icon: '\u{1F4C8}', label: t.comparison.headers.outlook, value: l(path.outlook, lang) },
                           ].map(item => (
                             <div key={item.label} className="p-2.5 rounded-xl bg-gray-50 border border-gray-100">
                               <div className="text-xs text-gray-400 mb-0.5">{item.icon} {item.label}</div>
@@ -504,7 +485,7 @@ export default function PathMap() {
 
                         {path.human_story && (
                           <div className="p-3.5 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100">
-                            <p className="italic text-xs text-gray-600 leading-relaxed">"{path.human_story.quote}"</p>
+                            <p className="italic text-xs text-gray-600 leading-relaxed">"{l(path.human_story.quote, lang)}"</p>
                             <p className="text-xs text-gray-400 mt-1.5 font-medium">{'\u{2014}'} {path.human_story.name}</p>
                           </div>
                         )}
@@ -549,8 +530,10 @@ export default function PathMap() {
                         </div>
                         <div className="flex-1">
                           <h3 className="font-bold text-gray-600 text-sm">{path.name}</h3>
-                          <p className="text-xs text-gray-400">{path.tagline}</p>
-                          <p className="text-xs text-gray-400 mt-1">Min: {path.minCert}</p>
+                          <p className="text-xs text-gray-400">{l(path.tagline, lang)}</p>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {lang === 'de' ? 'Benötigt: ' : 'Requires: '}{path.minCert}
+                          </p>
                         </div>
                       </div>
                     );

@@ -4,6 +4,7 @@ import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { pathColor } from '../data/colors.js';
 import { BRIDGE_PATHS } from '../data/paths.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 function Confetti() {
@@ -160,9 +161,10 @@ function CompassPanel({ riasecCounts, lifestyle, bestPath, t }) {
 }
 
 function metricDots(value) {
-  if (!value) return 0;
-  if (/1[,.]?[0-9]{3}|1400|high|meister|strong|hoch|sehr/i.test(value)) return 3;
-  if (/[6-9]\d{2}|600|900|medium|mittel|portfolio|wide|dual/i.test(value)) return 2;
+  const s = typeof value === 'string' ? value : '';
+  if (!s) return 0;
+  if (/1[,.]?[0-9]{3}|2[,.]?[0-9]{3}|high|meister|strong|hoch|sehr|maximal/i.test(s)) return 3;
+  if (/[6-9]\d{2}|600|900|medium|mittel|portfolio|wide|dual|breit/i.test(s)) return 2;
   return 1;
 }
 
@@ -230,9 +232,9 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500">{path.tagline}</p>
+            <p className="text-sm text-gray-500">{l(path.tagline, lang)}</p>
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {path.meta.split(' · ').map((tag, j) => (
+              {l(path.meta, lang).split(' · ').map((tag, j) => (
                 <span key={j} className="text-xs px-2 py-0.5 rounded-full bg-gray-50 text-gray-400 border border-gray-100">
                   {tag}
                 </span>
@@ -279,11 +281,11 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
             {reason && (
               <div className="p-4 rounded-xl bg-gradient-to-r from-pf-light/50 to-transparent border border-pf-primary/10">
                 <p className="text-xs font-bold text-pf-primary uppercase tracking-wider mb-1.5">{t.paths.whyFits}</p>
-                <p className="text-sm text-gray-600 leading-relaxed">{reason}</p>
+                <p className="text-sm text-gray-600 leading-relaxed">{l(reason, lang)}</p>
               </div>
             )}
 
-            <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
+            <p className="text-sm text-gray-600 leading-relaxed">{l(path.description, lang)}</p>
 
             {(path.difficulty || path.timeToStart) && (
               <div className="flex flex-wrap gap-2">
@@ -302,10 +304,10 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
 
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label: t.comparison.headers.income, value: path.income_now },
-                { label: t.comparison.headers.freedom, value: path.freedom },
-                { label: t.comparison.headers.flexibility, value: path.flexibility },
-                { label: t.comparison.headers.outlook, value: path.outlook },
+                { label: t.comparison.headers.income, value: l(path.income_now, lang) },
+                { label: t.comparison.headers.freedom, value: l(path.freedom, lang) },
+                { label: t.comparison.headers.flexibility, value: l(path.flexibility, lang) },
+                { label: t.comparison.headers.outlook, value: l(path.outlook, lang) },
               ].map(item => (
                 <div key={item.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
                   <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
@@ -319,7 +321,7 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
 
             {path.human_story && (
               <div className="p-4 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100">
-                <p className="italic text-sm text-gray-600 leading-relaxed">&ldquo;{path.human_story.quote}&rdquo;</p>
+                <p className="italic text-sm text-gray-600 leading-relaxed">&ldquo;{l(path.human_story.quote, lang)}&rdquo;</p>
                 <p className="text-xs text-gray-400 mt-2 font-medium">{'—'} {path.human_story.name}</p>
               </div>
             )}
@@ -327,7 +329,7 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
             {path.nextSteps && (
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.paths.milestones}</p>
-                <RouteMilestones steps={path.nextSteps} color={color} />
+                <RouteMilestones steps={l(path.nextSteps, lang)} color={color} />
               </div>
             )}
           </div>
@@ -349,6 +351,13 @@ export default function Paths() {
     const timer = setTimeout(() => setShowConfetti(false), 3500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!swapTarget) return;
+    function onKey(e) { if (e.key === 'Escape') setSwapTarget(null); }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [swapTarget]);
 
   useEffect(() => {
     if (state.suggestedPaths.length > 0 && openRoute === null) {
@@ -512,7 +521,7 @@ export default function Paths() {
                     {lang === 'de' ? 'Wird entfernt' : 'Removing'}
                   </div>
                   <div className="font-semibold text-gray-800">{removePath.name}</div>
-                  <div className="text-xs text-gray-500 mt-0.5">{removePath.tagline}</div>
+                  <div className="text-xs text-gray-500 mt-0.5">{l(removePath.tagline, lang)}</div>
                 </div>
               );
             })()}
@@ -530,8 +539,8 @@ export default function Paths() {
                     style={{ borderLeftColor: wcColor.border }}
                   >
                     <span className="font-semibold text-gray-800">{wc.name}</span>
-                    <div className="text-sm text-gray-500 mt-0.5">{wc.tagline}</div>
-                    <div className="text-xs text-gray-400 mt-1">{wc.meta}</div>
+                    <div className="text-sm text-gray-500 mt-0.5">{l(wc.tagline, lang)}</div>
+                    <div className="text-xs text-gray-400 mt-1">{l(wc.meta, lang)}</div>
                   </button>
                 );
               })}

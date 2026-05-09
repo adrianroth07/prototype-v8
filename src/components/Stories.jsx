@@ -1,23 +1,27 @@
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
+import { SCREENS } from '../state/appReducer.js';
 import { STORIES } from '../data/stories.js';
 import { pathColor } from '../data/colors.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 const RESOURCES = {
   de: [
-    { emoji: '\u{1F3E2}', name: 'JBA Neukölln', desc: 'Jugendberufsagentur — kostenlose Berufsberatung, alles unter einem Dach', detail: 'Sonnenallee 282, 12057 Berlin', url: 'https://www.jba-berlin.de' },
-    { emoji: '\u{1F3EB}', name: 'OSZ IMT Neukölln', desc: 'Oberstufenzentrum für IT, Medien und Technik — IBA, FOS, Berufliches Gymnasium', detail: 'Haarlemer Str. 23-27, 12359 Berlin', url: 'https://www.oszimt.de' },
-    { emoji: '\u{1F4CB}', name: 'Check-U', desc: 'Kostenloser Online-Test der Bundesagentur für Arbeit', detail: 'Dauert ca. 60 Minuten, sehr gründlich', url: 'https://www.check-u.de' },
-    { emoji: '\u{1F91D}', name: 'ARRIVO Berlin', desc: 'Hilft jungen Menschen, eine Ausbildung zu finden', detail: 'Kostenloses Coaching und Vermittlung', url: 'https://www.arrivo-berlin.de' },
-    { emoji: '\u{1F4BC}', name: 'JobInn', desc: 'Job- und Ausbildungsportal für Jugendliche in Neukölln', detail: 'Teil des JBA-Netzwerks', url: 'https://www.jobinn.de' },
+    { emoji: '\u{1F3E2}', name: 'JBA Neukölln', desc: 'Jugendberufsagentur — kostenlose Berufsberatung, alles unter einem Dach', detail: 'Sonnenallee 282, 12057 Berlin · ohne Termin', url: 'https://jba-berlin.de' },
+    { emoji: '\u{1F3EB}', name: 'OSZ IMT Neukölln', desc: 'Oberstufenzentrum für Informations- und Medizintechnik — IBA, FOS, Berufliches Gymnasium', detail: 'Haarlemer Str. 23-27, 12359 Berlin', url: 'https://www.oszimt.de' },
+    { emoji: '\u{1F4CB}', name: 'Check-U', desc: 'Kostenloser Online-Test der Bundesagentur für Arbeit', detail: 'Dauert ca. 2 Stunden (Pausen möglich)', url: 'https://www.check-u.de' },
+    { emoji: '\u{1F91D}', name: 'ARRIVO Berlin', desc: 'Hilft jungen Menschen mit Migrationsgeschichte, eine Ausbildung zu finden', detail: 'Kostenloses Coaching und Vermittlung', url: 'https://www.arrivo-berlin.de' },
+    { emoji: '\u{1F4BC}', name: 'JobInn Neukölln', desc: 'Aufsuchende Jugendsozialarbeit — Beratung zu Ausbildung und Beruf', detail: 'Lahnstr. 25, 12055 Berlin · GANGWAY e.V.', url: 'https://gangway.de/teams/jobinn-neukoelln/' },
+    { emoji: '\u{1F30D}', name: 'Beratung Bildung & Beruf', desc: 'Kostenlose, unabhängige Berufsberatung — auch auf Arabisch, Türkisch, Farsi', detail: 'Karl-Marx-Str. 131, 12043 Berlin', url: 'https://www.gesbit.de' },
   ],
   en: [
-    { emoji: '\u{1F3E2}', name: 'JBA Neukölln', desc: 'Youth career agency — free career guidance, all services under one roof', detail: 'Sonnenallee 282, 12057 Berlin', url: 'https://www.jba-berlin.de' },
-    { emoji: '\u{1F3EB}', name: 'OSZ IMT Neukölln', desc: 'Vocational school for IT, media and tech — IBA, FOS, Berufliches Gymnasium', detail: 'Haarlemer Str. 23-27, 12359 Berlin', url: 'https://www.oszimt.de' },
-    { emoji: '\u{1F4CB}', name: 'Check-U', desc: 'Free online orientation test by the Bundesagentur für Arbeit', detail: 'Takes ~60 minutes, very thorough', url: 'https://www.check-u.de' },
-    { emoji: '\u{1F91D}', name: 'ARRIVO Berlin', desc: 'Helps young people find an Ausbildung placement', detail: 'Free coaching and matching', url: 'https://www.arrivo-berlin.de' },
-    { emoji: '\u{1F4BC}', name: 'JobInn', desc: 'Job and Ausbildung portal for Neukölln youth', detail: 'Part of the JBA network', url: 'https://www.jobinn.de' },
+    { emoji: '\u{1F3E2}', name: 'JBA Neukölln', desc: 'Youth career agency — free career guidance, all services under one roof', detail: 'Sonnenallee 282, 12057 Berlin · walk-in', url: 'https://jba-berlin.de' },
+    { emoji: '\u{1F3EB}', name: 'OSZ IMT Neukölln', desc: 'Vocational school for IT and medical tech — IBA, FOS, Berufliches Gymnasium', detail: 'Haarlemer Str. 23-27, 12359 Berlin', url: 'https://www.oszimt.de' },
+    { emoji: '\u{1F4CB}', name: 'Check-U', desc: 'Free online orientation test by the Bundesagentur für Arbeit', detail: 'Takes ~2 hours (can pause and resume)', url: 'https://www.check-u.de' },
+    { emoji: '\u{1F91D}', name: 'ARRIVO Berlin', desc: 'Helps young people with migration background find an Ausbildung', detail: 'Free coaching and matching', url: 'https://www.arrivo-berlin.de' },
+    { emoji: '\u{1F4BC}', name: 'JobInn Neukölln', desc: 'Outreach youth social work — career and Ausbildung counseling', detail: 'Lahnstr. 25, 12055 Berlin · GANGWAY e.V.', url: 'https://gangway.de/teams/jobinn-neukoelln/' },
+    { emoji: '\u{1F30D}', name: 'Beratung Bildung & Beruf', desc: 'Free, independent career counseling — also in Arabic, Turkish, Farsi', detail: 'Karl-Marx-Str. 131, 12043 Berlin', url: 'https://www.gesbit.de' },
   ],
 };
 
@@ -60,26 +64,26 @@ export default function Stories() {
                 </div>
                 <div>
                   <h3 className="font-heading font-bold text-gray-800 text-lg">{story.name}</h3>
-                  <p className="text-sm text-gray-500">{story.role}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{story.detail}</p>
+                  <p className="text-sm text-gray-500">{l(story.role, lang)}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{l(story.detail, lang)}</p>
                 </div>
               </div>
 
               <div className="relative p-5 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100 mb-4 overflow-hidden">
                 <span className="absolute top-1 left-3 text-5xl text-pf-primary/20 font-serif leading-none select-none pointer-events-none">{'\u{201C}'}</span>
                 <blockquote className="relative text-base text-gray-600 italic leading-relaxed pl-6">
-                  {story.quote}
+                  {l(story.quote, lang)}
                 </blockquote>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-3 rounded-xl bg-pf-light/50">
                   <span className="text-xs font-bold text-pf-primary uppercase tracking-wider">{t.stories.why}</span>
-                  <p className="text-sm text-gray-600 mt-1 leading-relaxed">{story.why}</p>
+                  <p className="text-sm text-gray-600 mt-1 leading-relaxed">{l(story.why, lang)}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-pf-light/50">
                   <span className="text-xs font-bold text-pf-primary uppercase tracking-wider">{t.stories.advice}</span>
-                  <p className="text-sm text-gray-600 mt-1 leading-relaxed">{story.advice}</p>
+                  <p className="text-sm text-gray-600 mt-1 leading-relaxed">{l(story.advice, lang)}</p>
                 </div>
               </div>
             </div>
@@ -130,12 +134,20 @@ export default function Stories() {
         {t.common.noPathFinal}
       </p>
 
-      <button
-        onClick={() => dispatch({ type: 'RESTART' })}
-        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
-      >
-        {t.stories.restartBtn}
-      </button>
+      <div className="flex flex-col sm:flex-row items-center gap-4">
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.PATHS })}
+          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        >
+          {'←'} {lang === 'de' ? 'Zurück zu den Routen' : 'Back to routes'}
+        </button>
+        <button
+          onClick={() => dispatch({ type: 'RESTART' })}
+          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        >
+          {t.stories.restartBtn}
+        </button>
+      </div>
     </div>
   );
 }

@@ -31,16 +31,31 @@ export default function InfiniteGrid({ children, className }) {
     const reveal = revealRef.current;
     if (!container || !reveal) return;
 
-    const onMove = (e) => {
-      const { left, top } = container.getBoundingClientRect();
-      const x = e.clientX - left;
-      const y = e.clientY - top;
+    const setMask = (x, y) => {
       reveal.style.maskImage = `radial-gradient(350px circle at ${x}px ${y}px, black, transparent)`;
       reveal.style.webkitMaskImage = `radial-gradient(350px circle at ${x}px ${y}px, black, transparent)`;
     };
 
+    const onMove = (e) => {
+      const { left, top } = container.getBoundingClientRect();
+      setMask(e.clientX - left, e.clientY - top);
+    };
+
+    const onTouch = (e) => {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const { left, top } = container.getBoundingClientRect();
+      setMask(touch.clientX - left, touch.clientY - top);
+    };
+
     container.addEventListener('mousemove', onMove);
-    return () => container.removeEventListener('mousemove', onMove);
+    container.addEventListener('touchmove', onTouch, { passive: true });
+    container.addEventListener('touchstart', onTouch, { passive: true });
+    return () => {
+      container.removeEventListener('mousemove', onMove);
+      container.removeEventListener('touchmove', onTouch);
+      container.removeEventListener('touchstart', onTouch);
+    };
   }, []);
 
   const gridBg = `url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%230F6B5B' stroke-width='1'/%3E%3C/svg%3E")`;
@@ -56,13 +71,15 @@ export default function InfiniteGrid({ children, className }) {
       {/* Static grid — always visible, very faint */}
       <div
         ref={staticRef}
+        aria-hidden="true"
         className="absolute inset-0 z-0 opacity-[0.06]"
         style={{ backgroundImage: gridBg, backgroundSize: '40px 40px' }}
       />
 
-      {/* Mouse-reveal grid — brighter, masked to cursor */}
+      {/* Mouse/touch-reveal grid — brighter, masked to cursor */}
       <div
         ref={revealRef}
+        aria-hidden="true"
         className="absolute inset-0 z-0 opacity-25"
         style={{
           backgroundImage: gridBg,

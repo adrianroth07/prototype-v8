@@ -3,31 +3,21 @@ import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { ALL_PATHS_WITH_BRIDGES, CERT_RANK } from '../data/paths.js';
+import { LEADS_TO } from '../data/journeys.js';
 import { pathColor } from '../data/colors.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 const QUALIFICATIONS = [
-  { id: 'none', label: 'Kein Abschluss', rank: 0 },
-  { id: 'hauptschule', label: 'Hauptschulabschluss', rank: 1 },
-  { id: 'realschule', label: 'Realschulabschluss', rank: 2 },
-  { id: 'fachabitur', label: 'Fachhochschulreife', rank: 3 },
-  { id: 'abitur', label: 'Abitur', rank: 4 },
+  { id: 'none', de: 'Kein Abschluss', en: 'No certificate', rank: 0 },
+  { id: 'hauptschule', de: 'Hauptschulabschluss', en: 'Hauptschulabschluss (9th grade)', rank: 1 },
+  { id: 'realschule', de: 'Realschulabschluss', en: 'Realschulabschluss (10th grade)', rank: 2 },
+  { id: 'fachabitur', de: 'Fachhochschulreife', en: 'Fachhochschulreife', rank: 3 },
+  { id: 'abitur', de: 'Abitur', en: 'Abitur (13th grade)', rank: 4 },
 ];
 
-const LEADS_TO = {
-  iba: ['ausbildung', 'eq', 'fos'],
-  eq: ['ausbildung'],
-  fos: ['studium', 'ausbildung', 'freelancing'],
-  ausbildung: ['studium', 'freelancing', 'bundeswehr', 'gap-year'],
-  studium: ['freelancing', 'gap-year', 'ausbildung', 'bundeswehr'],
-  fsj: ['ausbildung', 'studium', 'freelancing', 'bundeswehr'],
-  freelancing: ['ausbildung', 'studium'],
-  bundeswehr: ['ausbildung', 'studium', 'freelancing'],
-  'gap-year': ['ausbildung', 'studium', 'fsj', 'freelancing', 'bundeswehr'],
-};
-
 export default function PathBuilder() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const [qualification, setQualification] = useState(null);
   const [journey, setJourney] = useState([]);
@@ -92,7 +82,7 @@ export default function PathBuilder() {
                   : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
               }`}
             >
-              {q.label}
+              {q[lang] || q.de}
             </button>
           ))}
         </div>
@@ -127,7 +117,7 @@ export default function PathBuilder() {
                       <div>
                         <span className="text-xs font-bold text-pf-primary uppercase tracking-wider">{t.builder.step} {i + 1}</span>
                         <h3 className="font-bold text-gray-800 text-lg">{path.name}</h3>
-                        <p className="text-sm text-gray-500 mt-0.5">{path.tagline}</p>
+                        <p className="text-sm text-gray-500 mt-0.5">{l(path.tagline, lang)}</p>
                       </div>
                     </div>
                     {i === journey.length - 1 && (
@@ -173,7 +163,7 @@ export default function PathBuilder() {
                       <span className="inline-block w-3 h-3 rounded-full" style={{ backgroundColor: color.border }} />
                       <span className="font-semibold text-sm text-gray-800">{path.name}</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1 ml-5">{path.tagline}</p>
+                    <p className="text-xs text-gray-500 mt-1 ml-5">{l(path.tagline, lang)}</p>
                   </button>
                 );
               })}

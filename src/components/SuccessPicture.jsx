@@ -5,7 +5,7 @@ import { SCREENS } from '../state/appReducer.js';
 import Reveal from './ui/Reveal.jsx';
 
 export default function SuccessPicture() {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -32,20 +32,22 @@ export default function SuccessPicture() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex flex-col items-center justify-center gap-6">
+      <div className="min-h-dvh flex flex-col items-center justify-center gap-6 px-6">
         <div className="animate-float">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-pf-light">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-pf-light shadow-lg shadow-pf-primary/10">
             <span className="text-4xl">{'\u{1F9ED}'}</span>
           </div>
         </div>
-        <p className="font-heading text-xl font-bold text-pf-text">
+        <p className="font-heading text-xl font-bold text-pf-text text-center">
           {t.loading?.finding || 'Finding your paths...'}
         </p>
-        <div className="relative flex gap-2">
-          <div className="absolute inset-0 -m-8 rounded-full opacity-50" style={{ background: 'radial-gradient(circle, rgba(15,107,91,0.05) 0%, transparent 70%)' }} />
-          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary relative" />
-          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary relative" />
-          <div className="loading-dot w-3 h-3 rounded-full bg-pf-primary relative" />
+        <div className="w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-pf-primary to-pf-accent rounded-full"
+            style={{
+              animation: 'loadingBar 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+            }}
+          />
         </div>
       </div>
     );
@@ -69,10 +71,16 @@ export default function SuccessPicture() {
         </Reveal>
       </div>
 
-      {/* Mobile header */}
       <div className="md:hidden px-6 pt-8 pb-2">
-        <h1 className="font-heading text-2xl font-bold text-pf-text mb-1">{t.successPicture.title}</h1>
-        <p className="text-sm text-gray-400">{t.successPicture.subtitle}</p>
+        <div className="flex items-start gap-3 mb-1">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-light shrink-0">
+            <span className="text-xl">{'\u{2728}'}</span>
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold text-pf-text">{t.successPicture.title}</h1>
+            <p className="text-sm text-gray-400">{t.successPicture.subtitle}</p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 md:p-14 flex flex-col max-w-xl">
@@ -95,6 +103,11 @@ export default function SuccessPicture() {
               style={{ minHeight: '180px' }}
             />
           </div>
+          {text.trim().length > 0 && (
+            <p className="text-xs text-gray-300 mt-1.5 text-right tabular-nums">
+              {text.trim().split(/\s+/).length} {lang === 'de' ? 'Wörter' : 'words'}
+            </p>
+          )}
 
           <div className="flex items-center gap-3 mt-auto pt-6">
             <button

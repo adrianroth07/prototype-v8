@@ -34,10 +34,16 @@ export default function Opener() {
         </Reveal>
       </div>
 
-      {/* Mobile header */}
       <div className="md:hidden px-6 pt-8 pb-4">
-        <h1 className="font-heading text-2xl font-bold text-pf-text mb-1">{t.opener.title}</h1>
-        <p className="text-sm text-gray-400">{t.opener.subtitle}</p>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-light shrink-0">
+            <span className="text-xl">{'\u{1F44B}'}</span>
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold text-pf-text">{t.opener.title}</h1>
+            <p className="text-sm text-gray-400">{t.opener.subtitle}</p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col justify-center p-6 md:p-14 gap-4 max-w-xl">
@@ -65,7 +71,7 @@ export default function Opener() {
         ))}
 
         <p className="text-xs text-gray-400 text-center mt-4 italic">
-          {t.common.canChange || 'You can always change this later.'}
+          {t.common.canChange}
         </p>
 
         <button

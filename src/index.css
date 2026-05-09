@@ -87,7 +87,6 @@ body::after {
 
 .reveal {
   opacity: 0;
-  will-change: transform, opacity, filter;
   transition:
     opacity var(--duration-reveal) var(--ease-smooth),
     transform var(--duration-reveal) var(--ease-smooth),
@@ -265,6 +264,15 @@ body::after {
 @keyframes borderGlow {
   0%, 100% { border-color: rgba(15, 107, 91, 0.1); }
   50% { border-color: rgba(15, 107, 91, 0.3); }
+}
+
+@keyframes bounceSoft {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+.animate-bounce-subtle {
+  animation: bounceSoft 2s ease-in-out infinite;
 }
 
 @keyframes ripple {
@@ -520,6 +528,13 @@ select:focus {
 .loading-dot:nth-child(2) { animation-delay: 0.2s; }
 .loading-dot:nth-child(3) { animation-delay: 0.4s; }
 
+@keyframes loadingBar {
+  0% { width: 0%; }
+  30% { width: 45%; }
+  60% { width: 75%; }
+  100% { width: 100%; }
+}
+
 /* ═══════════════════════════════════════════
    SECTION TRANSITIONS
    ═══════════════════════════════════════════ */
@@ -547,29 +562,31 @@ select:focus {
    FLOATING UI ELEMENTS — Hero decorations
    ═══════════════════════════════════════════ */
 
-.floating-badge {
-  animation: floatDrift 8s ease-in-out infinite;
-}
+@media (prefers-reduced-motion: no-preference) {
+  .floating-badge {
+    animation: floatDrift 8s ease-in-out infinite;
+  }
 
-.floating-badge-alt {
-  animation: floatDriftAlt 9s ease-in-out infinite;
-  animation-delay: -3s;
-}
+  .floating-badge-alt {
+    animation: floatDriftAlt 9s ease-in-out infinite;
+    animation-delay: -3s;
+  }
 
-.floating-badge-slow {
-  animation: floatSlow 10s ease-in-out infinite;
-  animation-delay: -5s;
-}
+  .floating-badge-slow {
+    animation: floatSlow 10s ease-in-out infinite;
+    animation-delay: -5s;
+  }
 
-.floating-emoji {
-  animation: floatDrift 7s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
-}
+  .floating-emoji {
+    animation: floatDrift 7s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
+  }
 
-.floating-emoji-alt {
-  animation: floatDriftAlt 8s ease-in-out infinite;
-  animation-delay: -2s;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
+  .floating-emoji-alt {
+    animation: floatDriftAlt 8s ease-in-out infinite;
+    animation-delay: -2s;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.06));
+  }
 }
 
 /* ═══════════════════════════════════════════

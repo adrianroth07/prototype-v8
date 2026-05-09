@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 const CERT_OPTIONS = ['none', 'hauptschule', 'realschule', 'fachabitur', 'abitur'];
+const CERT_PATH_COUNT = { none: 5, hauptschule: 7, realschule: 8, fachabitur: 9, abitur: 9 };
 const CERT_MAP = {
   none: null,
   hauptschule: 'Hauptschulabschluss',
@@ -74,6 +76,17 @@ export default function Qualifications() {
               <div className={`text-sm font-semibold ${cert === opt ? 'text-pf-primary' : 'text-gray-700'}`}>
                 {t.qualifications.certs[opt]}
               </div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-pf-primary rounded-full transition-all duration-500"
+                    style={{ width: `${(CERT_PATH_COUNT[opt] / 9) * 100}%` }}
+                  />
+                </div>
+                <span className={`text-[10px] font-bold tabular-nums shrink-0 ${cert === opt ? 'text-pf-primary' : 'text-gray-400'}`}>
+                  {CERT_PATH_COUNT[opt]}/9
+                </span>
+              </div>
               <div className={`text-xs mt-1 ${cert === opt ? 'text-pf-primary/70' : 'text-gray-400'}`}>
                 {lang === 'de' ? 'Ermöglicht: ' : 'Unlocks: '}{CERT_HINTS[lang]?.[opt] || CERT_HINTS.en[opt]}
               </div>
@@ -93,7 +106,7 @@ export default function Qualifications() {
           type="text"
           value={grade}
           onChange={(e) => setGrade(e.target.value)}
-          placeholder="z.B. 2,3"
+          placeholder={lang === 'de' ? 'z.B. 2,3' : 'e.g. 2.3'}
           className="w-36 rounded-xl border-2 border-gray-100 p-3.5 text-base focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
         />
       </div>
@@ -117,7 +130,7 @@ export default function Qualifications() {
                 <span className="text-lg">{result.open ? '\u{2705}' : '\u{274C}'}</span>
                 <div>
                   <span className="font-semibold">{path.name}</span>
-                  {result.note && <span className="ml-1.5 text-xs opacity-75">{result.note}</span>}
+                  {result.note && <span className="ml-1.5 text-xs opacity-75">{l(result.note, lang)}</span>}
                 </div>
               </div>
             );
@@ -131,12 +144,20 @@ export default function Qualifications() {
         {t.common.canChange}
       </p>
 
-      <button
-        onClick={proceed}
-        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
-      >
-        {t.qualifications.continueBtn}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.PATHS })}
+          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        >
+          {'←'} {t.common.back}
+        </button>
+        <button
+          onClick={proceed}
+          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        >
+          {t.qualifications.continueBtn}
+        </button>
+      </div>
       </Reveal>
     </div>
   );

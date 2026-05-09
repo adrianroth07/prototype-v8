@@ -64,6 +64,9 @@ export default function FieldNarrowing() {
             <div className="text-sm font-semibold text-gray-800">
               {t.fieldNarrowing.clusters[id]}
             </div>
+            <div className="text-xs text-gray-400 mt-1 leading-snug">
+              {t.fieldNarrowing.clusterDescs?.[id]}
+            </div>
             {selected.includes(id) && (
               <div className="mt-2 inline-flex items-center gap-1 text-xs text-pf-primary font-medium">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -83,12 +86,20 @@ export default function FieldNarrowing() {
       </div>
 
       <Reveal variant="up" delay={200}>
-      <button
-        onClick={proceed}
-        className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
-      >
-        {t.fieldNarrowing.continueBtn}
-      </button>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUALIFICATIONS })}
+          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        >
+          {'←'} {t.common.back}
+        </button>
+        <button
+          onClick={proceed}
+          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+        >
+          {t.fieldNarrowing.continueBtn}
+        </button>
+      </div>
       </Reveal>
     </div>
   );

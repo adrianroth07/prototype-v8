@@ -6,8 +6,10 @@ export default function LangToggle() {
   return (
     <button
       onClick={toggle}
-      className="fixed top-4 right-4 z-50 px-3 py-1.5 bg-white border-2 border-gray-200 rounded-full text-sm font-semibold text-gray-600 hover:border-gray-400 hover:text-gray-900 transition-all cursor-pointer shadow-sm"
+      aria-label={lang === 'de' ? 'Switch to English' : 'Auf Deutsch wechseln'}
+      className="fixed top-4 right-4 z-50 flex items-center gap-1.5 px-3.5 py-2 bg-white/90 backdrop-blur-sm border border-gray-200 rounded-full text-sm font-semibold text-gray-600 hover:border-pf-primary hover:text-pf-primary transition-all cursor-pointer shadow-sm"
     >
+      <span className="text-base leading-none">{lang === 'de' ? '\u{1F1EC}\u{1F1E7}' : '\u{1F1E9}\u{1F1EA}'}</span>
       {lang === 'de' ? 'EN' : 'DE'}
     </button>
   );

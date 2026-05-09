@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { ALL_PATHS_WITH_BRIDGES } from '../data/paths.js';
 import { pathColor } from '../data/colors.js';
+import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 export default function Browse() {
@@ -22,14 +23,25 @@ export default function Browse() {
     });
   };
 
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        if (comparing) setComparing(false);
+        else if (expanded) setExpanded(null);
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [comparing, expanded]);
+
   const selectedPaths = ALL_PATHS_WITH_BRIDGES.filter((p) => selected.includes(p.id));
 
   const comparisonRows = [
-    { key: 'tagline', label: lang === 'de' ? 'Beschreibung' : 'Description', get: (p) => p.tagline },
-    { key: 'income_now', label: t.comparison.headers.income, get: (p) => p.income_now },
-    { key: 'freedom', label: t.comparison.headers.freedom, get: (p) => p.freedom },
-    { key: 'flexibility', label: t.comparison.headers.flexibility, get: (p) => p.flexibility },
-    { key: 'outlook', label: t.comparison.headers.outlook, get: (p) => p.outlook },
+    { key: 'tagline', label: lang === 'de' ? 'Beschreibung' : 'Description', get: (p) => l(p.tagline, lang) },
+    { key: 'income_now', label: t.comparison.headers.income, get: (p) => l(p.income_now, lang) },
+    { key: 'freedom', label: t.comparison.headers.freedom, get: (p) => l(p.freedom, lang) },
+    { key: 'flexibility', label: t.comparison.headers.flexibility, get: (p) => l(p.flexibility, lang) },
+    { key: 'outlook', label: t.comparison.headers.outlook, get: (p) => l(p.outlook, lang) },
     {
       key: 'difficulty',
       label: lang === 'de' ? 'Schwierigkeit' : 'Difficulty',
@@ -45,7 +57,7 @@ export default function Browse() {
       label: lang === 'de' ? 'Startzeit' : 'Time to start',
       get: (p) => (p.timeToStart ? (p.timeToStart[lang] || p.timeToStart) : '\u{2014}'),
     },
-    { key: 'meta', label: 'Tags', get: (p) => p.meta },
+    { key: 'meta', label: 'Tags', get: (p) => l(p.meta, lang) },
   ];
 
   return (
@@ -80,10 +92,40 @@ export default function Browse() {
             </button>
           </div>
 
+          {/* Mobile: card-based comparison */}
           <Reveal>
-            <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm bg-white">
+            <div className="sm:hidden space-y-4">
+              {selectedPaths.map((path) => {
+                const color = pathColor(path.id);
+                return (
+                  <div key={path.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5" style={{ borderLeftWidth: '4px', borderLeftColor: color.border }}>
+                    <h3 className="font-heading font-bold text-gray-800 mb-3">{path.name}</h3>
+                    <div className="space-y-3">
+                      {comparisonRows.map(row => (
+                        <div key={row.key}>
+                          <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{row.label}</div>
+                          <div className="text-sm text-gray-700 mt-0.5 leading-relaxed">
+                            {row.key === 'difficulty' ? (
+                              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                                path.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                                path.difficulty === 'medium' ? 'bg-amber-100 text-amber-700' :
+                                path.difficulty === 'hard' ? 'bg-red-100 text-red-700' : 'text-gray-400'
+                              }`}>{row.get(path)}</span>
+                            ) : row.get(path)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Reveal>
+
+          {/* Desktop: table comparison */}
+          <Reveal>
+            <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-100 shadow-sm bg-white">
               <table className="w-full text-sm">
-                {/* Column headers — path names with color accent */}
                 <thead>
                   <tr>
                     <th className="text-left p-4 text-xs font-bold text-gray-400 uppercase tracking-wider bg-gray-50 border-b border-gray-100 min-w-[120px]">
@@ -92,16 +134,9 @@ export default function Browse() {
                     {selectedPaths.map((path) => {
                       const color = pathColor(path.id);
                       return (
-                        <th
-                          key={path.id}
-                          className="text-left p-4 border-b border-gray-100 min-w-[180px]"
-                          style={{ backgroundColor: color.bg }}
-                        >
+                        <th key={path.id} className="text-left p-4 border-b border-gray-100 min-w-[180px]" style={{ backgroundColor: color.bg }}>
                           <div className="flex items-center gap-2">
-                            <span
-                              className="inline-block w-3 h-3 rounded-full shrink-0"
-                              style={{ backgroundColor: color.border }}
-                            />
+                            <span className="inline-block w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: color.border }} />
                             <span className="font-heading font-bold text-gray-800">{path.name}</span>
                           </div>
                         </th>
@@ -112,31 +147,22 @@ export default function Browse() {
                 <tbody>
                   {comparisonRows.map((row, ri) => (
                     <tr key={row.key} className={ri % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}>
-                      <td className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-r border-gray-100">
-                        {row.label}
-                      </td>
+                      <td className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-r border-gray-100">{row.label}</td>
                       {selectedPaths.map((path) => (
                         <td key={path.id} className="p-4 text-gray-700 border-r border-gray-50 last:border-r-0">
                           {row.key === 'meta' ? (
                             <div className="flex flex-wrap gap-1.5">
-                              {path.meta.split(' \u{00B7} ').map((tag, j) => (
-                                <span key={j} className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">
-                                  {tag}
-                                </span>
+                              {l(path.meta, lang).split(' \u{00B7} ').map((tag, j) => (
+                                <span key={j} className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500">{tag}</span>
                               ))}
                             </div>
                           ) : row.key === 'difficulty' ? (
                             <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
                               path.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
                               path.difficulty === 'medium' ? 'bg-amber-100 text-amber-700' :
-                              path.difficulty === 'hard' ? 'bg-red-100 text-red-700' :
-                              'text-gray-400'
-                            }`}>
-                              {row.get(path)}
-                            </span>
-                          ) : (
-                            row.get(path)
-                          )}
+                              path.difficulty === 'hard' ? 'bg-red-100 text-red-700' : 'text-gray-400'
+                            }`}>{row.get(path)}</span>
+                          ) : row.get(path)}
                         </td>
                       ))}
                     </tr>
@@ -177,8 +203,8 @@ export default function Browse() {
               const q = filter.toLowerCase();
               return (
                 path.name.toLowerCase().includes(q) ||
-                path.tagline.toLowerCase().includes(q) ||
-                (path.description && path.description.toLowerCase().includes(q))
+                l(path.tagline, lang).toLowerCase().includes(q) ||
+                (path.description && l(path.description, lang).toLowerCase().includes(q))
               );
             }).map((path, i) => {
               const color = pathColor(path.id);
@@ -202,9 +228,9 @@ export default function Browse() {
                           </span>
                           <h3 className="font-heading text-lg font-bold text-gray-800">{path.name}</h3>
                         </div>
-                        <p className="text-sm text-gray-500">{path.tagline}</p>
+                        <p className="text-sm text-gray-500">{l(path.tagline, lang)}</p>
                         <div className="flex flex-wrap gap-2 mt-2">
-                          {path.meta.split(' \u{00B7} ').map((tag, j) => (
+                          {l(path.meta, lang).split(' \u{00B7} ').map((tag, j) => (
                             <span key={j} className="text-xs px-2.5 py-1 rounded-full bg-gray-50 text-gray-500 border border-gray-100">
                               {tag}
                             </span>
@@ -242,86 +268,100 @@ export default function Browse() {
                       </button>
                     </div>
 
-                    {isExpanded && (
-                      <div className="animate-fade-in mt-6 space-y-4">
-                        <p className="text-sm text-gray-600 leading-relaxed">{path.description}</p>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateRows: isExpanded ? '1fr' : '0fr',
+                        transition: 'grid-template-rows 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                      }}
+                    >
+                      <div style={{ overflow: 'hidden', minHeight: 0 }}>
+                        <div className="mt-6 space-y-4">
+                          <p className="text-sm text-gray-600 leading-relaxed">{l(path.description, lang)}</p>
 
-                        {(path.difficulty || path.timeToStart) && (
-                          <div className="flex flex-wrap gap-2">
-                            {path.difficulty && (
-                              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                                path.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-                                path.difficulty === 'medium' ? 'bg-amber-100 text-amber-700' :
-                                'bg-red-100 text-red-700'
-                              }`}>
-                                {path.difficulty === 'easy' ? (lang === 'de' ? 'Einfach' : 'Easy') :
-                                 path.difficulty === 'medium' ? (lang === 'de' ? 'Mittel' : 'Medium') :
-                                 (lang === 'de' ? 'Anspruchsvoll' : 'Challenging')}
-                              </span>
-                            )}
-                            {path.timeToStart && (
-                              <span className="text-xs px-2.5 py-1 rounded-full bg-pf-light text-pf-primary font-medium">
-                                {path.timeToStart[lang] || path.timeToStart}
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-3">
-                          {[
-                            { label: t.comparison.headers.income, value: path.income_now },
-                            { label: t.comparison.headers.freedom, value: path.freedom },
-                            { label: t.comparison.headers.flexibility, value: path.flexibility },
-                            { label: t.comparison.headers.outlook, value: path.outlook },
-                          ].map(item => (
-                            <div key={item.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                              <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{item.label}</div>
-                              <div className="text-sm text-gray-700">{item.value}</div>
+                          {(path.difficulty || path.timeToStart) && (
+                            <div className="flex flex-wrap gap-2">
+                              {path.difficulty && (
+                                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
+                                  path.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                                  path.difficulty === 'medium' ? 'bg-amber-100 text-amber-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {path.difficulty === 'easy' ? (lang === 'de' ? 'Einfach' : 'Easy') :
+                                   path.difficulty === 'medium' ? (lang === 'de' ? 'Mittel' : 'Medium') :
+                                   (lang === 'de' ? 'Anspruchsvoll' : 'Challenging')}
+                                </span>
+                              )}
+                              {path.timeToStart && (
+                                <span className="text-xs px-2.5 py-1 rounded-full bg-pf-light text-pf-primary font-medium">
+                                  {path.timeToStart[lang] || path.timeToStart}
+                                </span>
+                              )}
                             </div>
-                          ))}
-                        </div>
+                          )}
 
-                        {path.human_story && (
-                          <div className="p-4 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100">
-                            <p className="italic text-sm text-gray-600 leading-relaxed">"{path.human_story.quote}"</p>
-                            <p className="text-xs text-gray-400 mt-2 font-medium">{'\u{2014}'} {path.human_story.name}</p>
-                          </div>
-                        )}
-
-                        {path.branches && (
-                          <div className="space-y-2">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{lang === 'de' ? 'Formate' : 'Formats'}</p>
-                            {path.branches.map(b => (
-                              <div key={b.id} className="card-hover p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
-                                <div className="font-semibold text-sm text-gray-700">{b.name}</div>
-                                <p className="text-xs text-gray-500 mt-0.5">{b.desc}</p>
-                                <p className="text-xs text-gray-400 mt-1">{b.meta}</p>
+                          <div className="grid grid-cols-2 gap-3">
+                            {[
+                              { label: t.comparison.headers.income, value: l(path.income_now, lang) },
+                              { label: t.comparison.headers.freedom, value: l(path.freedom, lang) },
+                              { label: t.comparison.headers.flexibility, value: l(path.flexibility, lang) },
+                              { label: t.comparison.headers.outlook, value: l(path.outlook, lang) },
+                            ].map(item => (
+                              <div key={item.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
+                                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{item.label}</div>
+                                <div className="text-sm text-gray-700">{item.value}</div>
                               </div>
                             ))}
                           </div>
-                        )}
 
-                        {path.nextSteps && (
-                          <div className="pt-2">
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.paths.nextSteps}</p>
-                            <ul className="space-y-2">
-                              {path.nextSteps.map((step, j) => (
-                                <li key={j} className="flex gap-2.5 text-sm">
-                                  <span className="text-pf-primary shrink-0 mt-0.5">{'\u{2192}'}</span>
-                                  <span className="text-gray-500 leading-relaxed">{step}</span>
-                                </li>
+                          {path.human_story && (
+                            <div className="p-4 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100">
+                              <p className="italic text-sm text-gray-600 leading-relaxed">"{l(path.human_story.quote, lang)}"</p>
+                              <p className="text-xs text-gray-400 mt-2 font-medium">{'\u{2014}'} {path.human_story.name}</p>
+                            </div>
+                          )}
+
+                          {path.branches && (
+                            <div className="space-y-2">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{lang === 'de' ? 'Formate' : 'Formats'}</p>
+                              {path.branches.map(b => (
+                                <div key={b.id} className="card-hover p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+                                  <div className="font-semibold text-sm text-gray-700">{l(b.name, lang)}</div>
+                                  <p className="text-xs text-gray-500 mt-0.5">{l(b.desc, lang)}</p>
+                                  <p className="text-xs text-gray-400 mt-1">{l(b.meta, lang)}</p>
+                                </div>
                               ))}
-                            </ul>
-                          </div>
-                        )}
+                            </div>
+                          )}
+
+                          {path.nextSteps && (
+                            <div className="pt-2">
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.paths.nextSteps}</p>
+                              <ul className="space-y-2">
+                                {(l(path.nextSteps, lang) || []).map((step, j) => (
+                                  <li key={j} className="flex gap-2.5 text-sm">
+                                    <span className="text-pf-primary shrink-0 mt-0.5">{'\u{2192}'}</span>
+                                    <span className="text-gray-500 leading-relaxed">{step}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
+                    </div>
 
                     <button
                       onClick={() => setExpanded(isExpanded ? null : path.id)}
                       className="inline-flex items-center gap-1 text-xs text-pf-primary font-semibold mt-4 cursor-pointer hover:text-pf-dark transition-colors"
                     >
-                      {isExpanded ? '\u{25B2}' : '\u{25BC}'} {isExpanded ? t.browse.collapseBtn : t.browse.expandBtn}
+                      <svg
+                        className={`w-3 h-3 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                      {isExpanded ? t.browse.collapseBtn : t.browse.expandBtn}
                     </button>
                   </div>
                 </div>

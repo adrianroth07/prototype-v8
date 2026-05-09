@@ -24,6 +24,24 @@ export default function Quiz({ round }) {
     setShowWhy(false);
   }, [currentIndex, round]);
 
+  useEffect(() => {
+    function onKey(e) {
+      if (!question) return;
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= question.options.length) {
+        e.preventDefault();
+        selectOption(question.options[num - 1].id);
+      }
+      if (e.key === 'Enter' && selected.length > 0) {
+        e.preventDefault();
+        goNext();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
+
   if (!question) return null;
 
   const selected = answers[currentIndex] || [];
@@ -123,12 +141,12 @@ export default function Quiz({ round }) {
         <Reveal variant="blur">
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-pf-light text-pf-primary text-xs font-bold uppercase tracking-wider mb-4">
-              {question.word}
+              {question.word[lang]}
             </div>
             <h3 className="font-heading text-xl md:text-2xl font-bold text-gray-800 mb-2 tracking-tight">
-              {question.text}
+              {question.text[lang]}
             </h3>
-            <p className="text-sm text-gray-400 mb-8">{question.hint}</p>
+            <p className="text-sm text-gray-400 mb-8">{question.hint[lang]}</p>
           </div>
         </Reveal>
 
@@ -153,17 +171,19 @@ export default function Quiz({ round }) {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                    <div className={`w-5 h-5 ${question.multi ? 'rounded-md' : 'rounded-full'} border-2 flex items-center justify-center shrink-0 transition-all ${
                       isSelected ? 'border-pf-primary bg-pf-primary' : 'border-gray-300'
                     }`}>
-                      {isSelected && (
+                      {isSelected ? (
                         <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
+                      ) : (
+                        <span className="hidden md:inline text-[9px] text-gray-300 font-mono">{i + 1}</span>
                       )}
                     </div>
                     <span className={`text-base leading-relaxed ${isSelected ? 'text-pf-text font-medium' : 'text-gray-600'}`}>
-                      {opt.text}
+                      {opt.text[lang]}
                     </span>
                   </div>
                 </button>
@@ -174,13 +194,14 @@ export default function Quiz({ round }) {
 
         <button
           onClick={() => setShowWhy(!showWhy)}
+          aria-expanded={showWhy}
           className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer mb-4 self-start transition-colors"
         >
           {showWhy ? '\u{25B2}' : '\u{25BC}'} {t.quiz.whyWeAsk}
         </button>
         {showWhy && (
           <div className="text-xs text-gray-500 bg-white rounded-xl p-4 mb-4 border border-gray-100 leading-relaxed shadow-sm">
-            {question.why}
+            {question.why[lang]}
           </div>
         )}
 

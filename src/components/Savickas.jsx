@@ -38,10 +38,16 @@ export default function Savickas() {
         </Reveal>
       </div>
 
-      {/* Mobile header */}
       <div className="md:hidden px-6 pt-8 pb-2">
-        <h1 className="font-heading text-2xl font-bold text-pf-text mb-1">{t.savickas.title}</h1>
-        <p className="text-sm text-gray-400">{t.savickas.subtitle}</p>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-light shrink-0">
+            <span className="text-xl">{'\u{1F52E}'}</span>
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold text-pf-text">{t.savickas.title}</h1>
+            <p className="text-sm text-gray-400">{t.savickas.subtitle}</p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 md:p-14 flex flex-col gap-6 max-w-xl">
@@ -60,6 +66,7 @@ export default function Savickas() {
                   const val = e.target.value.slice(0, 200);
                   setFields({ ...fields, [key]: val });
                 }}
+                placeholder={t.savickas.placeholders?.[key] || ''}
                 rows={3}
                 maxLength={200}
                 className="w-full rounded-xl border-2 border-gray-100 border-l-[3px] border-l-pf-primary/30 p-4 text-base text-gray-700 leading-relaxed focus:border-pf-primary focus:border-l-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none resize-none bg-white shadow-sm transition-all placeholder:text-gray-300"

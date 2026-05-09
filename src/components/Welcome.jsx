@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
@@ -8,6 +9,15 @@ export default function Welcome() {
   const { t, lang } = useLang();
   const { dispatch } = usePathFinder();
   const nav = (screen) => dispatch({ type: 'NAVIGATE', screen });
+  const [showScrollHint, setShowScrollHint] = useState(true);
+
+  useEffect(() => {
+    function onScroll() {
+      if (window.scrollY > 100) setShowScrollHint(false);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <InfiniteGrid>
@@ -68,6 +78,15 @@ export default function Welcome() {
         <p className="animate-fade-in-up stagger-2 text-base text-gray-400 mb-10 max-w-md leading-relaxed text-balance">
           {t.landing.description}
         </p>
+
+        {/* Trust badges (mobile) */}
+        <div className="md:hidden flex justify-center gap-2.5 mb-6 animate-fade-in-up stagger-2">
+          {t.landing.trustBadges.map((badge, i) => (
+            <span key={i} className="text-xs px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-sm border border-gray-100 text-gray-500 font-medium shadow-sm">
+              {badge}
+            </span>
+          ))}
+        </div>
 
         {/* CTAs */}
         <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center gap-4 mb-10">
@@ -145,7 +164,18 @@ export default function Welcome() {
         </Reveal>
       </div>
 
-      <footer className="text-center text-xs text-gray-300 pb-8">
+      {showScrollHint && (
+        <div className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-40 animate-bounce-subtle">
+          <div className="flex flex-col items-center gap-1 text-gray-300">
+            <span className="text-xs font-medium">{lang === 'de' ? 'Mehr entdecken' : 'Scroll to explore'}</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+      )}
+
+      <footer className="text-center text-xs text-gray-400 pb-8">
         {t.landing.footer}
       </footer>
     </InfiniteGrid>

@@ -45,10 +45,16 @@ export default function Blocks() {
         </Reveal>
       </div>
 
-      {/* Mobile header */}
       <div className="md:hidden px-6 pt-8 pb-2">
-        <h1 className="font-heading text-2xl font-bold text-pf-text mb-1">{t.blocks.title}</h1>
-        <p className="text-sm text-gray-400">{t.blocks.subtitle}</p>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-light shrink-0">
+            <span className="text-xl">{'\u{1F6A7}'}</span>
+          </div>
+          <div>
+            <h1 className="font-heading text-2xl font-bold text-pf-text">{t.blocks.title}</h1>
+            <p className="text-sm text-gray-400">{t.blocks.subtitle}</p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 md:p-14 flex flex-col max-w-xl">
@@ -71,12 +77,21 @@ export default function Blocks() {
           </div>
         </Reveal>
 
+        {selected.length > 0 && (
+          <div className="mb-4 p-3 rounded-xl bg-pf-light/50 border border-pf-primary/10 animate-fade-in">
+            <p className="text-xs text-pf-primary font-medium leading-relaxed">
+              {t.blocks.reassurance}
+            </p>
+          </div>
+        )}
+
         <div className="mb-8">
           <label className="block text-sm font-semibold text-gray-700 mb-3">{t.blocks.otherLabel}</label>
           <input
             type="text"
             value={other}
             onChange={(e) => setOther(e.target.value)}
+            placeholder={t.blocks.otherPlaceholder || (t.blocks.otherLabel + '...')}
             className="w-full rounded-xl border-2 border-gray-100 p-4 text-base focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
           />
         </div>
