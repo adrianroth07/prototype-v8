@@ -11,7 +11,7 @@ import Reveal from './ui/Reveal.jsx';
 const CERT_LEVELS = [
   { id: 'bbr', label: 'BBR', fullLabel: '9. Klasse', rank: 1, emoji: '\u{1F4D7}', gradient: 'from-blue-50 to-indigo-50', border: 'border-blue-200' },
   { id: 'msa', label: 'MSA', fullLabel: '10. Klasse', rank: 2, emoji: '\u{1F4D8}', gradient: 'from-emerald-50 to-teal-50', border: 'border-emerald-200' },
-  { id: 'abitur', label: 'Abitur', fullLabel: '12./13. Klasse', rank: 4, emoji: '\u{1F4D5}', gradient: 'from-purple-50 to-pink-50', border: 'border-purple-200' },
+  { id: 'abitur', label: 'Abitur', fullLabel: '12./13. Klasse', rank: 4, emoji: '\u{1F4D5}', gradient: 'from-emerald-50 to-teal-50', border: 'border-emerald-200' },
 ];
 
 const HORIZON = {
@@ -320,6 +320,7 @@ export default function PathMap() {
                           <button
                             onClick={() => removeFromStep(i)}
                             className="sm:opacity-0 sm:group-hover:opacity-100 text-gray-300 hover:text-red-400 cursor-pointer transition-all p-1"
+                            aria-label={lang === 'de' ? 'Schritt entfernen' : 'Remove step'}
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -342,7 +343,7 @@ export default function PathMap() {
                     </div>
                     <div className="flex items-center gap-3 p-3.5 rounded-xl bg-gradient-to-r from-pf-light/60 to-white border border-pf-light/80">
                       <span className="text-xl">{HORIZON[lastStep.id]?.emoji || '\u{2728}'}</span>
-                      <p className="text-sm text-pf-text/80 leading-snug">{HORIZON[lastStep.id]?.[lang] || HORIZON[lastStep.id]?.text || (lang === 'de' ? 'Die Welt steht dir offen.' : 'The world is open.')}</p>
+                      <p className="text-sm text-pf-text/80 leading-snug">{HORIZON[lastStep.id]?.[lang] || HORIZON[lastStep.id]?.text || t.map.horizonFallback}</p>
                     </div>
                   </div>
                 )}
@@ -400,7 +401,7 @@ export default function PathMap() {
             </p>
 
             <div className="space-y-2.5 mb-6">
-              {availablePaths.map((path, i) => {
+              {availablePaths.map((path) => {
                 const color = pathColor(path.id);
                 const inJourney = journeyIds.has(path.id);
                 const isExpanded = expandedPath === path.id;
@@ -438,6 +439,8 @@ export default function PathMap() {
                         <button
                           onClick={() => setExpandedPath(isExpanded ? null : path.id)}
                           className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors p-1"
+                          aria-label={isExpanded ? (lang === 'de' ? 'Einklappen' : 'Collapse') : (lang === 'de' ? 'Aufklappen' : 'Expand')}
+                          aria-expanded={isExpanded}
                         >
                           <svg
                             className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -518,9 +521,7 @@ export default function PathMap() {
               <div className="mt-8">
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{'\u{1F512}'} {t.map.lockedTitle}</p>
                 <div className="space-y-2">
-                  {lockedPaths.map(path => {
-                    const color = pathColor(path.id);
-                    return (
+                  {lockedPaths.map(path => (
                       <div
                         key={path.id}
                         className="flex items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 bg-gray-50/50 opacity-50"
@@ -532,12 +533,11 @@ export default function PathMap() {
                           <h3 className="font-bold text-gray-600 text-sm">{path.name}</h3>
                           <p className="text-xs text-gray-400">{l(path.tagline, lang)}</p>
                           <p className="text-xs text-gray-400 mt-1">
-                            {lang === 'de' ? 'Benötigt: ' : 'Requires: '}{path.minCert}
+                            {t.map.requires}: {path.minCert}
                           </p>
                         </div>
                       </div>
-                    );
-                  })}
+                  ))}
                 </div>
               </div>
             )}

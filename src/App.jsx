@@ -4,6 +4,7 @@ import { usePathFinder } from './state/PathFinderContext.jsx';
 import { SCREENS } from './state/appReducer.js';
 import ScreenRouter from './components/ScreenRouter.jsx';
 import LangToggle from './components/LangToggle.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 
 const FLOW_SCREENS = [
   SCREENS.OPENER, SCREENS.QUIZ_R1, SCREENS.ROUND2_INTRO,
@@ -45,10 +46,12 @@ function AppShell() {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <PathFinderProvider>
-        <AppShell />
-      </PathFinderProvider>
-    </LanguageProvider>
+    <ErrorBoundary>
+      <LanguageProvider>
+        <PathFinderProvider>
+          <AppShell />
+        </PathFinderProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
   );
 }

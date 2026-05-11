@@ -5,11 +5,20 @@ import { SCREENS } from '../state/appReducer.js';
 import InfiniteGrid from './ui/InfiniteGrid.jsx';
 import Reveal from './ui/Reveal.jsx';
 
+function getResumeScreen(state) {
+  if (state.suggestedPaths?.length > 0) return SCREENS.PATHS;
+  if (Object.keys(state.round2Answers || {}).length > 0) return SCREENS.BLOCKS;
+  if (Object.keys(state.round1Answers || {}).length > 0) return SCREENS.QUIZ_R1;
+  if (state.userMode) return SCREENS.QUIZ_R1;
+  return null;
+}
+
 export default function Welcome() {
   const { t, lang } = useLang();
-  const { dispatch } = usePathFinder();
+  const { state, dispatch } = usePathFinder();
   const nav = (screen) => dispatch({ type: 'NAVIGATE', screen });
   const [showScrollHint, setShowScrollHint] = useState(true);
+  const resumeScreen = getResumeScreen(state);
 
   useEffect(() => {
     function onScroll() {
@@ -30,23 +39,17 @@ export default function Welcome() {
         <div className="hidden md:block absolute top-24 left-[6%] pointer-events-none floating-badge">
           <div className="card-glass rounded-xl px-4 py-3 shadow-lg border border-gray-100 text-left">
             <div className="text-lg mb-0.5">{'\u{1F9ED}'}</div>
-            <div className="font-heading font-bold text-sm text-gray-700">{lang === 'de' ? '6 Wege' : '6 Paths'}</div>
-            <div className="text-[10px] text-gray-400">{lang === 'de' ? 'nach dem Abi' : 'after school'}</div>
+            <div className="font-heading font-bold text-sm text-gray-700">{t.landing.badges.paths}</div>
+            <div className="text-[10px] text-gray-400">{t.landing.badges.afterSchool}</div>
           </div>
         </div>
 
-        <div className="hidden lg:block absolute top-[55%] left-[3%] pointer-events-none floating-badge-alt">
-          <div className="card-glass rounded-xl px-3.5 py-2.5 shadow-lg border border-gray-100 flex items-center gap-2">
-            <span className="text-base">{'\u{1F4AC}'}</span>
-            <span className="font-heading font-bold text-xs text-gray-600">{lang === 'de' ? 'KI-Chat' : 'AI Chat'}</span>
-          </div>
-        </div>
 
         {/* Right side — badge cards */}
         <div className="hidden md:block absolute top-36 right-[5%] pointer-events-none floating-badge-alt">
           <div className="card-glass rounded-xl px-4 py-3 shadow-lg border border-gray-100 text-left">
-            <div className="font-heading font-bold text-sm text-pf-primary">{lang === 'de' ? '100% kostenlos' : '100% free'}</div>
-            <div className="text-[10px] text-gray-400">{lang === 'de' ? 'Immer & überall' : 'Anytime & anywhere'}</div>
+            <div className="font-heading font-bold text-sm text-pf-primary">{t.landing.badges.free}</div>
+            <div className="text-[10px] text-gray-400">{t.landing.badges.anytime}</div>
           </div>
         </div>
 
@@ -54,7 +57,7 @@ export default function Welcome() {
           <div className="card-glass rounded-xl px-3.5 py-2.5 shadow-lg border border-gray-100 flex items-center gap-2">
             <span className="text-sm">{'\u{2705}'}</span>
             <div>
-              <div className="font-heading font-bold text-xs text-gray-700">{lang === 'de' ? 'Dein Match' : 'Your Match'}</div>
+              <div className="font-heading font-bold text-xs text-gray-700">{t.landing.badges.yourMatch}</div>
               <div className="text-[10px] text-gray-400">98%</div>
             </div>
           </div>
@@ -88,13 +91,34 @@ export default function Welcome() {
           ))}
         </div>
 
+        {/* Resume banner */}
+        {resumeScreen && (
+          <div className="animate-fade-in-up stagger-2 mb-4 w-full max-w-md">
+            <button
+              onClick={() => nav(resumeScreen)}
+              className="w-full flex items-center justify-between gap-3 px-5 py-3.5 rounded-xl bg-white/80 backdrop-blur-sm border border-pf-primary/20 shadow-sm hover:shadow-md hover:border-pf-primary/40 cursor-pointer transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-pf-primary animate-pulse" />
+                <span className="text-sm font-semibold text-pf-text">
+                  {t.landing.resumeBtn}
+                </span>
+              </div>
+              <span className="text-pf-primary group-hover:translate-x-0.5 transition-transform">{'\u{2192}'}</span>
+            </button>
+          </div>
+        )}
+
         {/* CTAs */}
         <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row items-center gap-4 mb-10">
           <button
-            onClick={() => nav(SCREENS.OPENER)}
-            className="btn-primary btn-glow w-full sm:w-auto px-12 py-4 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-bold rounded-xl shadow-lg shadow-pf-primary/20 cursor-pointer text-base"
+            onClick={() => {
+              if (resumeScreen) dispatch({ type: 'RESTART' });
+              nav(SCREENS.OPENER);
+            }}
+            className="btn-primary w-full sm:w-auto px-12 py-4 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-bold rounded-xl shadow-lg shadow-pf-primary/15 cursor-pointer text-base"
           >
-            {t.landing.startBtn}
+            {resumeScreen ? t.landing.restartBtn : t.landing.startBtn}
           </button>
           <button
             onClick={() => nav(SCREENS.BROWSE)}
@@ -167,7 +191,7 @@ export default function Welcome() {
       {showScrollHint && (
         <div className="md:hidden fixed bottom-8 left-1/2 -translate-x-1/2 z-40 animate-bounce-subtle">
           <div className="flex flex-col items-center gap-1 text-gray-300">
-            <span className="text-xs font-medium">{lang === 'de' ? 'Mehr entdecken' : 'Scroll to explore'}</span>
+            <span className="text-xs font-medium">{t.landing.scrollHint}</span>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7-7-7" />
             </svg>

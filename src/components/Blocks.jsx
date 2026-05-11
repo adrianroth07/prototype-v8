@@ -15,9 +15,9 @@ const BLOCK_EMOJIS = {
 
 export default function Blocks() {
   const { t } = useLang();
-  const { dispatch } = usePathFinder();
-  const [selected, setSelected] = useState([]);
-  const [other, setOther] = useState('');
+  const { state, dispatch } = usePathFinder();
+  const [selected, setSelected] = useState(state.blocks || []);
+  const [other, setOther] = useState(state.blocksOther || '');
 
   function toggleBlock(id) {
     setSelected(prev => prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]);
@@ -60,7 +60,7 @@ export default function Blocks() {
       <div className="flex-1 p-6 md:p-14 flex flex-col max-w-xl">
         <Reveal variant="scale">
           <div className="flex flex-wrap gap-3 mb-8">
-            {BLOCK_IDS.map((id, i) => (
+            {BLOCK_IDS.map((id) => (
               <button
                 key={id}
                 onClick={() => toggleBlock(id)}
@@ -98,8 +98,14 @@ export default function Blocks() {
 
         <div className="flex items-center gap-3 mt-auto pt-4">
           <button
+            onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUIZ_R2 })}
+            className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+          >
+            {'←'} {t.common.back}
+          </button>
+          <button
             onClick={proceed}
-            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+            className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
           >
             {t.blocks.continueBtn}
           </button>

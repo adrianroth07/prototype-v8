@@ -37,24 +37,24 @@ export default function Browse() {
   const selectedPaths = ALL_PATHS_WITH_BRIDGES.filter((p) => selected.includes(p.id));
 
   const comparisonRows = [
-    { key: 'tagline', label: lang === 'de' ? 'Beschreibung' : 'Description', get: (p) => l(p.tagline, lang) },
+    { key: 'tagline', label: t.browse.description, get: (p) => l(p.tagline, lang) },
     { key: 'income_now', label: t.comparison.headers.income, get: (p) => l(p.income_now, lang) },
     { key: 'freedom', label: t.comparison.headers.freedom, get: (p) => l(p.freedom, lang) },
     { key: 'flexibility', label: t.comparison.headers.flexibility, get: (p) => l(p.flexibility, lang) },
     { key: 'outlook', label: t.comparison.headers.outlook, get: (p) => l(p.outlook, lang) },
     {
       key: 'difficulty',
-      label: lang === 'de' ? 'Schwierigkeit' : 'Difficulty',
+      label: t.browse.difficulty,
       get: (p) => {
         if (!p.difficulty) return '\u{2014}';
-        if (p.difficulty === 'easy') return lang === 'de' ? 'Einfach' : 'Easy';
-        if (p.difficulty === 'medium') return lang === 'de' ? 'Mittel' : 'Medium';
-        return lang === 'de' ? 'Anspruchsvoll' : 'Challenging';
+        if (p.difficulty === 'easy') return t.browse.difficultyEasy;
+        if (p.difficulty === 'medium') return t.browse.difficultyMedium;
+        return t.browse.difficultyHard;
       },
     },
     {
       key: 'timeToStart',
-      label: lang === 'de' ? 'Startzeit' : 'Time to start',
+      label: t.browse.timeToStart,
       get: (p) => (p.timeToStart ? (p.timeToStart[lang] || p.timeToStart) : '\u{2014}'),
     },
     { key: 'meta', label: 'Tags', get: (p) => l(p.meta, lang) },
@@ -88,7 +88,7 @@ export default function Browse() {
               onClick={() => setComparing(false)}
               className="inline-flex items-center gap-1.5 text-sm text-pf-primary font-semibold cursor-pointer hover:text-pf-dark transition-colors"
             >
-              {'\u{2190}'} {lang === 'de' ? 'Zur\u{00FC}ck zur \u{00DC}bersicht' : 'Back to browse'}
+              {'\u{2190}'} {t.browse.backToBrowse}
             </button>
           </div>
 
@@ -180,7 +180,7 @@ export default function Browse() {
               }}
               className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
             >
-              {lang === 'de' ? 'Auswahl zur\u{00FC}cksetzen' : 'Clear selection'}
+              {t.browse.clearSelection}
             </button>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function Browse() {
               type="text"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              placeholder={lang === 'de' ? 'Wege durchsuchen...' : 'Search paths...'}
+              placeholder={t.browse.searchPlaceholder}
               className="w-full rounded-xl border-2 border-gray-100 p-3.5 text-sm focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
             />
           </Reveal>
@@ -254,10 +254,10 @@ export default function Browse() {
                           : (lang === 'de' ? `${path.name} ausw\u{00E4}hlen` : `Select ${path.name}`)
                         }
                         title={atMax
-                          ? (lang === 'de' ? 'Maximal 3 Wege' : 'Maximum 3 paths')
+                          ? t.browse.maxPaths
                           : isSelected
-                            ? (lang === 'de' ? 'Abw\u{00E4}hlen' : 'Deselect')
-                            : (lang === 'de' ? 'Zum Vergleich ausw\u{00E4}hlen' : 'Select to compare')
+                            ? t.browse.deselect
+                            : t.browse.selectToCompare
                         }
                       >
                         {isSelected && (
@@ -287,9 +287,9 @@ export default function Browse() {
                                   path.difficulty === 'medium' ? 'bg-amber-100 text-amber-700' :
                                   'bg-red-100 text-red-700'
                                 }`}>
-                                  {path.difficulty === 'easy' ? (lang === 'de' ? 'Einfach' : 'Easy') :
-                                   path.difficulty === 'medium' ? (lang === 'de' ? 'Mittel' : 'Medium') :
-                                   (lang === 'de' ? 'Anspruchsvoll' : 'Challenging')}
+                                  {path.difficulty === 'easy' ? t.browse.difficultyEasy :
+                                   path.difficulty === 'medium' ? t.browse.difficultyMedium :
+                                   t.browse.difficultyHard}
                                 </span>
                               )}
                               {path.timeToStart && (
@@ -323,7 +323,7 @@ export default function Browse() {
 
                           {path.branches && (
                             <div className="space-y-2">
-                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{lang === 'de' ? 'Formate' : 'Formats'}</p>
+                              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t.browse.formats}</p>
                               {path.branches.map(b => (
                                 <div key={b.id} className="card-hover p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
                                   <div className="font-semibold text-sm text-gray-700">{l(b.name, lang)}</div>
@@ -377,17 +377,17 @@ export default function Browse() {
             <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
               {(() => {
                 const deadlines = [
-                  { month: 'Mai', monthEn: 'May', emoji: '\u{1F4DA}', item: 'OSZ / IBA', desc: 'Anmeldung an Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', descEn: 'Registration at Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', color: '#3B82F6' },
-                  { month: 'Jul', monthEn: 'Jul', emoji: '\u{1F393}', item: 'Uni / FH', desc: 'Bewerbungsfrist f\u{00FC}r viele Studieng\u{00E4}nge (15. Juli)', descEn: 'Application deadline for many study programmes (July 15)', color: '#1B8A72' },
-                  { month: 'Jul\u{2013}Nov', monthEn: 'Jul\u{2013}Nov', emoji: '\u{1F6E0}\u{FE0F}', item: 'Ausbildung', desc: 'Hauptbewerbungszeit \u{2014} je fr\u{00FC}her, desto besser', descEn: 'Main application period \u{2014} the earlier, the better', color: '#F59E0B' },
-                  { month: 'Sep', monthEn: 'Sep', emoji: '\u{1F91D}', item: 'EQ', desc: 'Einstiegsqualifizierung startet am 1. Oktober \u{2014} vorher bewerben', descEn: 'Einstiegsqualifizierung starts October 1 \u{2014} apply before', color: '#0F6B5B' },
-                  { month: 'Ganzj\u{00E4}hrig', monthEn: 'Year-round', emoji: '\u{1F49A}', item: 'FSJ / BFD', desc: 'Pl\u{00E4}tze gibt es das ganze Jahr \u{2014} Hauptstart September', descEn: 'Places available year-round \u{2014} main start September', color: '#14B8A6' },
-                  { month: 'Ganzj\u{00E4}hrig', monthEn: 'Year-round', emoji: '\u{1F396}\u{FE0F}', item: 'Bundeswehr', desc: 'Karrierecenter beraten jederzeit \u{2014} Musterung nach 18', descEn: 'Career centres advise anytime \u{2014} Musterung after 18', color: '#64748B' },
+                  { month: { de: 'Mai', en: 'May' }, emoji: '\u{1F4DA}', item: 'OSZ / IBA', desc: { de: 'Anmeldung an Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)', en: 'Registration at Oberstufenzentren (IBA, FOS, Berufliches Gymnasium)' }, color: '#3B82F6' },
+                  { month: { de: 'Jul', en: 'Jul' }, emoji: '\u{1F393}', item: 'Uni / FH', desc: { de: 'Bewerbungsfrist f\u{00FC}r viele Studieng\u{00E4}nge (15. Juli)', en: 'Application deadline for many study programmes (July 15)' }, color: '#1B8A72' },
+                  { month: { de: 'Jul\u{2013}Nov', en: 'Jul\u{2013}Nov' }, emoji: '\u{1F6E0}\u{FE0F}', item: 'Ausbildung', desc: { de: 'Hauptbewerbungszeit \u{2014} je fr\u{00FC}her, desto besser', en: 'Main application period \u{2014} the earlier, the better' }, color: '#F59E0B' },
+                  { month: { de: 'Sep', en: 'Sep' }, emoji: '\u{1F91D}', item: 'EQ', desc: { de: 'Einstiegsqualifizierung startet am 1. Oktober \u{2014} vorher bewerben', en: 'Einstiegsqualifizierung starts October 1 \u{2014} apply before' }, color: '#0F6B5B' },
+                  { month: { de: 'Ganzj\u{00E4}hrig', en: 'Year-round' }, emoji: '\u{1F49A}', item: 'FSJ / BFD', desc: { de: 'Pl\u{00E4}tze gibt es das ganze Jahr \u{2014} Hauptstart September', en: 'Places available year-round \u{2014} main start September' }, color: '#14B8A6' },
+                  { month: { de: 'Ganzj\u{00E4}hrig', en: 'Year-round' }, emoji: '\u{1F396}\u{FE0F}', item: 'Bundeswehr', desc: { de: 'Karrierecenter beraten jederzeit \u{2014} Musterung nach 18', en: 'Career centres advise anytime \u{2014} Musterung after 18' }, color: '#64748B' },
                 ];
                 return deadlines.map((d, i) => (
                   <div key={i} className={`flex items-start gap-4 p-4 ${i > 0 ? 'border-t border-gray-50' : ''}`}>
                     <div className="shrink-0 w-20 text-right">
-                      <span className="text-xs font-bold text-pf-primary uppercase">{lang === 'de' ? d.month : d.monthEn}</span>
+                      <span className="text-xs font-bold text-pf-primary uppercase">{l(d.month, lang)}</span>
                     </div>
                     <div className="relative flex flex-col items-center shrink-0">
                       <span className="inline-block w-3 h-3 rounded-full border-2 border-white shadow-sm z-10" style={{ backgroundColor: d.color }} />
@@ -398,7 +398,7 @@ export default function Browse() {
                     <span className="text-lg shrink-0">{d.emoji}</span>
                     <div>
                       <div className="font-semibold text-sm text-gray-800">{d.item}</div>
-                      <p className="text-xs text-gray-500 mt-0.5">{lang === 'de' ? d.desc : d.descEn}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{l(d.desc, lang)}</p>
                     </div>
                   </div>
                 ));
@@ -439,7 +439,7 @@ export default function Browse() {
                   })}
                 </div>
                 <span className="text-xs text-gray-400 whitespace-nowrap">
-                  {selected.length} {lang === 'de' ? 'von' : 'of'} {ALL_PATHS_WITH_BRIDGES.length} {lang === 'de' ? 'ausgew\u{00E4}hlt' : 'selected'}
+                  {selected.length} {t.browse.of} {ALL_PATHS_WITH_BRIDGES.length} {t.browse.selectedLabel}
                 </span>
               </div>
 
@@ -448,18 +448,18 @@ export default function Browse() {
                   onClick={() => setSelected([])}
                   className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer transition-colors px-3 py-2"
                 >
-                  {lang === 'de' ? 'Zur\u{00FC}cksetzen' : 'Clear'}
+                  {t.browse.clear}
                 </button>
                 <button
                   onClick={() => { if (selected.length >= 2) setComparing(true); }}
                   disabled={selected.length < 2}
                   className={`btn-primary bg-gradient-to-b from-pf-primary to-pf-dark text-white text-xs font-semibold px-5 py-2 rounded-lg transition-all ${
                     selected.length >= 2
-                      ? 'btn-glow cursor-pointer'
+                      ? 'cursor-pointer shadow-lg shadow-pf-primary/10'
                       : 'opacity-40 cursor-not-allowed'
                   }`}
                 >
-                  {lang === 'de' ? 'Vergleichen' : 'Compare'}
+                  {t.browse.compare}
                 </button>
               </div>
             </div>

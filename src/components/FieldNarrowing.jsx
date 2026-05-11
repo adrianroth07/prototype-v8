@@ -16,7 +16,7 @@ const CLUSTER_EMOJIS = {
 const CLUSTER_COLORS = {
   'hands-on': 'from-orange-50 to-amber-50',
   'people': 'from-blue-50 to-indigo-50',
-  'creative': 'from-purple-50 to-pink-50',
+  'creative': 'from-rose-50 to-pink-50',
   'analytical': 'from-cyan-50 to-blue-50',
   'nature': 'from-green-50 to-emerald-50',
   'business': 'from-slate-50 to-gray-50',
@@ -24,8 +24,8 @@ const CLUSTER_COLORS = {
 
 export default function FieldNarrowing() {
   const { t, lang } = useLang();
-  const { dispatch } = usePathFinder();
-  const [selected, setSelected] = useState([]);
+  const { state, dispatch } = usePathFinder();
+  const [selected, setSelected] = useState(state.selectedClusters || []);
 
   function toggle(id) {
     setSelected(prev => prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]);
@@ -72,7 +72,7 @@ export default function FieldNarrowing() {
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
-                {lang === 'de' ? 'Ausgewählt' : 'Selected'}
+                {t.fieldNarrowing.selectedBadge}
               </div>
             )}
           </button>
@@ -82,11 +82,14 @@ export default function FieldNarrowing() {
 
       <div className="text-sm text-gray-500 mb-6 text-center">
         <span className={`font-semibold ${selected.length > 0 ? 'text-pf-primary' : ''}`}>{selected.length}</span>
-        {' '}{lang === 'de' ? 'von' : 'of'} 6
+        {' '}{t.fieldNarrowing.of} 6
+        {selected.length > 0 && (
+          <span className="ml-1 text-gray-300">{'·'} {t.fieldNarrowing.selectHint}</span>
+        )}
       </div>
 
       <Reveal variant="up" delay={200}>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUALIFICATIONS })}
           className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
@@ -95,7 +98,7 @@ export default function FieldNarrowing() {
         </button>
         <button
           onClick={proceed}
-          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+          className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
         >
           {t.fieldNarrowing.continueBtn}
         </button>

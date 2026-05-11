@@ -121,12 +121,15 @@ export default function Quiz({ round }) {
           <div className="h-2 bg-pf-dark rounded-full overflow-hidden">
             <div className="progress-bar-fill h-full bg-white rounded-full" style={{ width: `${progress}%` }} />
           </div>
+          <p className="text-[10px] text-pf-mid/50 mt-4">
+            {t.quiz.keyboardTip}
+          </p>
         </div>
       </div>
 
       {/* Mobile top bar */}
       <div className="md:hidden flex items-center gap-3 px-4 py-3 bg-pf-primary text-white sticky top-0 z-10">
-        <button onClick={goBack} className="text-white/70 hover:text-white cursor-pointer transition-colors p-1">
+        <button onClick={goBack} className="text-white/70 hover:text-white cursor-pointer transition-colors p-1" aria-label={lang === 'de' ? 'Zurück' : 'Back'}>
           {'\u{2190}'}
         </button>
         <span className="text-xs font-semibold text-white/80">
@@ -152,7 +155,7 @@ export default function Quiz({ round }) {
 
         {ENCOURAGE_AFTER.includes(currentIndex - 1) && (
           <p className="text-sm text-pf-primary text-center mb-4 font-medium">
-            {lang === 'de' ? 'Du machst das super! \u{1F4AA}' : "You're doing great! \u{1F4AA}"}
+            {t.quiz.encouragement[0]}
           </p>
         )}
 
@@ -210,7 +213,7 @@ export default function Quiz({ round }) {
           <button
             onClick={goNext}
             disabled={selected.length === 0}
-            className="btn-primary w-full md:w-auto px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all"
+            className="btn-primary w-full md:w-auto px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed disabled:shadow-none transition-all"
           >
             {t.quiz.next}
           </button>

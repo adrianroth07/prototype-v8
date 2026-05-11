@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 
@@ -66,12 +67,37 @@ function LoadingFallback() {
   );
 }
 
+const SCREEN_TITLES = {
+  WELCOME:        { de: 'PathFinder', en: 'PathFinder' },
+  OPENER:         { de: 'PathFinder — Start', en: 'PathFinder — Start' },
+  QUIZ_R1:        { de: 'PathFinder — Quiz', en: 'PathFinder — Quiz' },
+  ROUND2_INTRO:   { de: 'PathFinder — Checkpoint', en: 'PathFinder — Checkpoint' },
+  SAVICKAS:       { de: 'PathFinder — Reflexion', en: 'PathFinder — Reflection' },
+  QUIZ_R2:        { de: 'PathFinder — Quiz', en: 'PathFinder — Quiz' },
+  BLOCKS:         { de: 'PathFinder — Hürden', en: 'PathFinder — Barriers' },
+  SUCCESS_PICTURE:{ de: 'PathFinder — Vision', en: 'PathFinder — Vision' },
+  PATHS:          { de: 'PathFinder — Ergebnisse', en: 'PathFinder — Results' },
+  QUALIFICATIONS: { de: 'PathFinder — Qualifikationen', en: 'PathFinder — Qualifications' },
+  FIELD_NARROWING:{ de: 'PathFinder — Arbeitsstil', en: 'PathFinder — Work Style' },
+  COMPARISON:     { de: 'PathFinder — Vergleich', en: 'PathFinder — Comparison' },
+  STORIES:        { de: 'PathFinder — Geschichten', en: 'PathFinder — Stories' },
+  BROWSE:         { de: 'PathFinder — Alle Wege', en: 'PathFinder — All Paths' },
+  MAP:            { de: 'PathFinder — Karte', en: 'PathFinder — Map' },
+  PATH_BUILDER:   { de: 'PathFinder — Planer', en: 'PathFinder — Builder' },
+};
+
 export default function ScreenRouter() {
+  const { lang } = useLang();
   const { state } = usePathFinder();
   const [rendered, setRendered] = useState(state.screen);
   const [animState, setAnimState] = useState('visible');
   const [direction, setDirection] = useState('forward');
   const prevRef = useRef(state.screen);
+
+  useEffect(() => {
+    const titles = SCREEN_TITLES[state.screen];
+    document.title = titles?.[lang] || 'PathFinder';
+  }, [state.screen, lang]);
 
   useEffect(() => {
     if (state.screen !== rendered && animState === 'visible') {

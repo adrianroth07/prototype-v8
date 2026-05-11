@@ -124,6 +124,7 @@ export default function PathBuilder() {
                       <button
                         onClick={removeLastStep}
                         className="text-gray-300 hover:text-red-400 cursor-pointer transition-colors p-1"
+                        aria-label={lang === 'de' ? 'Schritt entfernen' : 'Remove step'}
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />

@@ -103,7 +103,7 @@ function RiasecRadar({ counts, labels }) {
   );
 }
 
-function CompassPanel({ riasecCounts, lifestyle, bestPath, t }) {
+function CompassPanel({ riasecCounts, lifestyle, bestPath, t, lang }) {
   const topTypes = Object.entries(riasecCounts)
     .filter(([k]) => k !== 'unsure')
     .sort((a, b) => b[1] - a[1])
@@ -112,27 +112,40 @@ function CompassPanel({ riasecCounts, lifestyle, bestPath, t }) {
   const anchorLabel = lifestyle?.anchor ? (t.paths.anchorLabels?.[lifestyle.anchor] || null) : null;
   const bestColor = pathColor(bestPath?.id);
 
+  const topLabels = topTypes.map(([type]) => t.paths.riasecLabels?.[type] || type);
+  const summaryText = topLabels.length > 0
+    ? `${t.paths.personalSummary} ${topLabels.join(' + ')}${anchorLabel ? ` · ${anchorLabel}` : ''}`
+    : null;
+
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
-      <div className="flex items-center gap-2">
-        <div className="w-2 h-2 rounded-full bg-pf-primary animate-pulse" />
-        <h3 className="font-heading text-sm font-bold text-gray-700 uppercase tracking-wider">
+    <div className="compass-panel p-6 space-y-5">
+      <div className="flex items-center gap-2.5">
+        <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-pf-light">
+          <span className="text-sm">{'\u{1F9ED}'}</span>
+        </div>
+        <h3 className="font-heading text-sm font-bold text-pf-text uppercase tracking-wider">
           {t.paths.compassTitle}
         </h3>
       </div>
 
       <RiasecRadar counts={riasecCounts} labels={t.paths.riasecLabels || {}} />
 
-      <div className="space-y-2">
-        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{t.paths.compassTraits}</p>
+      {summaryText && (
+        <p className="text-sm text-gray-600 leading-relaxed text-center italic">
+          {summaryText}
+        </p>
+      )}
+
+      <div className="space-y-2.5">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t.paths.compassTraits}</p>
         <div className="flex flex-wrap gap-1.5">
           {topTypes.map(([type]) => (
-            <span key={type} className="text-xs px-2.5 py-1 rounded-full bg-pf-light text-pf-primary font-medium">
+            <span key={type} className="text-xs px-3 py-1.5 rounded-full bg-pf-light text-pf-primary font-semibold">
               {t.paths.riasecLabels?.[type] || type}
             </span>
           ))}
           {anchorLabel && (
-            <span className="text-xs px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 font-medium">
+            <span className="text-xs px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 font-semibold">
               {anchorLabel}
             </span>
           )}
@@ -140,21 +153,21 @@ function CompassPanel({ riasecCounts, lifestyle, bestPath, t }) {
       </div>
 
       {bestPath && (
-        <div className="pt-3 border-t border-gray-100">
-          <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t.paths.compassBestMatch}</p>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: bestColor.border }} />
-            <span className="text-sm font-semibold text-gray-800">{bestPath.name}</span>
+        <div className="pt-4 border-t border-gray-100/80">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2.5">{t.paths.compassBestMatch}</p>
+          <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-pf-light/50">
+            <span className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: bestColor.border }} />
+            <span className="text-sm font-bold text-pf-text">{bestPath.name}</span>
           </div>
         </div>
       )}
 
-      <div className="pt-3 border-t border-gray-100 flex items-center gap-2">
+      <div className="pt-4 border-t border-gray-100/80 flex items-center gap-2.5">
         <div className="relative">
-          <div className="w-3 h-3 rounded-full bg-pf-primary" />
-          <div className="absolute inset-0 w-3 h-3 rounded-full bg-pf-primary animate-ping opacity-30" />
+          <div className="w-2.5 h-2.5 rounded-full bg-pf-primary" />
+          <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-pf-primary animate-ping opacity-25" />
         </div>
-        <span className="text-xs text-gray-400 font-medium">{t.paths.compassYouAreHere}</span>
+        <span className="text-xs text-gray-500 font-medium">{t.paths.compassYouAreHere}</span>
       </div>
     </div>
   );
@@ -182,14 +195,16 @@ function MetricIndicator({ value }) {
 function RouteMilestones({ steps, color }) {
   if (!steps?.length) return null;
   return (
-    <div className="relative pl-6">
-      <div className="absolute left-[7px] top-1 bottom-1 w-px" style={{ backgroundColor: color.border + '40' }} />
+    <div className="relative pl-7">
+      <div className="absolute left-[9px] top-2 bottom-2 w-px" style={{ backgroundColor: color.border + '30' }} />
       {steps.map((step, i) => (
-        <div key={i} className="relative pb-4 last:pb-0">
+        <div key={i} className="relative pb-5 last:pb-0 group/step">
           <div
-            className="absolute left-[-17px] top-1.5 w-2.5 h-2.5 rounded-full border-2 bg-white"
+            className="absolute left-[-19px] top-1 w-[18px] h-[18px] rounded-full border-2 bg-white flex items-center justify-center"
             style={{ borderColor: color.border }}
-          />
+          >
+            <span className="text-[8px] font-bold" style={{ color: color.border }}>{i + 1}</span>
+          </div>
           <p className="text-sm text-gray-600 leading-relaxed">{step}</p>
         </div>
       ))}
@@ -204,9 +219,7 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
 
   return (
     <div
-      className={`bg-white rounded-2xl border overflow-hidden transition-shadow duration-500 ${
-        isOpen ? 'shadow-md border-gray-200' : 'shadow-sm border-gray-100 hover:shadow-md'
-      }`}
+      className={`route-panel overflow-hidden ${isOpen ? 'route-active' : ''} ${isBest && !isOpen ? 'route-best' : ''}`}
       style={{ borderLeftWidth: '4px', borderLeftColor: color.border }}
     >
       <button
@@ -253,9 +266,13 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
                 {'⇄'} {t.paths.swapBtn}
               </span>
             )}
-            <span className="text-xs text-pf-primary font-semibold transition-transform">
-              {isOpen ? t.paths.closeRoute : t.paths.openRoute}
-            </span>
+            <svg
+              className="w-5 h-5 text-pf-primary transition-transform duration-300"
+              style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
         </div>
       </button>
@@ -280,7 +297,12 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
 
             {reason && (
               <div className="p-4 rounded-xl bg-gradient-to-r from-pf-light/50 to-transparent border border-pf-primary/10">
-                <p className="text-xs font-bold text-pf-primary uppercase tracking-wider mb-1.5">{t.paths.whyFits}</p>
+                <div className="flex items-center gap-2 mb-1.5">
+                  <svg className="w-3.5 h-3.5 text-pf-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="text-xs font-bold text-pf-primary uppercase tracking-wider">{t.paths.whyFits}</p>
+                </div>
                 <p className="text-sm text-gray-600 leading-relaxed">{l(reason, lang)}</p>
               </div>
             )}
@@ -302,27 +324,28 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2.5">
               {[
                 { label: t.comparison.headers.income, value: l(path.income_now, lang) },
                 { label: t.comparison.headers.freedom, value: l(path.freedom, lang) },
                 { label: t.comparison.headers.flexibility, value: l(path.flexibility, lang) },
                 { label: t.comparison.headers.outlook, value: l(path.outlook, lang) },
               ].map(item => (
-                <div key={item.label} className="p-3 rounded-xl bg-gray-50 border border-gray-100">
-                  <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">
-                    {item.label}
+                <div key={item.label} className="p-3 rounded-xl bg-warm-50 border border-gray-100/60">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{item.label}</span>
                     <MetricIndicator value={item.value} />
                   </div>
-                  <div className="text-xs text-gray-600">{item.value}</div>
+                  <div className="text-xs text-gray-700 font-medium">{item.value}</div>
                 </div>
               ))}
             </div>
 
             {path.human_story && (
-              <div className="p-4 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100">
-                <p className="italic text-sm text-gray-600 leading-relaxed">&ldquo;{l(path.human_story.quote, lang)}&rdquo;</p>
-                <p className="text-xs text-gray-400 mt-2 font-medium">{'—'} {path.human_story.name}</p>
+              <div className="relative p-5 rounded-xl bg-gradient-to-r from-surface to-surface-alt border border-gray-100 overflow-hidden">
+                <span className="absolute top-0 left-3 text-4xl text-pf-primary/15 font-serif leading-none select-none pointer-events-none">{'\u{201C}'}</span>
+                <p className="relative italic text-sm text-gray-600 leading-relaxed pl-4">&ldquo;{l(path.human_story.quote, lang)}&rdquo;</p>
+                <p className="text-xs text-gray-400 mt-2.5 pl-4 font-medium">{'—'} {path.human_story.name}</p>
               </div>
             )}
 
@@ -344,7 +367,9 @@ export default function Paths() {
   const { state, dispatch } = usePathFinder();
   const [swapTarget, setSwapTarget] = useState(null);
   const [showConfetti, setShowConfetti] = useState(true);
-  const [openRoute, setOpenRoute] = useState(null);
+  const [openRoute, setOpenRoute] = useState(() =>
+    state.suggestedPaths.length > 0 ? state.suggestedPaths[0].id : null
+  );
   const [expandedBridge, setExpandedBridge] = useState(null);
 
   useEffect(() => {
@@ -359,12 +384,7 @@ export default function Paths() {
     return () => window.removeEventListener('keydown', onKey);
   }, [swapTarget]);
 
-  useEffect(() => {
-    if (state.suggestedPaths.length > 0 && openRoute === null) {
-      setOpenRoute(state.suggestedPaths[0].id);
-    }
-  }, [state.suggestedPaths]);
-
+  const [copied, setCopied] = useState(false);
   const { suggestedPaths, wildcardPaths, reasons, riasecCounts, lifestyle } = state;
 
   function handleSwap(removeId, addPath) {
@@ -372,25 +392,40 @@ export default function Paths() {
     setSwapTarget(null);
   }
 
+  async function shareResults() {
+    const summary = suggestedPaths.map((p, i) => `${i + 1}. ${p.name} — ${l(p.tagline, lang)}`).join('\n');
+    const text = `${t.paths.shareTitle}:\n\n${summary}\n\n${t.paths.shareFooter}: ${window.location.origin}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'PathFinder', text }); return; } catch { /* user cancelled */ }
+    }
+    try { await navigator.clipboard.writeText(text); } catch { /* clipboard unavailable */ }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
   return (
     <div className="min-h-dvh relative">
       {showConfetti && <Confetti />}
 
-      <div className="px-6 md:px-12 pt-10 pb-6 max-w-6xl mx-auto">
+      <div className="px-6 md:px-12 pt-10 pb-8 max-w-6xl mx-auto">
         <Reveal>
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-2.5 mb-5">
             <div className="relative">
-              <div className="w-3 h-3 rounded-full bg-pf-primary" />
-              <div className="absolute inset-0 w-3 h-3 rounded-full bg-pf-primary animate-ping opacity-20" />
+              <div className="w-2.5 h-2.5 rounded-full bg-pf-primary" />
+              <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-pf-primary animate-ping opacity-20" />
             </div>
-            <span className="text-xs font-bold text-pf-primary uppercase tracking-widest">
+            <span className="text-[11px] font-bold text-pf-primary uppercase tracking-widest">
               {t.paths.compassYouAreHere}
             </span>
           </div>
           <h1 className="font-heading text-3xl md:text-4xl lg:text-5xl font-black text-pf-text tracking-tight mb-3">
             {t.paths.title}
           </h1>
-          <p className="text-gray-400 text-base md:text-lg max-w-xl">{t.paths.subtitle}</p>
+          <p className="text-gray-500 text-base md:text-lg max-w-xl leading-relaxed mb-2">{t.paths.subtitle}</p>
+          <p className="text-sm text-gray-400">
+            {suggestedPaths.length} {t.paths.routesForYou}
+            {wildcardPaths.length > 0 && ` · ${wildcardPaths.length} ${t.paths.hidden}`}
+          </p>
         </Reveal>
       </div>
 
@@ -399,12 +434,13 @@ export default function Paths() {
 
           <div className="lg:w-[280px] shrink-0">
             <div className="lg:sticky lg:top-8">
-              <Reveal variant="left" delay={200}>
+              <Reveal variant="left" delay={100}>
                 <CompassPanel
                   riasecCounts={riasecCounts || {}}
                   lifestyle={lifestyle}
                   bestPath={suggestedPaths[0]}
                   t={t}
+                  lang={lang}
                 />
               </Reveal>
             </div>
@@ -468,11 +504,17 @@ export default function Paths() {
             <section>
               <Reveal variant="up">
                 <div className="divider-gradient my-2" />
-                <h2 className="font-heading text-lg font-bold text-gray-700 mt-6 mb-1 flex items-center gap-2">
-                  <span className="w-8 h-px bg-gray-300" />
-                  {t.paths.bridgeTitle}
-                </h2>
-                <p className="text-sm text-gray-400 mb-5 pl-10">{t.paths.bridgeSubtitle}</p>
+                <div className="mt-6 mb-5 flex items-start gap-3 pl-1">
+                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 shrink-0 mt-0.5">
+                    <span className="text-sm">{'\u{1F309}'}</span>
+                  </div>
+                  <div>
+                    <h2 className="font-heading text-lg font-bold text-gray-700">
+                      {t.paths.bridgeTitle}
+                    </h2>
+                    <p className="text-sm text-gray-400">{t.paths.bridgeSubtitle}</p>
+                  </div>
+                </div>
               </Reveal>
               <div className="flex flex-col gap-3">
                 {BRIDGE_PATHS.map((path) => (
@@ -493,13 +535,37 @@ export default function Paths() {
             <div className="pt-4">
               <p className="text-sm text-gray-400 text-center italic mb-6">{t.common.noPathFinal}</p>
               <Reveal variant="scale">
-                <div className="text-center">
+                <div className="flex flex-col items-center gap-3">
                   <button
                     onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUALIFICATIONS })}
-                    className="btn-primary btn-glow px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+                    className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
                   >
                     {t.paths.confirmBtn}
                   </button>
+                  <button
+                    onClick={shareResults}
+                    className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1.5"
+                  >
+                    {copied ? (
+                      <>{'✓'} {t.paths.copiedMsg}</>
+                    ) : (
+                      <>{'↗'} {t.paths.shareBtn}</>
+                    )}
+                  </button>
+                  <div className="flex items-center gap-4 mt-2">
+                    <button
+                      onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.BROWSE })}
+                      className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors"
+                    >
+                      {t.paths.browseAll}
+                    </button>
+                    <button
+                      onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUIZ_R1 })}
+                      className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors"
+                    >
+                      {t.paths.retakeQuiz}
+                    </button>
+                  </div>
                 </div>
               </Reveal>
             </div>
@@ -518,7 +584,7 @@ export default function Paths() {
               return (
                 <div className="mb-4 p-3 rounded-xl border-l-4 bg-red-50/50 border border-red-100" style={{ borderLeftColor: removeColor.border }}>
                   <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
-                    {lang === 'de' ? 'Wird entfernt' : 'Removing'}
+                    {t.paths.removing}
                   </div>
                   <div className="font-semibold text-gray-800">{removePath.name}</div>
                   <div className="text-xs text-gray-500 mt-0.5">{l(removePath.tagline, lang)}</div>
@@ -526,7 +592,7 @@ export default function Paths() {
               );
             })()}
             <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-              {lang === 'de' ? 'Ersetzen durch' : 'Replace with'}
+              {t.paths.replaceWith}
             </div>
             <div className="flex flex-col gap-2">
               {wildcardPaths.map((wc) => {

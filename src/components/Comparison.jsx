@@ -25,7 +25,7 @@ const FINANCIAL_INFO = {
 };
 
 function extractEuro(text) {
-  const match = text.match(/[\d.,]+\s*[–\-]\s*[\d.,]+\s*€|[\d.,]+\s*€|bis\s+[\d.,]+\s*€|up\s+to\s+[\d.,]+\s*€/);
+  const match = text.match(/[\d.,]+\s*[–-]\s*[\d.,]+\s*€|[\d.,]+\s*€|bis\s+[\d.,]+\s*€|up\s+to\s+[\d.,]+\s*€/);
   if (!match) return { amount: null, rest: text };
   const amount = match[0];
   const rest = text.replace(amount, '').replace(/^\s*[:–\-·]\s*/, '').trim();
@@ -157,9 +157,7 @@ export default function Comparison() {
               <span className="font-heading font-bold text-sm text-pf-primary">Kindergeld</span>
             </div>
             <p className="text-xs text-pf-primary/70 leading-relaxed">
-              {lang === 'de'
-                ? '250€/Monat bis 25 Jahre — solange du in Ausbildung, Studium, FSJ oder Übergang bist. Gilt für alle Wege.'
-                : '250€/month until age 25 — as long as you\'re in training, studying, doing FSJ, or in transition. Applies to all paths.'}
+              {t.comparison.kindergeld}
             </p>
           </div>
         </div>
@@ -167,7 +165,7 @@ export default function Comparison() {
       </Reveal>
 
       <Reveal variant="up" delay={400}>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.FIELD_NARROWING })}
           className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
@@ -176,7 +174,7 @@ export default function Comparison() {
         </button>
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.STORIES })}
-          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+          className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
         >
           {t.comparison.continueBtn}
         </button>

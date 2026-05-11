@@ -4,27 +4,6 @@ import { cn } from '../../lib/utils.js';
 export default function InfiniteGrid({ children, className }) {
   const containerRef = useRef(null);
   const revealRef = useRef(null);
-  const staticRef = useRef(null);
-  const rafRef = useRef(null);
-  const offsetRef = useRef(0);
-
-  useEffect(() => {
-    const reveal = revealRef.current;
-    const staticGrid = staticRef.current;
-    if (!reveal || !staticGrid) return;
-
-    const animate = () => {
-      offsetRef.current = (offsetRef.current + 0.3) % 40;
-      const v = offsetRef.current;
-      const pos = `${v}px ${v}px`;
-      reveal.style.backgroundPosition = pos;
-      staticGrid.style.backgroundPosition = pos;
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(rafRef.current);
-  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -70,10 +49,9 @@ export default function InfiniteGrid({ children, className }) {
     >
       {/* Static grid — always visible, very faint */}
       <div
-        ref={staticRef}
         aria-hidden="true"
         className="absolute inset-0 z-0 opacity-[0.06]"
-        style={{ backgroundImage: gridBg, backgroundSize: '40px 40px' }}
+        style={{ backgroundImage: gridBg, backgroundSize: '40px 40px', animation: 'gridDrift 2.2s linear infinite' }}
       />
 
       {/* Mouse/touch-reveal grid — brighter, masked to cursor */}
@@ -84,17 +62,18 @@ export default function InfiniteGrid({ children, className }) {
         style={{
           backgroundImage: gridBg,
           backgroundSize: '40px 40px',
+          animation: 'gridDrift 2.2s linear infinite',
           maskImage: 'radial-gradient(350px circle at -1000px -1000px, black, transparent)',
           WebkitMaskImage: 'radial-gradient(350px circle at -1000px -1000px, black, transparent)',
         }}
       />
 
       {/* Ambient glow blobs */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute right-[-15%] top-[-15%] w-[35%] h-[35%] rounded-full bg-pf-primary/20 blur-[120px]" />
-        <div className="absolute right-[10%] top-[-5%] w-[18%] h-[18%] rounded-full bg-pf-mid/10 blur-[100px]" />
-        <div className="absolute left-[-10%] bottom-[-15%] w-[35%] h-[35%] rounded-full bg-pf-dark/8 blur-[120px]" />
-        <div className="absolute left-[30%] bottom-[10%] w-[20%] h-[20%] rounded-full bg-pf-mid/25 blur-[100px]" />
+      <div className="absolute inset-0 pointer-events-none z-0 will-change-transform">
+        <div className="absolute right-[-15%] top-[-15%] w-[35%] h-[35%] rounded-full bg-pf-primary/10 blur-[100px]" />
+        <div className="absolute right-[10%] top-[-5%] w-[18%] h-[18%] rounded-full bg-pf-mid/6 blur-[80px]" />
+        <div className="absolute left-[-10%] bottom-[-15%] w-[35%] h-[35%] rounded-full bg-pf-dark/5 blur-[100px]" />
+        <div className="absolute left-[30%] bottom-[10%] w-[20%] h-[20%] rounded-full bg-pf-mid/12 blur-[80px]" />
       </div>
 
       {/* Content */}

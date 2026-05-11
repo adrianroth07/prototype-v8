@@ -81,8 +81,14 @@ export default function Savickas() {
 
         <div className="flex items-center gap-3 mt-auto pt-4">
           <button
+            onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.ROUND2_INTRO })}
+            className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+          >
+            {'←'} {t.common.back}
+          </button>
+          <button
             onClick={proceed}
-            className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+            className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
           >
             {t.savickas.continueBtn}
           </button>

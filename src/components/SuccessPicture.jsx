@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
@@ -10,10 +10,19 @@ export default function SuccessPicture() {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [loadingStage, setLoadingStage] = useState(0);
+
+  useEffect(() => {
+    if (!loading) return;
+    const t1 = setTimeout(() => setLoadingStage(1), 600);
+    const t2 = setTimeout(() => setLoadingStage(2), 1200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [loading]);
 
   function proceed() {
     dispatch({ type: 'SET_SUCCESS_PICTURE', text });
     setLoading(true);
+    setLoadingStage(0);
     dispatch({ type: 'COMPUTE_RESULTS' });
     setTimeout(() => {
       setLoading(false);
@@ -23,6 +32,7 @@ export default function SuccessPicture() {
 
   function skip() {
     setLoading(true);
+    setLoadingStage(0);
     dispatch({ type: 'COMPUTE_RESULTS' });
     setTimeout(() => {
       setLoading(false);
@@ -31,6 +41,7 @@ export default function SuccessPicture() {
   }
 
   if (loading) {
+    const stages = t.loading?.stages || [t.loading?.finding || 'Finding your paths...'];
     return (
       <div className="min-h-dvh flex flex-col items-center justify-center gap-6 px-6">
         <div className="animate-float">
@@ -38,8 +49,8 @@ export default function SuccessPicture() {
             <span className="text-4xl">{'\u{1F9ED}'}</span>
           </div>
         </div>
-        <p className="font-heading text-xl font-bold text-pf-text text-center">
-          {t.loading?.finding || 'Finding your paths...'}
+        <p key={loadingStage} className="font-heading text-xl font-bold text-pf-text text-center animate-fade-in">
+          {stages[loadingStage] || stages[0]}
         </p>
         <div className="w-48 h-1.5 bg-gray-100 rounded-full overflow-hidden">
           <div
@@ -105,14 +116,20 @@ export default function SuccessPicture() {
           </div>
           {text.trim().length > 0 && (
             <p className="text-xs text-gray-300 mt-1.5 text-right tabular-nums">
-              {text.trim().split(/\s+/).length} {lang === 'de' ? 'Wörter' : 'words'}
+              {text.trim().split(/\s+/).length} {t.successPicture.words}
             </p>
           )}
 
           <div className="flex items-center gap-3 mt-auto pt-6">
             <button
+              onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.BLOCKS })}
+              className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+            >
+              {'←'} {t.common.back}
+            </button>
+            <button
               onClick={proceed}
-              className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+              className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
             >
               {t.successPicture.continueBtn}
             </button>

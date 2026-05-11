@@ -34,8 +34,9 @@ const CERT_HINTS = {
 export default function Qualifications() {
   const { t, lang } = useLang();
   const { state, dispatch } = usePathFinder();
-  const [cert, setCert] = useState('none');
-  const [grade, setGrade] = useState('');
+  const savedCert = Object.entries(CERT_MAP).find(([, v]) => v === state.quals?.cert)?.[0] || 'none';
+  const [cert, setCert] = useState(savedCert);
+  const [grade, setGrade] = useState(state.quals?.overallGrade || '');
 
   function proceed() {
     dispatch({
@@ -88,7 +89,7 @@ export default function Qualifications() {
                 </span>
               </div>
               <div className={`text-xs mt-1 ${cert === opt ? 'text-pf-primary/70' : 'text-gray-400'}`}>
-                {lang === 'de' ? 'Ermöglicht: ' : 'Unlocks: '}{CERT_HINTS[lang]?.[opt] || CERT_HINTS.en[opt]}
+                {t.qualifications.unlocks} {CERT_HINTS[lang]?.[opt] || CERT_HINTS.en[opt]}
               </div>
             </button>
             </Reveal>
@@ -106,7 +107,7 @@ export default function Qualifications() {
           type="text"
           value={grade}
           onChange={(e) => setGrade(e.target.value)}
-          placeholder={lang === 'de' ? 'z.B. 2,3' : 'e.g. 2.3'}
+          placeholder={t.qualifications.gradePlaceholder}
           className="w-36 rounded-xl border-2 border-gray-100 p-3.5 text-base focus:border-pf-primary focus:ring-1 focus:ring-pf-light focus:outline-none bg-white shadow-sm transition-all placeholder:text-gray-300"
         />
       </div>
@@ -115,7 +116,7 @@ export default function Qualifications() {
       {state.filterResult && Object.keys(state.filterResult).length > 0 && (
         <Reveal variant="up" delay={300}>
         <div className="mb-10 space-y-3">
-          {state.suggestedPaths.map((path, i) => {
+          {state.suggestedPaths.map((path) => {
             const result = state.filterResult[path.id];
             if (!result) return null;
             return (
@@ -144,7 +145,7 @@ export default function Qualifications() {
         {t.common.canChange}
       </p>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.PATHS })}
           className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
@@ -153,7 +154,7 @@ export default function Qualifications() {
         </button>
         <button
           onClick={proceed}
-          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+          className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
         >
           {t.qualifications.continueBtn}
         </button>

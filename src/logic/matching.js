@@ -70,15 +70,23 @@ export function scorePaths(riasecCounts, anchor) {
     for (const type of path.riasecFit) score += riasecCounts[type] || 0;
     score += pathBoost[path.id] || 0;
     return { path, score };
-  }).sort((a, b) => b.score - a.score).map(x => x.path);
+  }).sort((a, b) => b.score - a.score);
 }
 
 export function suggestPaths(riasecCounts, lifestyle) {
-  const ranked = scorePaths(riasecCounts, lifestyle?.anchor);
-  if (lifestyle?.wantsIncomeNow) {
-    const incomeBoost = { high: 2, variable: 1, low: 0 };
-    ranked.sort((a, b) => (incomeBoost[b.incomeFit] || 0) - (incomeBoost[a.incomeFit] || 0));
-  }
+  const scored = scorePaths(riasecCounts, lifestyle?.anchor);
+  const incomeBoost = { high: 2, variable: 1, low: 0 };
+
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    if (lifestyle?.wantsIncomeNow)
+      return (incomeBoost[b.path.incomeFit] || 0) - (incomeBoost[a.path.incomeFit] || 0);
+    return 0;
+  });
+
+  let ranked = scored.filter(x => x.score > 0).map(x => x.path);
+  if (ranked.length < 3) ranked = scored.slice(0, 3).map(x => x.path);
+
   if (lifestyle?.studyOpen === false)
     ranked.sort((a, b) => (a.id === 'studium' ? 1 : 0) - (b.id === 'studium' ? 1 : 0));
   if (lifestyle?.explorer) {
@@ -90,12 +98,12 @@ export function suggestPaths(riasecCounts, lifestyle) {
 
 // Returns up to `count` wildcard paths (ranked paths not in the top 3)
 export function getWildcards(riasecCounts, suggestedPaths, anchor, count = 1) {
-  const ranked = scorePaths(riasecCounts, anchor);
+  const scored = scorePaths(riasecCounts, anchor);
   const suggestedIds = new Set(suggestedPaths.map(p => p.id));
   const wildcards = [];
-  for (const p of ranked) {
-    if (!suggestedIds.has(p.id)) {
-      wildcards.push(p);
+  for (const { path } of scored) {
+    if (!suggestedIds.has(path.id)) {
+      wildcards.push(path);
       if (wildcards.length >= count) break;
     }
   }

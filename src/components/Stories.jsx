@@ -32,9 +32,16 @@ export default function Stories() {
   const relevantStoryIds = new Set(
     state.suggestedPaths.flatMap(p => p.stories || [])
   );
+  const clusters = state.selectedClusters || [];
   const stories = Object.entries(STORIES)
     .filter(([id]) => relevantStoryIds.has(id))
-    .map(([id, story]) => ({ id, ...story }));
+    .map(([id, story]) => ({ id, ...story }))
+    .sort((a, b) => {
+      if (clusters.length === 0) return 0;
+      const aMatch = clusters.includes(a.cluster) ? 1 : 0;
+      const bMatch = clusters.includes(b.cluster) ? 1 : 0;
+      return bMatch - aMatch;
+    });
 
   return (
     <div className="min-h-dvh p-6 md:p-12 max-w-4xl mx-auto relative">
@@ -66,6 +73,9 @@ export default function Stories() {
                   <h3 className="font-heading font-bold text-gray-800 text-lg">{story.name}</h3>
                   <p className="text-sm text-gray-500">{l(story.role, lang)}</p>
                   <p className="text-xs text-gray-400 mt-0.5">{l(story.detail, lang)}</p>
+                  {story.background && (
+                    <p className="text-xs text-gray-400 mt-0.5">{l(story.background, lang)}</p>
+                  )}
                 </div>
               </div>
 
@@ -94,7 +104,7 @@ export default function Stories() {
         {stories.length === 0 && (
           <div className="animate-fade-in text-center py-12 text-gray-400">
             <span className="text-4xl block mb-3">{'\u{1F4AD}'}</span>
-            <p className="text-sm italic">{lang === 'de' ? 'Noch keine Geschichten für deine Wege.' : 'No stories available for your selected paths yet.'}</p>
+            <p className="text-sm italic">{t.stories.noStories}</p>
           </div>
         )}
       </div>
@@ -130,20 +140,28 @@ export default function Stories() {
         </div>
       </Reveal>
 
-      <p className="text-sm text-gray-400 text-center italic mb-6">
-        {t.common.noPathFinal}
-      </p>
+      <div className="p-6 rounded-xl bg-pf-light/50 border border-pf-primary/10 text-center mb-8">
+        <p className="text-sm text-gray-500 italic mb-1">
+          {t.common.noPathFinal}
+        </p>
+      </div>
 
-      <div className="flex flex-col sm:flex-row items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
         <button
           onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.PATHS })}
           className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
         >
-          {'←'} {lang === 'de' ? 'Zurück zu den Routen' : 'Back to routes'}
+          {'←'} {t.stories.backToRoutes}
+        </button>
+        <button
+          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.COMPARISON })}
+          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+        >
+          {'←'} {t.stories.toComparison}
         </button>
         <button
           onClick={() => dispatch({ type: 'RESTART' })}
-          className="btn-primary px-10 py-3.5 bg-pf-primary text-white font-semibold rounded-xl hover:bg-pf-dark shadow-lg shadow-pf-primary/15 cursor-pointer transition-all"
+          className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
         >
           {t.stories.restartBtn}
         </button>
