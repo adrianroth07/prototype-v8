@@ -77,6 +77,23 @@ export function suggestPaths(riasecCounts, lifestyle) {
   const scored = scorePaths(riasecCounts, lifestyle?.anchor);
   const incomeBoost = { high: 2, variable: 1, low: 0 };
 
+  if (lifestyle) {
+    const lifestyleBoosts = {};
+    if (lifestyle.prefersStructure) {
+      lifestyleBoosts['ausbildung'] = (lifestyleBoosts['ausbildung'] || 0) + 1;
+      lifestyleBoosts['bundeswehr'] = (lifestyleBoosts['bundeswehr'] || 0) + 1;
+    }
+    if (lifestyle.prefersFlexibility) {
+      lifestyleBoosts['freelancing'] = (lifestyleBoosts['freelancing'] || 0) + 1;
+      lifestyleBoosts['gap-year'] = (lifestyleBoosts['gap-year'] || 0) + 1;
+    }
+    if (lifestyle.riskAverse) {
+      lifestyleBoosts['ausbildung'] = (lifestyleBoosts['ausbildung'] || 0) + 1;
+      lifestyleBoosts['bundeswehr'] = (lifestyleBoosts['bundeswehr'] || 0) + 1;
+    }
+    for (const entry of scored) entry.score += lifestyleBoosts[entry.path.id] || 0;
+  }
+
   scored.sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;
     if (lifestyle?.wantsIncomeNow)
