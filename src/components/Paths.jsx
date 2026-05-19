@@ -412,7 +412,7 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
               </div>
             )}
 
-            {path.careerExamples && (
+            {path.careerExamples && path.id !== 'gap-year' && (
               <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100">
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{t.paths.careerOutcomes}</p>
                 <p className="text-xs text-gray-600 leading-relaxed">{typeof path.careerExamples === 'object' ? (path.careerExamples[lang] || path.careerExamples.en) : path.careerExamples}</p>
@@ -559,7 +559,7 @@ export default function Paths() {
                   if (dismissedPaths.has(path.id)) {
                     return (
                       <div key={path.id} className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50/60 text-sm text-gray-400">
-                        <span>{path.name} — {lang === 'de' ? 'ausgeblendet' : 'hidden'}</span>
+                        <span>{path.name} — {t.paths.dismissedLabel}</span>
                         <button
                           onClick={() => { const s = new Set(dismissedPaths); s.delete(path.id); setDismissedPaths(s); }}
                           className="text-xs text-pf-primary hover:underline cursor-pointer"

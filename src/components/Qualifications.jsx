@@ -121,7 +121,7 @@ export default function Qualifications() {
         </div>
         {isGermanCitizen === false && (
           <p className="mt-2 text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
-            {lang === 'de' ? 'Hinweis: Die Bundeswehr erfordert die deutsche Staatsbürgerschaft.' : 'Note: The Bundeswehr requires German citizenship.'}
+            {t.qualifications.bundeswehrCitizenNote}
           </p>
         )}
       </div>

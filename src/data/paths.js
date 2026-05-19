@@ -292,7 +292,7 @@ export const ALL_PATHS = [
     incomeFit: 'low',
     typical_day: { de: 'Vorlesungen, Seminare, Selbststudium', en: 'Lectures, seminars, independent study' },
     income_now: { de: '0–992 €/Monat BAföG (einkommensabhängig der Eltern) · 600–1.200 €/Monat (Duales Studium)', en: '0–992 €/mo BAföG (means-tested, depends on parents\' income) · 600–1,200 €/mo (dual study)' },
-    careerExamples: { de: 'Software-Engineer · BWLer/in · Ingenieur/in · Lehrerin / Lehrer · Arzt / Ärztin', en: 'Software engineer · Business analyst · Engineer · Teacher · Doctor' },
+    careerExamples: { de: 'Software-Engineer · BWLer/in · Ingenieur/in · Lehrerin / Lehrer · Arzt / Ärztin', en: 'Software engineer · Business graduate · Engineer · Teacher · Doctor' },
     freedom: { de: 'Hoch (Uni/FH) — Gering (dual)', en: 'High (Uni/FH) — Low (dual)' },
     flexibility: { de: 'Fach wechseln möglich; Zeitaufwand hoch', en: 'Can change subject; time cost is high' },
     outlook: { de: 'Breit — abhängig von Fach und Format', en: 'Wide — depends on field and format' },

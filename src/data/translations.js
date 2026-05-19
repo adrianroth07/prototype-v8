@@ -142,7 +142,8 @@ export const translations = {
       pdfExport: 'Als PDF speichern',
       prevPath: 'Vorherige Route',
       nextPath: 'Nächste Route',
-      careerOutcomes: 'Mögliche Berufe',
+      careerOutcomes: 'Beispielberufe',
+      dismissedLabel: 'ausgeblendet',
       shareTitle: 'Meine PathFinder-Ergebnisse',
       shareFooter: 'Finde deinen Weg',
       riasecLabels: {
@@ -182,6 +183,7 @@ export const translations = {
       citizenLabel: 'Hast du die deutsche Staatsbürgerschaft?',
       citizenYes: 'Ja',
       citizenNo: 'Nein',
+      bundeswehrCitizenNote: 'Hinweis: Die Bundeswehr erfordert die deutsche Staatsbürgerschaft.',
     },
     fieldNarrowing: {
       title: 'Arbeitsstil',
@@ -465,6 +467,7 @@ export const translations = {
       prevPath: 'Previous route',
       nextPath: 'Next route',
       careerOutcomes: 'Career examples',
+      dismissedLabel: 'hidden',
       shareTitle: 'My PathFinder results',
       shareFooter: 'Find your path',
       riasecLabels: {
@@ -504,6 +507,7 @@ export const translations = {
       citizenLabel: 'Do you have German citizenship?',
       citizenYes: 'Yes',
       citizenNo: 'No',
+      bundeswehrCitizenNote: 'Note: The Bundeswehr requires German citizenship.',
     },
     fieldNarrowing: {
       title: 'Work style',
@@ -542,7 +546,7 @@ export const translations = {
         outlook: 'Outlook',
         financial: 'Funding',
         duration: 'Duration',
-        minCert: 'Entry req.',
+        minCert: 'Entry requirement',
       },
       financeTitle: 'Financial support',
       financeSubtitle: 'What you get — regardless of your path',
