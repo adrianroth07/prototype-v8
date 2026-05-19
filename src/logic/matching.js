@@ -96,6 +96,10 @@ export function suggestPaths(riasecCounts, lifestyle) {
       const studiumEntry = scored.find(x => x.path.id === 'studium');
       if (studiumEntry) studiumEntry.score -= 2;
     }
+    if (lifestyle.studyOpen === true) {
+      const studiumEntry = scored.find(x => x.path.id === 'studium');
+      if (studiumEntry) studiumEntry.score += 2;
+    }
   }
 
   scored.sort((a, b) => {
@@ -242,6 +246,13 @@ export function filterByQuals(paths, quals) {
   const userCertRank = CERT_RANK[quals.cert] ?? 0;
   const out = {};
   for (const path of paths) {
+    if (path.id === 'bundeswehr' && quals.isGermanCitizen === false) {
+      out[path.id] = { open: false, note: {
+        de: 'Die Bundeswehr erfordert die deutsche Staatsbürgerschaft.',
+        en: 'The Bundeswehr requires German citizenship.',
+      }};
+      continue;
+    }
     const open = userCertRank >= (CERT_RANK[path.minCert] ?? 0);
     let note = null;
     if (!open) {

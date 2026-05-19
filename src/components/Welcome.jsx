@@ -33,36 +33,6 @@ export default function Welcome() {
       {/* ── Hero section ── */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 pt-20 pb-12 text-center relative">
 
-        {/* ── Floating side elements (desktop only) ── */}
-
-        {/* Left side — badge cards */}
-        <div className="hidden md:block absolute top-24 left-[6%] pointer-events-none floating-badge">
-          <div className="card-glass rounded-xl px-4 py-3 shadow-lg border border-gray-100 text-left">
-            <div className="text-lg mb-0.5">{'\u{1F9ED}'}</div>
-            <div className="font-heading font-bold text-sm text-gray-700">{t.landing.badges.paths}</div>
-            <div className="text-[10px] text-gray-400">{t.landing.badges.afterSchool}</div>
-          </div>
-        </div>
-
-
-        {/* Right side — badge cards */}
-        <div className="hidden md:block absolute top-36 right-[5%] pointer-events-none floating-badge-alt">
-          <div className="card-glass rounded-xl px-4 py-3 shadow-lg border border-gray-100 text-left">
-            <div className="font-heading font-bold text-sm text-pf-primary">{t.landing.badges.free}</div>
-            <div className="text-[10px] text-gray-400">{t.landing.badges.anytime}</div>
-          </div>
-        </div>
-
-        <div className="hidden lg:block absolute top-[60%] right-[4%] pointer-events-none floating-badge-slow">
-          <div className="card-glass rounded-xl px-3.5 py-2.5 shadow-lg border border-gray-100 flex items-center gap-2">
-            <span className="text-sm">{'\u{2705}'}</span>
-            <div>
-              <div className="font-heading font-bold text-xs text-gray-700">{t.landing.badges.yourMatch}</div>
-              <div className="text-[10px] text-gray-400">98%</div>
-            </div>
-          </div>
-        </div>
-
         {/* ── Main content ── */}
         <div className="animate-float mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/80 shadow-lg shadow-pf-primary/8 backdrop-blur-sm">
@@ -81,15 +51,6 @@ export default function Welcome() {
         <p className="animate-fade-in-up stagger-2 text-base text-gray-400 mb-10 max-w-md leading-relaxed text-balance">
           {t.landing.description}
         </p>
-
-        {/* Trust badges (mobile) */}
-        <div className="md:hidden flex justify-center gap-2.5 mb-6 animate-fade-in-up stagger-2">
-          {t.landing.trustBadges.map((badge, i) => (
-            <span key={i} className="text-xs px-3 py-1.5 rounded-full bg-white/70 backdrop-blur-sm border border-gray-100 text-gray-500 font-medium shadow-sm">
-              {badge}
-            </span>
-          ))}
-        </div>
 
         {/* Resume banner */}
         {resumeScreen && (
@@ -122,7 +83,7 @@ export default function Welcome() {
           </button>
           <button
             onClick={() => nav(SCREENS.BROWSE)}
-            className="text-pf-primary hover:text-pf-dark font-semibold cursor-pointer transition-colors text-base"
+            className="text-gray-400 hover:text-gray-600 cursor-pointer transition-colors text-sm"
           >
             {t.landing.browseBtn} {'\u{2192}'}
           </button>

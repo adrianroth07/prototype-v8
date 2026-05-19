@@ -38,7 +38,7 @@ export function freshState() {
     suggestedPaths: [],
     wildcardPaths: [],
     reasons: {},
-    quals: { cert: null, overallGrade: '', langs: [], engLevel: '', experience: [], extras: [] },
+    quals: { cert: null, overallGrade: '', langs: [], engLevel: '', experience: [], extras: [], isGermanCitizen: null },
     filterResult: {},
     selectedClusters: [],
   };

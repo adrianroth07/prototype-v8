@@ -63,6 +63,7 @@ export const ROUND1_QUESTIONS = [
     text: { de: 'Welche Art von Problem macht dir wirklich Spaß zu lösen?', en: "Which kind of problem do you actually find satisfying to solve?" },
     hint: { de: 'Das, bei dem du die Zeit vergisst.', en: "The one that makes you lose track of time." },
     why: { de: 'Die Probleme, die dir Spaß machen, zeigen deine echten Interessen besser als jede Note.', en: "The problems you enjoy solving show your real interests better than any grade." },
+    vague: true,
     modeHint: {
       lena:  { de: 'Denk an echte Momente — nicht an eine ideale Version von dir.', en: "Think of real moments — not an ideal version of yourself." },
       malik: { de: 'Kommt das mit dem überein, womit du gerne Zeit verbringst?', en: "Does this line up with what you already like spending time on?" },
@@ -80,39 +81,17 @@ export const ROUND1_QUESTIONS = [
     ],
   },
   {
-    id: 'r1q4',
-    word: { de: 'FOKUS', en: 'FOCUS' },
-    text: { de: 'Womit würdest du am liebsten einen ganzen Nachmittag verbringen?', en: "Which of these would you most happily spend a whole afternoon on?" },
-    hint: { de: 'Mehrere Antworten möglich — was hält dich wirklich stundenlang?', en: "Multiple answers OK — what genuinely keeps you busy for hours?" },
-    why: { de: 'Was dich stundenlang beschäftigt hält, zeigt, welcher Weg zu dir passt.', en: "What keeps you focused for hours is a big clue about what path would fit you." },
-    modeHint: {
-      lena:  { de: 'Was tust du tatsächlich gerne — nicht was du glaubst, tun zu sollen?', en: "What do you actually like doing — not what you think you should?" },
-      malik: { de: 'Passt das zu dem, womit du in deiner Wunschkarriere arbeitest?', en: "Does this match what you'd work with in your ideal career?" },
-      clear: { de: 'Würdest du das in dem Bereich tun, den du anstrebst?', en: "Would you be doing this in the field you're aiming for?" },
-    },
-    multi: true,
-    options: [
-      { id: 'r1q4_r', text: { de: 'Ein Workshop mit Werkzeug — etwas bauen', en: "A hands-on workshop — tools, building something" }, type: 'R' },
-      { id: 'r1q4_i', text: { de: 'Ein kniffliges Mathe- oder Naturwissenschaftsproblem lösen', en: "A tough science or maths problem to crack" }, type: 'I' },
-      { id: 'r1q4_a', text: { de: 'Ein Kunst-, Musik-, Medien- oder Designprojekt', en: "An art, music, media or design project" }, type: 'A' },
-      { id: 'r1q4_s', text: { de: 'Eine Diskussion über etwas, das wirklich wichtig ist', en: "A discussion about something that really matters" }, type: 'S' },
-      { id: 'r1q4_e', text: { de: 'Eine Geschäftsidee oder einen Plan entwickeln', en: "Coming up with a business idea or plan" }, type: 'E' },
-      { id: 'r1q4_c', text: { de: 'Ein System bauen, das Ordnung in etwas bringt', en: "Building a system that makes sense of something" }, type: 'C' },
-      { id: 'r1q4_u', text: { de: 'Keins davon — ich würd lieber chillen oder Freunde treffen', en: "None of these — I'd rather chill or see friends" }, type: 'unsure' },
-    ],
-  },
-  {
     id: 'r1q5',
     word: { de: 'HELFEN', en: 'SUPPORT' },
     text: { de: 'Ein Freund bittet dich um Hilfe bei etwas Wichtigem. Du bist am besten, wenn...', en: "A friend asks for your help with something big. You're at your best when..." },
-    hint: { de: 'Worum kommen Leute wirklich zu dir?', en: "What do people actually come to you for?" },
+    hint: { de: 'Mehrere Antworten möglich — worum kommen Leute wirklich zu dir?', en: "Multiple answers OK — what do people actually come to you for?" },
     why: { de: 'Wobei Menschen dich um Hilfe bitten, ist oft eine Stärke, die du selbst gar nicht bemerkst.', en: "What people ask you for help with is often a strength you don't even notice." },
     modeHint: {
       lena:  { de: 'Worum bitten dich Leute tatsächlich — nicht worum du wünschst, sie würden dich bitten?', en: "What do people actually come to you for — not what you wish they did?" },
       malik: { de: 'Spiegelt das die Art von Arbeit wider, die du dir vorstellen kannst?', en: "Does this reflect the kind of work you can see yourself doing?" },
       clear: { de: 'Braucht die Rolle, die du im Sinn hast, diese Stärke?', en: "Does the role you have in mind need this strength?" },
     },
-    multi: false,
+    multi: true,
     options: [
       { id: 'r1q5_r', text: { de: 'Beim Reparieren oder Bauen von etwas Praktischem helfen', en: "Helping fix or build something practical" }, type: 'R' },
       { id: 'r1q5_i', text: { de: 'Optionen recherchieren und herausfinden, was Sinn ergibt', en: "Researching options and figuring out what makes sense" }, type: 'I' },
@@ -148,7 +127,7 @@ export const ROUND1_QUESTIONS = [
   {
     id: 'r1q7',
     word: { de: 'HANDELN', en: 'ACT' },
-    text: { de: 'Euer Gruppenprojekt steckt in der Klemme. Du greifst ein und...', en: "Your group project hits a problem. You step in to..." },
+    text: { de: 'Du arbeitest an etwas Eigenem — es läuft nicht wie geplant. Was tust du?', en: "You're working on something of your own — it's not going to plan. What do you do?" },
     hint: { de: 'Was du wirklich tun würdest, nicht was du glaubst, tun zu sollen.', en: "What you'd actually do, not what you think you should do." },
     why: { de: 'Wie du unter Druck reagierst, zeigt deine echten Instinkte — das, was man nicht vortäuschen kann.', en: "How you react under pressure shows your real instincts — the stuff you can't fake." },
     modeHint: {
@@ -172,7 +151,8 @@ export const ROUND1_QUESTIONS = [
     word: { de: 'FLOW', en: 'FLOW' },
     text: { de: "Du bist am meisten 'im Flow', wenn du...", en: "You feel most 'in the zone' when you're..." },
     hint: { de: 'Mehrere Antworten möglich — wähl alles, wo die Zeit wirklich vergeht.', en: "Multiple answers OK — pick everything where time actually disappears." },
-    why: { de: 'Wenn die Zeit vergeht, hast du deinen Sweet Spot gefunden. So fühlt sich ein passender Karriereweg an.', en: "When time disappears, you've found your sweet spot. That's what a good career path feels like." },
+    why: { de: '"Im Flow" bedeutet: du vergisst die Zeit, es fühlt sich leicht an — das zeigt, wo deine echten Stärken liegen.', en: '"In the zone" means time disappears and it feels effortless — that points to where your real strengths lie.' },
+    vague: true,
     modeHint: {
       lena:  { de: 'Kein Stress — es gibt kein richtig oder falsch hier.', en: "No stress — there's no right or wrong here." },
       malik: { de: 'Passt das Flow-Gefühl zu dem, was du dir vorstellst?', en: "Does this flow feeling match what you've been imagining?" },
@@ -193,14 +173,15 @@ export const ROUND1_QUESTIONS = [
     id: 'r1q9',
     word: { de: 'ICH', en: 'REFLECT' },
     text: { de: 'Welches davon klingt am meisten nach dir?', en: "Which of these sounds most like you?" },
-    hint: { de: 'Keine richtige Antwort — wähl die, die am besten passt.', en: "No right answer — pick the one that fits best." },
+    hint: { de: 'Mehrere Antworten möglich — es ist okay, wenn du dich in mehr als einem wiedererkennst.', en: "Multiple answers OK — it's fine if more than one fits you." },
     why: { de: 'Wie du dich selbst beschreibst, ist oft die ehrlichste Antwort — du kennst dich selbst am besten.', en: "How you describe yourself is often the most honest answer — you know yourself best." },
+    vague: true,
     modeHint: {
       lena:  { de: 'Auch wenn du unsicher bist — welches passt ein bisschen am besten?', en: "Even if you're unsure — which one fits just a little better?" },
       malik: { de: 'Passt das zu der Person, die du in deiner Wunschkarriere sein möchtest?', en: "Does this match the person you want to be in your imagined career?" },
       clear: { de: 'Bestätigt das die Richtung, die du bereits eingeschlagen hast?', en: "Does this confirm the direction you've already chosen?" },
     },
-    multi: false,
+    multi: true,
     options: [
       { id: 'r1q9_r', text: { de: 'Ich bin handwerklich begabt und mag es zu verstehen, wie Dinge funktionieren', en: "I'm good with my hands and like seeing how things work" }, type: 'R' },
       { id: 'r1q9_i', text: { de: 'Ich stelle viele Fragen und mag es, Dinge tief zu verstehen', en: "I ask a lot of questions and like understanding things deeply" }, type: 'I' },

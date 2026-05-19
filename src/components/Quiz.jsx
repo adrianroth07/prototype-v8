@@ -21,7 +21,7 @@ export default function Quiz({ round }) {
 
   useEffect(() => {
     setAnimKey(k => k + 1);
-    setShowWhy(false);
+    setShowWhy(question?.vague === true);
   }, [currentIndex, round]);
 
   useEffect(() => {
@@ -195,17 +195,31 @@ export default function Quiz({ round }) {
           </div>
         </Reveal>
 
-        <button
-          onClick={() => setShowWhy(!showWhy)}
-          aria-expanded={showWhy}
-          className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer mb-4 self-start transition-colors"
-        >
-          {showWhy ? '\u{25B2}' : '\u{25BC}'} {t.quiz.whyWeAsk}
-        </button>
-        {showWhy && (
-          <div className="text-xs text-gray-500 bg-white rounded-xl p-4 mb-4 border border-gray-100 leading-relaxed shadow-sm">
+        {question.vague ? (
+          <div className="text-xs text-gray-500 bg-pf-light/60 rounded-xl p-4 mb-4 border border-pf-primary/10 leading-relaxed">
             {question.why[lang]}
+            <button
+              onClick={() => setShowWhy(!showWhy)}
+              className="block mt-1.5 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+            >
+              {showWhy ? '\u{25B2} Ausblenden' : '\u{25BC} ' + t.quiz.whyWeAsk}
+            </button>
           </div>
+        ) : (
+          <>
+            <button
+              onClick={() => setShowWhy(!showWhy)}
+              aria-expanded={showWhy}
+              className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer mb-4 self-start transition-colors"
+            >
+              {showWhy ? '\u{25B2}' : '\u{25BC}'} {t.quiz.whyWeAsk}
+            </button>
+            {showWhy && (
+              <div className="text-xs text-gray-500 bg-white rounded-xl p-4 mb-4 border border-gray-100 leading-relaxed shadow-sm">
+                {question.why[lang]}
+              </div>
+            )}
+          </>
         )}
 
         {/* Sticky CTA on mobile */}

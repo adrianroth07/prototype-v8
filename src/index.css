@@ -500,3 +500,33 @@ select:focus {
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(15, 107, 91, 0.5);
 }
+
+/* ═══════════════════════════════════════════
+   PRINT — PDF export via window.print()
+   ═══════════════════════════════════════════ */
+
+@media print {
+  .no-print { display: none !important; }
+
+  body {
+    background: white;
+    font-size: 12px;
+  }
+
+  /* Expand all route panels */
+  [style*="grid-template-rows: 0fr"] {
+    grid-template-rows: 1fr !important;
+  }
+
+  /* Remove sticky/fixed elements */
+  .fixed, .sticky { position: static !important; }
+
+  /* Kill confetti canvas */
+  canvas { display: none !important; }
+
+  /* Remove animations */
+  * { animation: none !important; transition: none !important; }
+
+  /* Avoid page breaks inside cards */
+  .route-panel { page-break-inside: avoid; break-inside: avoid; }
+}

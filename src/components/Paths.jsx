@@ -273,7 +273,7 @@ function RouteMilestones({ steps, color }) {
   );
 }
 
-function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, hasWildcards, t, lang }) {
+function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, hasWildcards, onDismiss, onPrev, onNext, prevLabel, nextLabel, t, lang }) {
   const color = pathColor(path.id);
   const diffLabel = { easy: { de: 'Einfach', en: 'Easy' }, medium: { de: 'Mittel', en: 'Medium' }, hard: { de: 'Anspruchsvoll', en: 'Challenging' } };
   const diffColor = { easy: 'bg-green-100 text-green-700', medium: 'bg-amber-100 text-amber-700', hard: 'bg-red-100 text-red-700' };
@@ -412,10 +412,44 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
               </div>
             )}
 
+            {path.careerExamples && (
+              <div className="p-3.5 rounded-xl bg-gray-50 border border-gray-100">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">{t.paths.careerOutcomes}</p>
+                <p className="text-xs text-gray-600 leading-relaxed">{typeof path.careerExamples === 'object' ? (path.careerExamples[lang] || path.careerExamples.en) : path.careerExamples}</p>
+              </div>
+            )}
+
             {path.nextSteps && (
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t.paths.milestones}</p>
                 <RouteMilestones steps={l(path.nextSteps, lang)} color={color} />
+              </div>
+            )}
+
+            {(onDismiss || onPrev || onNext) && (
+              <div className="flex items-center justify-between pt-3 border-t border-gray-100 no-print">
+                <div className="flex items-center gap-2">
+                  {onPrev && (
+                    <button onClick={onPrev} className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1">
+                      {'←'} {prevLabel || t.paths.prevPath}
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  {onDismiss && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onDismiss(); }}
+                      className="text-xs text-gray-400 hover:text-red-500 cursor-pointer transition-colors border border-gray-200 hover:border-red-200 rounded-lg px-2.5 py-1"
+                    >
+                      {t.paths.notForMe}
+                    </button>
+                  )}
+                  {onNext && (
+                    <button onClick={onNext} className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1">
+                      {nextLabel || t.paths.nextPath} {'→'}
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -434,6 +468,7 @@ export default function Paths() {
     state.suggestedPaths.length > 0 ? state.suggestedPaths[0].id : null
   );
   const [expandedBridge, setExpandedBridge] = useState(null);
+  const [dismissedPaths, setDismissedPaths] = useState(new Set());
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3500);
@@ -485,6 +520,7 @@ export default function Paths() {
             {t.paths.title}
           </h1>
           <p className="text-gray-500 text-base md:text-lg max-w-xl leading-relaxed mb-2">{t.paths.subtitle}</p>
+          <p className="text-xs text-gray-400 italic mb-2">{t.paths.disclaimer}</p>
           <p className="text-sm text-gray-400">
             {suggestedPaths.length} {t.paths.routesForYou}
             {wildcardPaths.length > 0 && ` · ${wildcardPaths.length} ${t.paths.hidden}`}
@@ -519,22 +555,46 @@ export default function Paths() {
                 </h2>
               </Reveal>
               <div className="flex flex-col gap-4">
-                {suggestedPaths.map((path, i) => (
-                  <Reveal key={path.id} delay={i * 80}>
-                    <RoutePanel
-                      path={path}
-                      index={i}
-                      reason={reasons[path.id]}
-                      isOpen={openRoute === path.id}
-                      onToggle={() => setOpenRoute(openRoute === path.id ? null : path.id)}
-                      isBest={i === 0}
-                      onSwap={wildcardPaths.length > 0 ? setSwapTarget : null}
-                      hasWildcards={wildcardPaths.length > 0}
-                      t={t}
-                      lang={lang}
-                    />
-                  </Reveal>
-                ))}
+                {suggestedPaths.map((path, i) => {
+                  if (dismissedPaths.has(path.id)) {
+                    return (
+                      <div key={path.id} className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50/60 text-sm text-gray-400">
+                        <span>{path.name} — {lang === 'de' ? 'ausgeblendet' : 'hidden'}</span>
+                        <button
+                          onClick={() => { const s = new Set(dismissedPaths); s.delete(path.id); setDismissedPaths(s); }}
+                          className="text-xs text-pf-primary hover:underline cursor-pointer"
+                        >
+                          {t.paths.notForMeUndo}
+                        </button>
+                      </div>
+                    );
+                  }
+                  const visibleList = suggestedPaths.filter(p => !dismissedPaths.has(p.id));
+                  const visibleIdx = visibleList.findIndex(p => p.id === path.id);
+                  const prevPath = visibleIdx > 0 ? visibleList[visibleIdx - 1] : null;
+                  const nextPath = visibleIdx < visibleList.length - 1 ? visibleList[visibleIdx + 1] : null;
+                  return (
+                    <Reveal key={path.id} delay={i * 80}>
+                      <RoutePanel
+                        path={path}
+                        index={i}
+                        reason={reasons[path.id]}
+                        isOpen={openRoute === path.id}
+                        onToggle={() => setOpenRoute(openRoute === path.id ? null : path.id)}
+                        isBest={i === 0}
+                        onSwap={wildcardPaths.length > 0 ? setSwapTarget : null}
+                        hasWildcards={wildcardPaths.length > 0}
+                        onDismiss={() => { const s = new Set(dismissedPaths); s.add(path.id); setDismissedPaths(s); if (openRoute === path.id) setOpenRoute(null); }}
+                        onPrev={prevPath ? () => setOpenRoute(prevPath.id) : null}
+                        onNext={nextPath ? () => setOpenRoute(nextPath.id) : null}
+                        prevLabel={prevPath?.name}
+                        nextLabel={nextPath?.name}
+                        t={t}
+                        lang={lang}
+                      />
+                    </Reveal>
+                  );
+                })}
               </div>
             </section>
 
@@ -614,6 +674,12 @@ export default function Paths() {
                     ) : (
                       <>{'↗'} {t.paths.shareBtn}</>
                     )}
+                  </button>
+                  <button
+                    onClick={() => window.print()}
+                    className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1.5 no-print"
+                  >
+                    {'⬇'} {t.paths.pdfExport}
                   </button>
                   <div className="flex items-center gap-4 mt-2">
                     <button

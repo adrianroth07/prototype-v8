@@ -37,7 +37,14 @@ export default function Comparison() {
   const { state, dispatch } = usePathFinder();
   const paths = state.suggestedPaths;
 
+  const CERT_LABEL = {
+    de: { null: 'Kein Abschluss nötig', 'Hauptschulabschluss': 'Hauptschulabschluss', 'Realschulabschluss': 'Realschulabschluss', 'Fachhochschulreife': 'Fachhochschulreife', 'Abitur': 'Abitur' },
+    en: { null: 'No qualification required', 'Hauptschulabschluss': 'Hauptschulabschluss', 'Realschulabschluss': 'Realschulabschluss', 'Fachhochschulreife': 'Fachhochschulreife', 'Abitur': 'Abitur' },
+  };
+
   const rows = [
+    { key: 'duration', accessor: (p) => typeof p.timeToStart === 'object' ? (p.timeToStart[lang] || p.timeToStart.en) : (p.timeToStart || '—') },
+    { key: 'minCert', accessor: (p) => CERT_LABEL[lang]?.[String(p.minCert)] || (lang === 'de' ? 'Kein Abschluss nötig' : 'No qualification required') },
     { key: 'typicalDay', accessor: (p) => l(p.typical_day, lang) },
     { key: 'income', accessor: (p) => l(p.income_now, lang) },
     { key: 'freedom', accessor: (p) => l(p.freedom, lang) },

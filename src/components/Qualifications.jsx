@@ -37,11 +37,12 @@ export default function Qualifications() {
   const savedCert = Object.entries(CERT_MAP).find(([, v]) => v === state.quals?.cert)?.[0] || 'none';
   const [cert, setCert] = useState(savedCert);
   const [grade, setGrade] = useState(state.quals?.overallGrade || '');
+  const [isGermanCitizen, setIsGermanCitizen] = useState(state.quals?.isGermanCitizen ?? null);
 
   function proceed() {
     dispatch({
       type: 'SET_QUALS',
-      quals: { ...state.quals, cert: CERT_MAP[cert], overallGrade: grade },
+      quals: { ...state.quals, cert: CERT_MAP[cert], overallGrade: grade, isGermanCitizen },
     });
     dispatch({ type: 'NAVIGATE', screen: SCREENS.FIELD_NARROWING });
   }
@@ -95,6 +96,34 @@ export default function Qualifications() {
             </Reveal>
           ))}
         </div>
+      </div>
+      </Reveal>
+
+      <Reveal variant="up" delay={150}>
+      <div className="mb-8">
+        <label className="block text-sm font-semibold text-gray-700 mb-3">
+          {t.qualifications.citizenLabel}
+        </label>
+        <div className="flex gap-3">
+          {[{ val: true, key: 'citizenYes' }, { val: false, key: 'citizenNo' }].map(({ val, key }) => (
+            <button
+              key={key}
+              onClick={() => setIsGermanCitizen(val)}
+              className={`px-6 py-3 rounded-xl border-2 text-sm font-semibold cursor-pointer transition-all ${
+                isGermanCitizen === val
+                  ? 'border-pf-primary bg-pf-light text-pf-primary shadow-sm shadow-pf-primary/10'
+                  : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200'
+              }`}
+            >
+              {t.qualifications[key]}
+            </button>
+          ))}
+        </div>
+        {isGermanCitizen === false && (
+          <p className="mt-2 text-xs text-amber-600 bg-amber-50 rounded-lg px-3 py-2">
+            {lang === 'de' ? 'Hinweis: Die Bundeswehr erfordert die deutsche Staatsbürgerschaft.' : 'Note: The Bundeswehr requires German citizenship.'}
+          </p>
+        )}
       </div>
       </Reveal>
 
