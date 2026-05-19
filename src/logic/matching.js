@@ -92,6 +92,10 @@ export function suggestPaths(riasecCounts, lifestyle) {
       lifestyleBoosts['bundeswehr'] = (lifestyleBoosts['bundeswehr'] || 0) + 1;
     }
     for (const entry of scored) entry.score += lifestyleBoosts[entry.path.id] || 0;
+    if (lifestyle.studyOpen === false) {
+      const studiumEntry = scored.find(x => x.path.id === 'studium');
+      if (studiumEntry) studiumEntry.score -= 2;
+    }
   }
 
   scored.sort((a, b) => {
@@ -103,9 +107,6 @@ export function suggestPaths(riasecCounts, lifestyle) {
 
   let ranked = scored.filter(x => x.score > 0).map(x => x.path);
   if (ranked.length < 3) ranked = scored.slice(0, 3).map(x => x.path);
-
-  if (lifestyle?.studyOpen === false)
-    ranked.sort((a, b) => (a.id === 'studium' ? 1 : 0) - (b.id === 'studium' ? 1 : 0));
   if (lifestyle?.explorer) {
     const gapIdx = ranked.findIndex(p => p.id === 'gap-year');
     if (gapIdx > 2) { const [gap] = ranked.splice(gapIdx, 1); ranked.splice(2, 0, gap); }

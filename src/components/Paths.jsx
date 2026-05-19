@@ -7,6 +7,67 @@ import { BRIDGE_PATHS } from '../data/paths.js';
 import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
+const STUDIUM_SUBTYPES = {
+  de: [
+    { id: 'bachelor', icon: '\u{1F393}', name: 'Bachelor (BSc / BA)', time: '3–4 Jahre', desc: 'Der klassische Einstieg. An Uni oder FH — gibt dir Breite, Theorie und ein anerkanntes Abschlusszeugnis.' },
+    { id: 'dual', icon: '\u{1F504}', name: 'Duales Studium', time: '3 Jahre', desc: 'Studium + Berufsausbildung gleichzeitig. Du verdienst von Anfang an und hast einen festen Betriebspartner.' },
+    { id: 'fh', icon: '\u{1F3D7}', name: 'Fachhochschule (FH)', time: '3–4 Jahre', desc: 'Mehr Praxis als die Uni, kleinere Kurse und enger mit der Industrie vernetzt.' },
+    { id: 'master', icon: '\u{1F52C}', name: 'Master', time: '+1,5–2 Jahre', desc: 'Vertiefung nach dem Bachelor — sinnvoll, wenn du in Forschung, Führung oder ein Spezialfeld willst.' },
+    { id: 'abroad', icon: '\u{2708}', name: 'Studium im Ausland', time: 'variabel', desc: 'Erasmus-Semester, vollständiges Studium oder ein Jahr mit Sprachkurs. Öffnet Türen global.' },
+  ],
+  en: [
+    { id: 'bachelor', icon: '\u{1F393}', name: 'Bachelor (BSc / BA)', time: '3–4 years', desc: 'The classic entry point. At university or Fachhochschule — breadth, theory, and a recognised degree.' },
+    { id: 'dual', icon: '\u{1F504}', name: 'Dual Study Programme', time: '3 years', desc: 'Study + apprenticeship at the same time. You earn from day one and have a real employer on board.' },
+    { id: 'fh', icon: '\u{1F3D7}', name: 'Fachhochschule (FH)', time: '3–4 years', desc: 'More hands-on than university, smaller classes, closer ties to industry.' },
+    { id: 'master', icon: '\u{1F52C}', name: "Master's Degree", time: '+1.5–2 years', desc: 'Deep specialisation after your bachelor — worth it for research, leadership, or niche fields.' },
+    { id: 'abroad', icon: '\u{2708}', name: 'Study Abroad', time: 'variable', desc: 'Erasmus semester, full degree abroad, or a gap year with language courses. Opens global doors.' },
+  ],
+};
+
+function StudiumSubTypes({ lang }) {
+  const [expanded, setExpanded] = useState(null);
+  const subtypes = STUDIUM_SUBTYPES[lang] || STUDIUM_SUBTYPES.en;
+  const label = lang === 'de' ? 'Welche Art von Studium?' : 'Which type of study?';
+
+  return (
+    <div className="rounded-xl border border-gray-100 overflow-hidden">
+      <div className="px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">{label}</p>
+      </div>
+      <div className="divide-y divide-gray-100">
+        {subtypes.map(sub => (
+          <div key={sub.id}>
+            <button
+              onClick={() => setExpanded(expanded === sub.id ? null : sub.id)}
+              className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-base">{sub.icon}</span>
+                <div>
+                  <span className="text-sm font-semibold text-gray-700">{sub.name}</span>
+                  <span className="ml-2 text-xs text-gray-400">{sub.time}</span>
+                </div>
+              </div>
+              <svg
+                className="w-4 h-4 text-gray-400 shrink-0 transition-transform duration-200"
+                style={{ transform: expanded === sub.id ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            {expanded === sub.id && (
+              <div className="px-4 pb-3">
+                <p className="text-sm text-gray-500 leading-relaxed pl-8">{sub.desc}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Confetti() {
   const canvasRef = useRef(null);
   useEffect(() => {
@@ -308,6 +369,8 @@ function RoutePanel({ path, index, reason, isOpen, onToggle, isBest, onSwap, has
             )}
 
             <p className="text-sm text-gray-600 leading-relaxed">{l(path.description, lang)}</p>
+
+            {path.id === 'studium' && <StudiumSubTypes lang={lang} />}
 
             {(path.difficulty || path.timeToStart) && (
               <div className="flex flex-wrap gap-2">

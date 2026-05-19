@@ -128,59 +128,19 @@ export default function Welcome() {
           </button>
         </div>
 
-        {/* ── Tool cards — PathMap & PathBuilder ── */}
-        <Reveal variant="up" delay={100}>
-          <div className="max-w-xl w-full mb-12">
-            <h2 className="font-heading text-xs font-bold text-gray-400 uppercase tracking-widest mb-5">
-              {t.landing.tools.title}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={() => nav(SCREENS.MAP)}
-                className="card-hover card-glass text-left p-5 rounded-xl border border-gray-100 shadow-sm cursor-pointer group transition-all hover:border-pf-primary hover:shadow-md"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-light ring-1 ring-pf-primary/10 group-hover:bg-pf-primary group-hover:ring-0 transition-colors">
-                    <span className="text-xl group-hover:brightness-0 group-hover:invert transition-all">{'\u{1F5FA}\u{FE0F}'}</span>
+        {/* ── How it works — compact 3-step strip ── */}
+        <Reveal variant="up" delay={150}>
+          <div className="max-w-lg w-full mb-10">
+            <div className="flex items-center justify-center gap-0">
+              {t.landing.steps.slice(0, 3).map((step, i) => (
+                <div key={i} className="flex items-center">
+                  <div className="flex flex-col items-center px-4 text-center">
+                    <div className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pf-light text-pf-primary text-xs font-bold mb-1.5 ring-1 ring-pf-primary/20">
+                      {i + 1}
+                    </div>
+                    <div className="text-xs font-semibold text-gray-600">{step.title}</div>
                   </div>
-                  <span className="font-heading font-bold text-gray-800 group-hover:text-pf-primary transition-colors">{t.landing.tools.map.title}</span>
-                </div>
-                <p className="text-sm text-gray-500 leading-relaxed">{t.landing.tools.map.desc}</p>
-              </button>
-
-              <button
-                onClick={() => nav(SCREENS.PATH_BUILDER)}
-                className="card-hover card-glass text-left p-5 rounded-xl border border-gray-100 shadow-sm cursor-pointer group transition-all hover:border-pf-accent hover:shadow-md"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-pf-accent-light ring-1 ring-pf-accent/10 group-hover:bg-pf-accent group-hover:ring-0 transition-colors">
-                    <span className="text-xl group-hover:brightness-0 group-hover:invert transition-all">{'\u{1F3D7}\u{FE0F}'}</span>
-                  </div>
-                  <span className="font-heading font-bold text-gray-800 group-hover:text-pf-accent transition-colors">{t.landing.tools.builder.title}</span>
-                </div>
-                <p className="text-sm text-gray-500 leading-relaxed">{t.landing.tools.builder.desc}</p>
-              </button>
-            </div>
-          </div>
-        </Reveal>
-
-        {/* ── How it works ── */}
-        <Reveal variant="up" delay={250}>
-          <div className="max-w-2xl w-full">
-            <h2 className="font-heading text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
-              {t.landing.howItWorks}
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {t.landing.steps.map((step, i) => (
-                <div
-                  key={i}
-                  className="bg-white/70 backdrop-blur-sm rounded-xl p-5 border border-gray-100 shadow-sm"
-                >
-                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-pf-primary to-pf-dark text-white text-xs font-bold mb-3">
-                    {i + 1}
-                  </div>
-                  <div className="font-heading font-bold text-sm text-gray-800 mb-1">{step.title}</div>
-                  <div className="text-xs text-gray-400 leading-relaxed">{step.desc}</div>
+                  {i < 2 && <div className="w-6 h-px bg-gray-200 shrink-0" />}
                 </div>
               ))}
             </div>
