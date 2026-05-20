@@ -89,6 +89,7 @@ function Confetti() {
       opacity: 1,
     }));
     let frame = 0;
+    let rafId;
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let alive = false;
@@ -106,10 +107,17 @@ function Confetti() {
         ctx.restore();
       }
       frame++;
-      if (alive && frame < 180) requestAnimationFrame(animate);
-      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (alive && frame < 180) {
+        rafId = requestAnimationFrame(animate);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
     }
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(rafId);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
   }, []);
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-50" style={{ width: '100vw', height: '100vh' }} />;
 }
@@ -466,7 +474,12 @@ export default function Paths() {
   const [openRoute, setOpenRoute] = useState(() =>
     state.suggestedPaths.length > 0 ? state.suggestedPaths[0].id : null
   );
-const [dismissedPaths, setDismissedPaths] = useState(new Set());
+  const [compassOpen, setCompassOpen] = useState(false);
+  const [dismissedPaths, setDismissedPaths] = useState(new Set());
+
+  useEffect(() => {
+    setDismissedPaths(new Set());
+  }, [state.suggestedPaths]);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3500);
@@ -531,15 +544,52 @@ const [dismissedPaths, setDismissedPaths] = useState(new Set());
 
           <div className="lg:w-[280px] shrink-0">
             <div className="lg:sticky lg:top-8">
-              <Reveal variant="left" delay={100}>
-                <CompassPanel
-                  riasecCounts={riasecCounts || {}}
-                  lifestyle={lifestyle}
-                  bestPath={suggestedPaths[0]}
-                  t={t}
-                  lang={lang}
-                />
-              </Reveal>
+              {/* Mobile collapse toggle */}
+              <button
+                onClick={() => setCompassOpen(o => !o)}
+                className="lg:hidden w-full flex items-center justify-between px-4 py-3 rounded-xl bg-white border border-gray-100 shadow-sm mb-1 cursor-pointer"
+                aria-expanded={compassOpen}
+              >
+                <span className="flex items-center gap-2 text-sm font-semibold text-pf-text">
+                  <span>{'\u{1F9ED}'}</span>
+                  {t.paths.compassTitle}
+                </span>
+                <svg
+                  className="w-4 h-4 text-pf-primary transition-transform duration-300"
+                  style={{ transform: compassOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              <div className="hidden lg:block">
+                <Reveal variant="left" delay={100}>
+                  <CompassPanel
+                    riasecCounts={riasecCounts || {}}
+                    lifestyle={lifestyle}
+                    bestPath={suggestedPaths[0]}
+                    t={t}
+                    lang={lang}
+                  />
+                </Reveal>
+              </div>
+              <div
+                className="lg:hidden overflow-hidden"
+                style={{
+                  maxHeight: compassOpen ? '600px' : '0px',
+                  transition: 'max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
+                }}
+              >
+                <div className="pt-1">
+                  <CompassPanel
+                    riasecCounts={riasecCounts || {}}
+                    lifestyle={lifestyle}
+                    bestPath={suggestedPaths[0]}
+                    t={t}
+                    lang={lang}
+                  />
+                </div>
+              </div>
             </div>
           </div>
 

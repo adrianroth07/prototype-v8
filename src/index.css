@@ -22,7 +22,7 @@
   --color-pf-primary: #0F6B5B;
   --color-pf-dark: #0A4F43;
   --color-pf-light: #E6F7F2;
-  --color-pf-mid: #B8DDD3;
+  --color-pf-mid: #8CB8AC;
   --color-pf-accent: #1B8A72;
   --color-pf-accent-light: #D1F0E7;
   --color-pf-text: #111827;
@@ -43,6 +43,8 @@
   --duration-normal: 0.4s;
   --duration-slow: 0.7s;
   --duration-reveal: 0.8s;
+  --stagger-sm: 80ms;
+  --stagger-md: 120ms;
 }
 
 body {
@@ -337,6 +339,17 @@ body::after {
   transition-duration: 0.1s;
 }
 
+.btn-secondary {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+}
+
+.btn-tertiary {
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+}
 
 /* ═══════════════════════════════════════════
    OPTION CARD — Quiz selections

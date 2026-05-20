@@ -77,13 +77,21 @@ export default function Blocks() {
           </div>
         </Reveal>
 
-        {selected.length > 0 && (
-          <div className="mb-4 p-3 rounded-xl bg-pf-light/50 border border-pf-primary/10 animate-fade-in">
+        <div
+          className="overflow-hidden transition-all duration-300"
+          style={{
+            maxHeight: selected.length > 0 ? '80px' : '0px',
+            opacity: selected.length > 0 ? 1 : 0,
+            marginBottom: selected.length > 0 ? '1rem' : '0',
+          }}
+          aria-live="polite"
+        >
+          <div className="p-3 rounded-xl bg-pf-light/50 border border-pf-primary/10">
             <p className="text-xs text-pf-primary font-medium leading-relaxed">
               {t.blocks.reassurance}
             </p>
           </div>
-        )}
+        </div>
 
         <div className="mb-8">
           <label className="block text-sm font-semibold text-gray-700 mb-3">{t.blocks.otherLabel}</label>
@@ -111,7 +119,7 @@ export default function Blocks() {
           </button>
           <button
             onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.SUCCESS_PICTURE })}
-            className="px-6 py-3.5 text-gray-400 hover:text-gray-600 font-medium cursor-pointer transition-colors"
+            className="btn-tertiary text-gray-400 hover:text-gray-600 font-medium cursor-pointer transition-colors"
           >
             {t.blocks.skipBtn}
           </button>

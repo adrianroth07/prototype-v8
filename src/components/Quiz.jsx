@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
@@ -24,33 +24,16 @@ export default function Quiz({ round }) {
     setShowWhy(question?.vague === true);
   }, [currentIndex, round]);
 
-  useEffect(() => {
-    function onKey(e) {
-      if (!question) return;
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      const num = parseInt(e.key);
-      if (num >= 1 && num <= question.options.length) {
-        e.preventDefault();
-        selectOption(question.options[num - 1].id);
-      }
-      if (e.key === 'Enter' && selected.length > 0) {
-        e.preventDefault();
-        goNext();
-      }
-    }
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  });
-
-  if (!question) return null;
-
   const selected = answers[currentIndex] || [];
 
-  function selectOption(optId) {
-    const newSelected = question.multi
-      ? selected.includes(optId)
-        ? selected.filter(id => id !== optId)
-        : [...selected, optId]
+  const selectOption = useCallback((optId) => {
+    const currentSelected = answers[currentIndex] || [];
+    const currentQuestion = questions[currentIndex];
+    if (!currentQuestion) return;
+    const newSelected = currentQuestion.multi
+      ? currentSelected.includes(optId)
+        ? currentSelected.filter(id => id !== optId)
+        : [...currentSelected, optId]
       : [optId];
 
     if (round === 1) {
@@ -58,15 +41,16 @@ export default function Quiz({ round }) {
     } else {
       dispatch({ type: 'SET_R2_ANSWER', index: currentIndex, selected: newSelected });
     }
-  }
+  }, [answers, currentIndex, questions, round, dispatch]);
 
-  function goNext() {
-    if (selected.length === 0) return;
+  const goNext = useCallback(() => {
+    const currentSelected = answers[currentIndex] || [];
+    if (currentSelected.length === 0) return;
 
     const nextIndex = currentIndex + 1;
 
     if (round === 1) {
-      const allAnswers = Object.values({ ...state.round1Answers, [currentIndex]: selected });
+      const allAnswers = Object.values({ ...state.round1Answers, [currentIndex]: currentSelected });
       if (nextIndex >= 3 && shouldEndRound1(allAnswers)) {
         dispatch({ type: 'NAVIGATE', screen: SCREENS.ROUND2_INTRO });
         return;
@@ -83,7 +67,29 @@ export default function Quiz({ round }) {
       }
       dispatch({ type: 'SET_R2_INDEX', index: nextIndex });
     }
-  }
+  }, [answers, currentIndex, questions, round, state.round1Answers, dispatch]);
+
+  const handleKeyDown = useCallback((e) => {
+    const currentQuestion = questions[currentIndex];
+    if (!currentQuestion) return;
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= currentQuestion.options.length) {
+      e.preventDefault();
+      selectOption(currentQuestion.options[num - 1].id);
+    }
+    if (e.key === 'Enter' && (answers[currentIndex] || []).length > 0) {
+      e.preventDefault();
+      goNext();
+    }
+  }, [questions, currentIndex, answers, selectOption, goNext]);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  if (!question) return null;
 
   function goBack() {
     if (currentIndex > 0) {
@@ -140,7 +146,7 @@ export default function Quiz({ round }) {
         </div>
       </div>
 
-      <div key={animKey} className="flex-1 p-6 md:p-12 flex flex-col max-w-2xl">
+      <div key={animKey} className="flex-1 p-6 pt-10 md:p-12 flex flex-col max-w-2xl">
         <Reveal variant="blur">
           <div>
             <div className="inline-block px-3 py-1 rounded-full bg-pf-light text-pf-primary text-xs font-bold uppercase tracking-wider mb-4">
@@ -195,32 +201,24 @@ export default function Quiz({ round }) {
           </div>
         </Reveal>
 
-        {question.vague ? (
-          <div className="text-xs text-gray-500 bg-pf-light/60 rounded-xl p-4 mb-4 border border-pf-primary/10 leading-relaxed">
-            {question.why[lang]}
-            <button
-              onClick={() => setShowWhy(!showWhy)}
-              className="block mt-1.5 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
-            >
-              {showWhy ? '\u{25B2} ' + t.quiz.hideWhy : '\u{25BC} ' + t.quiz.whyWeAsk}
-            </button>
-          </div>
-        ) : (
-          <>
-            <button
-              onClick={() => setShowWhy(!showWhy)}
-              aria-expanded={showWhy}
-              className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer mb-4 self-start transition-colors"
-            >
-              {showWhy ? '\u{25B2}' : '\u{25BC}'} {t.quiz.whyWeAsk}
-            </button>
-            {showWhy && (
-              <div className="text-xs text-gray-500 bg-white rounded-xl p-4 mb-4 border border-gray-100 leading-relaxed shadow-sm">
-                {question.why[lang]}
-              </div>
-            )}
-          </>
-        )}
+        <>
+          <button
+            onClick={() => setShowWhy(!showWhy)}
+            aria-expanded={showWhy}
+            className="text-xs text-gray-400 hover:text-pf-primary cursor-pointer mb-2 self-start transition-colors"
+          >
+            {showWhy ? '\u{25B2} ' + t.quiz.hideWhy : '\u{25BC} ' + t.quiz.whyWeAsk}
+          </button>
+          {showWhy && (
+            <div className={`text-xs text-gray-500 rounded-xl p-4 mb-4 border leading-relaxed ${
+              question.vague
+                ? 'bg-pf-light/60 border-pf-primary/10'
+                : 'bg-white border-gray-100 shadow-sm'
+            }`}>
+              {question.why[lang]}
+            </div>
+          )}
+        </>
 
         {/* Sticky CTA on mobile */}
         <div className="mt-auto pt-6 md:relative fixed bottom-0 left-0 right-0 md:p-0 p-4 safe-bottom bg-gradient-to-t from-warm-50 via-warm-50/95 to-warm-50/0 md:bg-transparent md:from-transparent z-10">

@@ -79,22 +79,25 @@ export default function Savickas() {
           </Reveal>
         ))}
 
-        <div className="flex items-center gap-3 mt-auto pt-4">
-          <button
-            onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.ROUND2_INTRO })}
-            className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
-          >
-            {'←'} {t.common.back}
-          </button>
-          <button
-            onClick={proceed}
-            className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
-          >
-            {t.savickas.continueBtn}
-          </button>
+        <div className="mt-auto pt-4 space-y-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.ROUND2_INTRO })}
+              className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+            >
+              {'←'} {t.common.back}
+            </button>
+            <button
+              onClick={proceed}
+              disabled={!Object.values(fields).some(v => v.trim().length > 0)}
+              className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
+            >
+              {t.savickas.continueBtn}
+            </button>
+          </div>
           <button
             onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.QUIZ_R2 })}
-            className="px-6 py-3.5 text-gray-400 hover:text-gray-600 font-medium cursor-pointer transition-colors"
+            className="btn-tertiary text-gray-400 hover:text-gray-600 font-medium cursor-pointer transition-colors block"
           >
             {t.savickas.skipBtn}
           </button>

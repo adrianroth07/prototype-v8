@@ -41,8 +41,16 @@ export default function Welcome() {
         </div>
 
         <h1 className="animate-fade-in-up font-heading text-5xl md:text-7xl font-black text-pf-text mb-4 tracking-tight">
-          <span className="text-gradient-animated">{t.landing.title.split(/(?<=Path)/)[0]}</span>
-          {t.landing.title.split(/(?<=Path)/).slice(1).join('')}
+          {(() => {
+            const title = t.landing.title;
+            const splitIdx = title.indexOf('Path') !== -1 ? title.indexOf('Path') + 4 : title.length;
+            return (
+              <>
+                <span className="text-gradient-animated">{title.slice(0, splitIdx)}</span>
+                {title.slice(splitIdx)}
+              </>
+            );
+          })()}
         </h1>
 
         <p className="animate-fade-in-up stagger-1 text-xl md:text-2xl text-gray-500 mb-3 max-w-lg font-light">

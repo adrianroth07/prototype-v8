@@ -17,6 +17,7 @@ export default function Browse() {
   const [comparing, setComparing] = useState(false);
   const [rejectFlash, setRejectFlash] = useState(null);
   const [comparisonCopied, setComparisonCopied] = useState(false);
+  const [shareToast, setShareToast] = useState(null);
 
   const toggleSelect = (pathId) => {
     if (selected.length >= 3 && !selected.includes(pathId)) {
@@ -43,6 +44,11 @@ export default function Browse() {
 
   const selectedPaths = ALL_PATHS_WITH_BRIDGES.filter((p) => selected.includes(p.id));
 
+  function showToast(msg, isError = false) {
+    setShareToast({ msg, isError });
+    setTimeout(() => setShareToast(null), 2500);
+  }
+
   async function shareComparison() {
     const lines = selectedPaths.map((p) => {
       const rows = [
@@ -58,9 +64,18 @@ export default function Browse() {
     if (navigator.share) {
       try { await navigator.share({ title: 'PathFinder', text }); return; } catch { /* cancelled */ }
     }
-    try { await navigator.clipboard.writeText(text); } catch { /* unavailable */ }
-    setComparisonCopied(true);
-    setTimeout(() => setComparisonCopied(false), 2000);
+    if (!navigator.clipboard) {
+      showToast(lang === 'de' ? 'Kopieren nicht verfügbar' : 'Clipboard not available', true);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setComparisonCopied(true);
+      setTimeout(() => setComparisonCopied(false), 2000);
+      showToast(t.browse.copiedMsg || (lang === 'de' ? 'Kopiert!' : 'Copied!'));
+    } catch {
+      showToast(lang === 'de' ? 'Kopieren fehlgeschlagen' : 'Copy failed', true);
+    }
   }
 
   const comparisonRows = [
@@ -456,6 +471,18 @@ export default function Browse() {
         </>
       )}
 
+      {shareToast && (
+        <div
+          className={`fixed bottom-24 left-1/2 -translate-x-1/2 z-[60] px-4 py-2.5 rounded-xl text-sm font-medium shadow-lg animate-fade-in ${
+            shareToast.isError
+              ? 'bg-red-50 text-red-700 border border-red-200'
+              : 'bg-pf-light text-pf-primary border border-pf-primary/20'
+          }`}
+        >
+          {shareToast.msg}
+        </div>
+      )}
+
       {!comparing && createPortal(
         <div className="fixed bottom-0 inset-x-0 z-50 safe-bottom">
           <div className="card-glass border-t border-gray-200/60 shadow-lg backdrop-blur-xl">
@@ -505,7 +532,7 @@ export default function Browse() {
                 <button
                   onClick={() => { if (selected.length >= 2) setComparing(true); }}
                   disabled={selected.length < 2}
-                  className={`btn-primary bg-gradient-to-b from-pf-primary to-pf-dark text-white text-xs font-semibold px-5 py-2 rounded-lg transition-all ${
+                  className={`btn-primary btn-secondary bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold transition-all ${
                     selected.length >= 2
                       ? 'cursor-pointer shadow-lg shadow-pf-primary/10'
                       : 'opacity-40 cursor-not-allowed'
