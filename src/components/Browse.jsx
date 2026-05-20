@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
@@ -14,11 +15,17 @@ export default function Browse() {
   const [filter, setFilter] = useState('');
   const [selected, setSelected] = useState([]);
   const [comparing, setComparing] = useState(false);
+  const [rejectFlash, setRejectFlash] = useState(null);
+  const [comparisonCopied, setComparisonCopied] = useState(false);
 
   const toggleSelect = (pathId) => {
+    if (selected.length >= 3 && !selected.includes(pathId)) {
+      setRejectFlash(pathId);
+      setTimeout(() => setRejectFlash(null), 600);
+      return;
+    }
     setSelected((prev) => {
       if (prev.includes(pathId)) return prev.filter((id) => id !== pathId);
-      if (prev.length >= 3) return prev;
       return [...prev, pathId];
     });
   };
@@ -35,6 +42,26 @@ export default function Browse() {
   }, [comparing, expanded]);
 
   const selectedPaths = ALL_PATHS_WITH_BRIDGES.filter((p) => selected.includes(p.id));
+
+  async function shareComparison() {
+    const lines = selectedPaths.map((p) => {
+      const rows = [
+        l(p.tagline, lang),
+        `${t.comparison.headers.income}: ${l(p.income_now, lang)}`,
+        `${t.comparison.headers.freedom}: ${l(p.freedom, lang)}`,
+        `${t.comparison.headers.flexibility}: ${l(p.flexibility, lang)}`,
+        `${t.comparison.headers.outlook}: ${l(p.outlook, lang)}`,
+      ];
+      return `${p.name}\n${rows.map(r => `  ${r}`).join('\n')}`;
+    });
+    const text = `${t.browse.shareTitle}:\n\n${lines.join('\n\n')}\n\n${window.location.origin}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'PathFinder', text }); return; } catch { /* cancelled */ }
+    }
+    try { await navigator.clipboard.writeText(text); } catch { /* unavailable */ }
+    setComparisonCopied(true);
+    setTimeout(() => setComparisonCopied(false), 2000);
+  }
 
   const comparisonRows = [
     { key: 'tagline', label: t.browse.description, get: (p) => l(p.tagline, lang) },
@@ -172,7 +199,21 @@ export default function Browse() {
             </div>
           </Reveal>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 flex flex-col items-center gap-3">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={shareComparison}
+                className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1.5"
+              >
+                {comparisonCopied ? <>{'✓'} {t.browse.copiedMsg}</> : <>{'↗'} {t.browse.shareBtn}</>}
+              </button>
+              <button
+                onClick={() => window.print()}
+                className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1.5 no-print"
+              >
+                {'⬇'} {t.browse.pdfExport}
+              </button>
+            </div>
             <button
               onClick={() => {
                 setComparing(false);
@@ -214,10 +255,15 @@ export default function Browse() {
               return (
                 <Reveal key={path.id} delay={i * 80}>
                 <div
-                  className={`card-hover bg-white rounded-xl border-l-4 border shadow-sm overflow-hidden transition-all ${
-                    isSelected ? 'border-pf-primary ring-2 ring-pf-light' : 'border-gray-100'
+                  onClick={() => toggleSelect(path.id)}
+                  className={`card-hover bg-white rounded-xl border-l-4 border shadow-sm overflow-hidden transition-colors cursor-pointer ${
+                    rejectFlash === path.id
+                      ? 'border-red-400 ring-2 ring-red-200 animate-shake'
+                      : isSelected
+                        ? 'border-pf-primary ring-2 ring-pf-light'
+                        : 'border-gray-100'
                   }`}
-                  style={{ borderLeftColor: color.border }}
+                  style={{ borderLeftColor: rejectFlash === path.id ? '#f87171' : color.border }}
                 >
                   <div className="p-6 md:p-8">
                     <div className="flex items-start justify-between">
@@ -241,7 +287,6 @@ export default function Browse() {
                       {/* Selection checkbox */}
                       <button
                         onClick={(e) => { e.stopPropagation(); toggleSelect(path.id); }}
-                        disabled={atMax}
                         className={`shrink-0 ml-3 mt-1 w-6 h-6 rounded-md border-2 flex items-center justify-center cursor-pointer transition-all ${
                           isSelected
                             ? 'bg-pf-primary border-pf-primary text-white'
@@ -352,7 +397,7 @@ export default function Browse() {
                     </div>
 
                     <button
-                      onClick={() => setExpanded(isExpanded ? null : path.id)}
+                      onClick={(e) => { e.stopPropagation(); setExpanded(isExpanded ? null : path.id); }}
                       className="inline-flex items-center gap-1 text-xs text-pf-primary font-semibold mt-4 cursor-pointer hover:text-pf-dark transition-colors"
                     >
                       <svg
@@ -407,49 +452,56 @@ export default function Browse() {
           </Reveal>
 
           {/* Spacer so sticky bar doesn't cover last card */}
-          {selected.length > 0 && <div className="h-24" />}
+          <div className="h-24" />
         </>
       )}
 
-      {/* ── Sticky compare bar ── */}
-      {selected.length >= 1 && !comparing && (
+      {!comparing && createPortal(
         <div className="fixed bottom-0 inset-x-0 z-50 safe-bottom">
           <div className="card-glass border-t border-gray-200/60 shadow-lg backdrop-blur-xl">
             <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="flex items-center gap-2 flex-wrap">
-                  {selectedPaths.map((path) => {
-                    const color = pathColor(path.id);
-                    return (
-                      <span
-                        key={path.id}
-                        className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border"
-                        style={{ backgroundColor: color.bg, borderColor: color.border, color: color.text }}
-                      >
-                        {path.name}
-                        <button
-                          onClick={() => toggleSelect(path.id)}
-                          className="hover:opacity-70 cursor-pointer transition-opacity"
-                          aria-label={lang === 'de' ? `${path.name} entfernen` : `Remove ${path.name}`}
-                        >
-                          {'\u{00D7}'}
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-                <span className="text-xs text-gray-400 whitespace-nowrap">
-                  {selected.length} {t.browse.of} {ALL_PATHS_WITH_BRIDGES.length} {t.browse.selectedLabel}
-                </span>
+                {selected.length === 0 ? (
+                  <span className="text-xs text-gray-400">{lang === 'de' ? 'Bis zu 3 Wege zum Vergleichen auswählen' : 'Select up to 3 paths to compare'}</span>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {selectedPaths.map((path) => {
+                        const color = pathColor(path.id);
+                        return (
+                          <span
+                            key={path.id}
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border"
+                            style={{ backgroundColor: color.bg, borderColor: color.border, color: color.text }}
+                          >
+                            {path.name}
+                            <button
+                              onClick={() => toggleSelect(path.id)}
+                              className="hover:opacity-70 cursor-pointer transition-opacity"
+                              aria-label={lang === 'de' ? `${path.name} entfernen` : `Remove ${path.name}`}
+                            >
+                              {'\u{00D7}'}
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <span className="text-xs text-gray-400 whitespace-nowrap">
+                      {selected.length}/3
+                    </span>
+                  </>
+                )}
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => setSelected([])}
-                  className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer transition-colors px-3 py-2"
-                >
-                  {t.browse.clear}
-                </button>
+                {selected.length > 0 && (
+                  <button
+                    onClick={() => setSelected([])}
+                    className="text-xs text-gray-400 hover:text-gray-600 cursor-pointer transition-colors px-3 py-2"
+                  >
+                    {t.browse.clear}
+                  </button>
+                )}
                 <button
                   onClick={() => { if (selected.length >= 2) setComparing(true); }}
                   disabled={selected.length < 2}
@@ -464,7 +516,8 @@ export default function Browse() {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

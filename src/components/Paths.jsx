@@ -3,7 +3,6 @@ import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
 import { pathColor } from '../data/colors.js';
-import { BRIDGE_PATHS } from '../data/paths.js';
 import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
@@ -467,8 +466,7 @@ export default function Paths() {
   const [openRoute, setOpenRoute] = useState(() =>
     state.suggestedPaths.length > 0 ? state.suggestedPaths[0].id : null
   );
-  const [expandedBridge, setExpandedBridge] = useState(null);
-  const [dismissedPaths, setDismissedPaths] = useState(new Set());
+const [dismissedPaths, setDismissedPaths] = useState(new Set());
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3500);
@@ -623,37 +621,6 @@ export default function Paths() {
                 </div>
               </section>
             )}
-
-            <section>
-              <Reveal variant="up">
-                <div className="divider-gradient my-2" />
-                <div className="mt-6 mb-5 flex items-start gap-3 pl-1">
-                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-amber-50 shrink-0 mt-0.5">
-                    <span className="text-sm">{'\u{1F309}'}</span>
-                  </div>
-                  <div>
-                    <h2 className="font-heading text-lg font-bold text-gray-700">
-                      {t.paths.bridgeTitle}
-                    </h2>
-                    <p className="text-sm text-gray-400">{t.paths.bridgeSubtitle}</p>
-                  </div>
-                </div>
-              </Reveal>
-              <div className="flex flex-col gap-3">
-                {BRIDGE_PATHS.map((path) => (
-                  <Reveal key={path.id} delay={100}>
-                    <RoutePanel
-                      path={path}
-                      reason={reasons[path.id]}
-                      isOpen={expandedBridge === path.id}
-                      onToggle={() => setExpandedBridge(expandedBridge === path.id ? null : path.id)}
-                      t={t}
-                      lang={lang}
-                    />
-                  </Reveal>
-                ))}
-              </div>
-            </section>
 
             <div className="pt-4">
               <p className="text-sm text-gray-400 text-center italic mb-6">{t.common.noPathFinal}</p>

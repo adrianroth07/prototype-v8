@@ -59,19 +59,19 @@ export default function Blocks() {
 
       <div className="flex-1 p-6 md:p-14 flex flex-col max-w-xl">
         <Reveal variant="scale">
-          <div className="flex flex-wrap gap-3 mb-8">
+          <div className="grid grid-cols-2 gap-3 mb-8">
             {BLOCK_IDS.map((id) => (
               <button
                 key={id}
                 onClick={() => toggleBlock(id)}
-                className={`flex items-center gap-2 px-4 py-2.5 min-h-[44px] rounded-xl border-2 text-sm cursor-pointer transition-all duration-200 ${
+                className={`flex items-center gap-3 px-4 py-3 min-h-[52px] rounded-xl border-2 text-sm font-medium text-left cursor-pointer transition-all duration-200 ${
                   selected.includes(id)
-                    ? 'border-pf-primary bg-pf-primary text-white font-semibold shadow-sm shadow-pf-primary/10 scale-105'
+                    ? 'border-pf-primary bg-pf-primary text-white shadow-sm shadow-pf-primary/10'
                     : 'border-gray-100 bg-white text-gray-600 hover:border-gray-200 hover:shadow-sm'
                 }`}
               >
-                <span className="text-base">{BLOCK_EMOJIS[id]}</span>
-                {t.blocks.chips[id]}
+                <span className="text-lg shrink-0">{BLOCK_EMOJIS[id]}</span>
+                <span className="leading-tight">{t.blocks.chips[id]}</span>
               </button>
             ))}
           </div>

@@ -15,9 +15,6 @@ const CERT_LEVELS = [
 ];
 
 const HORIZON = {
-  iba: { emoji: '\u{1F331}', de: 'Besserer Abschluss, klarere Richtung — Ausbildung, EQ oder weiterschulen', en: 'Better certificate, clearer direction — Ausbildung, EQ, or further school' },
-  eq: { emoji: '\u{1F3AF}', de: '60%+ bekommen danach einen Ausbildungsvertrag', en: '60%+ get an Ausbildung contract — this is your bridge' },
-  fos: { emoji: '\u{1F393}', de: 'Fachabitur oder Abitur — Uni und Duales Studium werden möglich', en: 'Fachabitur or Abitur — university and Duales Studium become possible' },
   ausbildung: { emoji: '\u{1F3ED}', de: 'Karriere im Beruf — Meister, Techniker oder Teamleitung', en: 'Career in your trade — Meister, Techniker, or team lead' },
   studium: { emoji: '\u{1F4BC}', de: 'Firma, Forschung oder eigenes Projekt starten', en: 'Join a company, start research, or launch your own project' },
   fsj: { emoji: '\u{1F331}', de: 'Klarheit über deine Richtung — bereit für den nächsten Schritt', en: 'Clarity on your direction — ready for the next step' },
@@ -29,32 +26,27 @@ const HORIZON = {
 const RECOMMENDED_JOURNEYS = {
   bbr: [
     {
-      de: { label: 'Erst IBA', desc: 'Abschluss nachholen, dann Ausbildung' },
-      en: { label: 'IBA first', desc: 'Upgrade your certificate, then train' },
-      steps: ['iba', 'ausbildung'],
-    },
-    {
-      de: { label: 'Brücke zur Ausbildung', desc: 'Zeig was du kannst, werde übernommen' },
-      en: { label: 'Bridge to Ausbildung', desc: 'Prove yourself at a company, get hired' },
-      steps: ['eq', 'ausbildung'],
-    },
-    {
       de: { label: 'Der Klassiker', desc: 'Direkt Ausbildung starten und wachsen' },
       en: { label: 'The classic', desc: 'Start a trade directly, grow from there' },
       steps: ['ausbildung', 'studium'],
     },
     {
-      de: { label: 'Schritt für Schritt', desc: 'IBA, dann EQ, dann Ausbildung' },
-      en: { label: 'Step by step up', desc: 'IBA, then EQ, then Ausbildung' },
-      steps: ['iba', 'eq', 'ausbildung'],
+      de: { label: 'Orientierungsjahr', desc: 'Freiwilligenjahr, dann Ausbildung' },
+      en: { label: 'Orientation year', desc: 'Volunteer year, then vocational training' },
+      steps: ['fsj', 'ausbildung'],
+    },
+    {
+      de: { label: 'Praxis & Freiheit', desc: 'Ausbildung, dann selbstständig werden' },
+      en: { label: 'Skills & freedom', desc: 'Train first, then go independent' },
+      steps: ['ausbildung', 'freelancing'],
+    },
+    {
+      de: { label: 'Erst entdecken', desc: 'Gap Year zur Orientierung, dann Ausbildung' },
+      en: { label: 'Explore first', desc: 'Gap year to find direction, then train' },
+      steps: ['gap-year', 'ausbildung'],
     },
   ],
   msa: [
-    {
-      de: { label: 'Erst upgraden', desc: 'Fachabitur/Abitur holen, dann studieren' },
-      en: { label: 'Upgrade first', desc: 'Get Fachabitur/Abitur, then study' },
-      steps: ['fos', 'studium'],
-    },
     {
       de: { label: 'Erst orientieren', desc: 'Richtung finden, dann loslegen' },
       en: { label: 'Orientation first', desc: 'Find your direction, then commit' },

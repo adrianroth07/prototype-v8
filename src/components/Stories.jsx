@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLang } from '../LanguageContext.jsx';
 import { usePathFinder } from '../state/PathFinderContext.jsx';
 import { SCREENS } from '../state/appReducer.js';
@@ -8,19 +9,19 @@ import Reveal from './ui/Reveal.jsx';
 
 const RESOURCES = {
   de: [
-    { emoji: '\u{1F3E2}', name: 'JBA Neukölln', desc: 'Jugendberufsagentur — kostenlose Berufsberatung, alles unter einem Dach', detail: 'Sonnenallee 282, 12057 Berlin · ohne Termin', url: 'https://jba-berlin.de' },
-    { emoji: '\u{1F3EB}', name: 'OSZ IMT Neukölln', desc: 'Oberstufenzentrum für Informations- und Medizintechnik — IBA, FOS, Berufliches Gymnasium', detail: 'Haarlemer Str. 23-27, 12359 Berlin', url: 'https://www.oszimt.de' },
+    { emoji: '\u{1F3DB}', name: 'Berufsberatung (Agentur für Arbeit)', desc: 'Kostenlose Berufsberatung — persönlich, telefonisch oder per Video', detail: 'Lokale Geschäftsstellen bundesweit · kein Einzugsgebiet', url: 'https://www.arbeitsagentur.de/bildung/berufsberatung' },
+    { emoji: '\u{1F50D}', name: 'BERUFENET', desc: 'Alle Ausbildungsberufe erkunden — offizielle Datenbank der Bundesagentur', detail: 'Kostenlos · über 330 Berufsprofile mit Infos zu Gehalt und Zugang', url: 'https://berufenet.arbeitsagentur.de' },
     { emoji: '\u{1F4CB}', name: 'Check-U', desc: 'Kostenloser Online-Test der Bundesagentur für Arbeit', detail: 'Dauert ca. 2 Stunden (Pausen möglich)', url: 'https://www.check-u.de' },
     { emoji: '\u{1F91D}', name: 'ARRIVO Berlin', desc: 'Hilft jungen Menschen mit Migrationsgeschichte, eine Ausbildung zu finden', detail: 'Kostenloses Coaching und Vermittlung', url: 'https://www.arrivo-berlin.de' },
-    { emoji: '\u{1F4BC}', name: 'JobInn Neukölln', desc: 'Aufsuchende Jugendsozialarbeit — Beratung zu Ausbildung und Beruf', detail: 'Lahnstr. 25, 12055 Berlin · GANGWAY e.V.', url: 'https://gangway.de/teams/jobinn-neukoelln/' },
+    { emoji: '\u{1F91D}', name: 'KAUSA Service-Stellen', desc: 'Kostenlose Ausbildungsberatung für junge Menschen mit Einwanderungsgeschichte', detail: 'Bundesweit · BIBB-Netzwerk', url: 'https://www.kausa.de' },
     { emoji: '\u{1F30D}', name: 'Beratung Bildung & Beruf', desc: 'Kostenlose, unabhängige Berufsberatung — auch auf Arabisch, Türkisch, Farsi', detail: 'Karl-Marx-Str. 131, 12043 Berlin', url: 'https://www.gesbit.de' },
   ],
   en: [
-    { emoji: '\u{1F3E2}', name: 'JBA Neukölln', desc: 'Youth career agency — free career guidance, all services under one roof', detail: 'Sonnenallee 282, 12057 Berlin · walk-in', url: 'https://jba-berlin.de' },
-    { emoji: '\u{1F3EB}', name: 'OSZ IMT Neukölln', desc: 'Vocational school for IT and medical tech — IBA, FOS, Berufliches Gymnasium', detail: 'Haarlemer Str. 23-27, 12359 Berlin', url: 'https://www.oszimt.de' },
+    { emoji: '\u{1F3DB}', name: 'Berufsberatung (Bundesagentur)', desc: 'Free career counseling — in person, by phone or video', detail: 'Local offices nationwide · no catchment area', url: 'https://www.arbeitsagentur.de/bildung/berufsberatung' },
+    { emoji: '\u{1F50D}', name: 'BERUFENET', desc: 'Explore every training profession — official Bundesagentur database', detail: 'Free · 330+ career profiles with salary and entry info', url: 'https://berufenet.arbeitsagentur.de' },
     { emoji: '\u{1F4CB}', name: 'Check-U', desc: 'Free online orientation test by the Bundesagentur für Arbeit', detail: 'Takes ~2 hours (can pause and resume)', url: 'https://www.check-u.de' },
     { emoji: '\u{1F91D}', name: 'ARRIVO Berlin', desc: 'Helps young people with migration background find an Ausbildung', detail: 'Free coaching and matching', url: 'https://www.arrivo-berlin.de' },
-    { emoji: '\u{1F4BC}', name: 'JobInn Neukölln', desc: 'Outreach youth social work — career and Ausbildung counseling', detail: 'Lahnstr. 25, 12055 Berlin · GANGWAY e.V.', url: 'https://gangway.de/teams/jobinn-neukoelln/' },
+    { emoji: '\u{1F91D}', name: 'KAUSA Service-Stellen', desc: 'Free Ausbildung support for young people with a migration background', detail: 'Nationwide · BIBB network', url: 'https://www.kausa.de' },
     { emoji: '\u{1F30D}', name: 'Beratung Bildung & Beruf', desc: 'Free, independent career counseling — also in Arabic, Turkish, Farsi', detail: 'Karl-Marx-Str. 131, 12043 Berlin', url: 'https://www.gesbit.de' },
   ],
 };
@@ -28,11 +29,23 @@ const RESOURCES = {
 export default function Stories() {
   const { t, lang } = useLang();
   const { state, dispatch } = usePathFinder();
+  const [storiesCopied, setStoriesCopied] = useState(false);
 
   const relevantStoryIds = new Set(
     state.suggestedPaths.flatMap(p => p.stories || [])
   );
   const clusters = state.selectedClusters || [];
+  async function shareStories() {
+    const lines = stories.map((s) => `"${l(s.quote, lang)}" — ${s.name} (${l(s.role, lang)})`);
+    const text = `${t.stories.shareTitle}:\n\n${lines.join('\n\n')}\n\n${window.location.origin}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'PathFinder', text }); return; } catch { /* cancelled */ }
+    }
+    try { await navigator.clipboard.writeText(text); } catch { /* unavailable */ }
+    setStoriesCopied(true);
+    setTimeout(() => setStoriesCopied(false), 2000);
+  }
+
   const stories = Object.entries(STORIES)
     .filter(([id]) => relevantStoryIds.has(id))
     .map(([id, story]) => ({ id, ...story }))
@@ -146,25 +159,41 @@ export default function Stories() {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <button
-          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.PATHS })}
-          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
-        >
-          {'←'} {t.stories.backToRoutes}
-        </button>
-        <button
-          onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.COMPARISON })}
-          className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
-        >
-          {'←'} {t.stories.toComparison}
-        </button>
-        <button
-          onClick={() => dispatch({ type: 'RESTART' })}
-          className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
-        >
-          {t.stories.restartBtn}
-        </button>
+      <div className="flex flex-col items-center gap-3">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={shareStories}
+            className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1.5"
+          >
+            {storiesCopied ? <>{'✓'} {t.stories.copiedMsg}</> : <>{'↗'} {t.stories.shareBtn}</>}
+          </button>
+          <button
+            onClick={() => window.print()}
+            className="text-sm text-gray-400 hover:text-pf-primary cursor-pointer transition-colors flex items-center gap-1.5 no-print"
+          >
+            {'⬇'} {t.stories.pdfExport}
+          </button>
+        </div>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <button
+            onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.PATHS })}
+            className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+          >
+            {'←'} {t.stories.backToRoutes}
+          </button>
+          <button
+            onClick={() => dispatch({ type: 'NAVIGATE', screen: SCREENS.COMPARISON })}
+            className="text-sm text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
+          >
+            {'←'} {t.stories.toComparison}
+          </button>
+          <button
+            onClick={() => dispatch({ type: 'RESTART' })}
+            className="btn-primary px-10 py-3.5 bg-gradient-to-b from-pf-primary to-pf-dark text-white font-semibold rounded-xl shadow-lg shadow-pf-primary/12 cursor-pointer transition-all"
+          >
+            {t.stories.restartBtn}
+          </button>
+        </div>
       </div>
     </div>
   );

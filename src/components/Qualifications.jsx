@@ -6,7 +6,7 @@ import { l } from '../utils/localize.js';
 import Reveal from './ui/Reveal.jsx';
 
 const CERT_OPTIONS = ['none', 'hauptschule', 'realschule', 'fachabitur', 'abitur'];
-const CERT_PATH_COUNT = { none: 5, hauptschule: 7, realschule: 8, fachabitur: 9, abitur: 9 };
+const CERT_PATH_COUNT = { none: 3, hauptschule: 4, realschule: 5, fachabitur: 6, abitur: 6 };
 const CERT_MAP = {
   none: null,
   hauptschule: 'Hauptschulabschluss',
@@ -16,18 +16,18 @@ const CERT_MAP = {
 };
 const CERT_HINTS = {
   de: {
-    none: 'IBA, EQ, BVJ',
-    hauptschule: 'Ausbildung, IBA, EQ',
-    realschule: 'Ausbildung, FOS, FSJ',
-    fachabitur: 'FH, Duales Studium, Ausbildung',
-    abitur: 'Uni, FH, Duales Studium, Ausbildung',
+    none: 'FSJ, Freelancing, Gap Year',
+    hauptschule: 'Ausbildung, FSJ, Freelancing',
+    realschule: 'Ausbildung, Bundeswehr, FSJ',
+    fachabitur: 'Alle 6 Wege offen',
+    abitur: 'Alle 6 Wege offen',
   },
   en: {
-    none: 'IBA, EQ, BVJ',
-    hauptschule: 'Ausbildung, IBA, EQ',
-    realschule: 'Ausbildung, FOS, FSJ',
-    fachabitur: 'FH, Duales Studium, Ausbildung',
-    abitur: 'Uni, FH, Duales Studium, Ausbildung',
+    none: 'FSJ, Freelancing, Gap Year',
+    hauptschule: 'Ausbildung, FSJ, Freelancing',
+    realschule: 'Ausbildung, Bundeswehr, FSJ',
+    fachabitur: 'All 6 paths open',
+    abitur: 'All 6 paths open',
   },
 };
 
@@ -82,11 +82,11 @@ export default function Qualifications() {
                 <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-pf-primary rounded-full transition-all duration-500"
-                    style={{ width: `${(CERT_PATH_COUNT[opt] / 9) * 100}%` }}
+                    style={{ width: `${(CERT_PATH_COUNT[opt] / 6) * 100}%` }}
                   />
                 </div>
                 <span className={`text-[10px] font-bold tabular-nums shrink-0 ${cert === opt ? 'text-pf-primary' : 'text-gray-400'}`}>
-                  {CERT_PATH_COUNT[opt]}/9
+                  {CERT_PATH_COUNT[opt]}/6
                 </span>
               </div>
               <div className={`text-xs mt-1 ${cert === opt ? 'text-pf-primary/70' : 'text-gray-400'}`}>

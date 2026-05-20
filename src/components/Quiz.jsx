@@ -202,7 +202,7 @@ export default function Quiz({ round }) {
               onClick={() => setShowWhy(!showWhy)}
               className="block mt-1.5 text-gray-400 hover:text-gray-600 cursor-pointer transition-colors"
             >
-              {showWhy ? '\u{25B2} Ausblenden' : '\u{25BC} ' + t.quiz.whyWeAsk}
+              {showWhy ? '\u{25B2} ' + t.quiz.hideWhy : '\u{25BC} ' + t.quiz.whyWeAsk}
             </button>
           </div>
         ) : (
